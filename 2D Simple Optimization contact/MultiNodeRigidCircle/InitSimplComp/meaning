@@ -1,0 +1,7 @@
+if   nsim==0: simplex = get_simplex(s0,0.001)
+elif nsim==1: simplex = get_simplex(s0,0.005)
+elif nsim==2: simplex = get_simplex(s0,0.5*ds[idx_act])
+elif nsim==3: simplex = get_simplex(s0,0.8*ds[idx_act])
+
+
+

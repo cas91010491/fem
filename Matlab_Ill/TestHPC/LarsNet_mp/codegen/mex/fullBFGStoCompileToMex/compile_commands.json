@@ -1,0 +1,146 @@
+[
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o",
+    "file": "fullBFGStoCompileToMex_data.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_data.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  rt_nonfinite.c -o build/glnxa64/rt_nonfinite.o",
+    "file": "rt_nonfinite.c",
+    "output": "build/glnxa64/rt_nonfinite.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_initialize.c -o build/glnxa64/fullBFGStoCompileToMex_initialize.o",
+    "file": "fullBFGStoCompileToMex_initialize.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_initialize.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_terminate.c -o build/glnxa64/fullBFGStoCompileToMex_terminate.o",
+    "file": "fullBFGStoCompileToMex_terminate.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_terminate.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  find.c -o build/glnxa64/find.o",
+    "file": "find.c",
+    "output": "build/glnxa64/find.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex.c -o build/glnxa64/fullBFGStoCompileToMex.o",
+    "file": "fullBFGStoCompileToMex.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_int_forloop_overflow_check.c -o build/glnxa64/eml_int_forloop_overflow_check.o",
+    "file": "eml_int_forloop_overflow_check.c",
+    "output": "build/glnxa64/eml_int_forloop_overflow_check.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_setop.c -o build/glnxa64/eml_setop.o",
+    "file": "eml_setop.c",
+    "output": "build/glnxa64/eml_setop.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eye.c -o build/glnxa64/eye.o",
+    "file": "eye.c",
+    "output": "build/glnxa64/eye.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  inv.c -o build/glnxa64/inv.o",
+    "file": "inv.c",
+    "output": "build/glnxa64/inv.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  norm.c -o build/glnxa64/norm.o",
+    "file": "norm.c",
+    "output": "build/glnxa64/norm.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  warning.c -o build/glnxa64/warning.o",
+    "file": "warning.c",
+    "output": "build/glnxa64/warning.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_mtimes_helper.c -o build/glnxa64/eml_mtimes_helper.o",
+    "file": "eml_mtimes_helper.c",
+    "output": "build/glnxa64/eml_mtimes_helper.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  mtimes.c -o build/glnxa64/mtimes.o",
+    "file": "mtimes.c",
+    "output": "build/glnxa64/mtimes.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_api.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o",
+    "file": "interface/_coder_fullBFGStoCompileToMex_api.c",
+    "output": "build/glnxa64/_coder_fullBFGStoCompileToMex_api.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_mex.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o",
+    "file": "interface/_coder_fullBFGStoCompileToMex_mex.c",
+    "output": "build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sort.c -o build/glnxa64/sort.o",
+    "file": "sort.c",
+    "output": "build/glnxa64/sort.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sortIdx.c -o build/glnxa64/sortIdx.o",
+    "file": "sortIdx.c",
+    "output": "build/glnxa64/sortIdx.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xgetrf.c -o build/glnxa64/xgetrf.o",
+    "file": "xgetrf.c",
+    "output": "build/glnxa64/xgetrf.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xtrsm.c -o build/glnxa64/xtrsm.o",
+    "file": "xtrsm.c",
+    "output": "build/glnxa64/xtrsm.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_emxutil.c -o build/glnxa64/fullBFGStoCompileToMex_emxutil.o",
+    "file": "fullBFGStoCompileToMex_emxutil.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_emxutil.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_mexutil.c -o build/glnxa64/fullBFGStoCompileToMex_mexutil.o",
+    "file": "fullBFGStoCompileToMex_mexutil.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_mexutil.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_info.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o",
+    "file": "interface/_coder_fullBFGStoCompileToMex_info.c",
+    "output": "build/glnxa64/_coder_fullBFGStoCompileToMex_info.o"
+  },
+  {
+    "directory": "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp\" -I \"./interface\" -I \"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  /mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/version/c_mexapi_version.c -o build/glnxa64/c_mexapi_version.o",
+    "file": "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/version/c_mexapi_version.c",
+    "output": "build/glnxa64/c_mexapi_version.o"
+  }
+]

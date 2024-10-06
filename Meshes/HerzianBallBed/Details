@@ -1,0 +1,9 @@
+BALL
+Center:				(0.0, 0.0, 0.0)
+Sphere Radius: 		1.0
+CenterCube mesh: 	6x6
+
+BED:
+Center:				(0.0, 0.0, 0.0)
+Dimensions:			15X15X5
+Mesh:				25x25x10

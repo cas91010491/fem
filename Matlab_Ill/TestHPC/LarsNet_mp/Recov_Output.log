@@ -1,0 +1,1441 @@
+Opening log file:  /home/users/dihurtado/java.log.52292
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2021 The MathWorks, Inc.
+                  R2021a (9.10.0.1602886) 64-bit (glnxa64)
+                             February 17, 2021
+
+Opening log file:  /home/users/dihurtado/java.log.52290
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2021 The MathWorks, Inc.
+                  R2021a (9.10.0.1602886) 64-bit (glnxa64)
+                             February 17, 2021
+
+Opening log file:  /home/users/dihurtado/java.log.52293
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2021 The MathWorks, Inc.
+                  R2021a (9.10.0.1602886) 64-bit (glnxa64)
+                             February 17, 2021
+
+Opening log file:  /home/users/dihurtado/java.log.52291
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2021 The MathWorks, Inc.
+                  R2021a (9.10.0.1602886) 64-bit (glnxa64)
+                             February 17, 2021
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_data.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/rt_nonfinite.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_initialize.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_terminate.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/find.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_setop.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eye.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/inv.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/norm.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/warning.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_mtimes_helper.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/mtimes.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_int_forloop_overflow_check.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/sort.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/sortIdx.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_emxutil.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_mexutil.c'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/rtwtypes.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/rtwtypes.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_types.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_types.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_data.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_data.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/rt_nonfinite.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/rt_nonfinite.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_initialize.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_initialize.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_terminate.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_terminate.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/find.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/find.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_setop.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_setop.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eye.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eye.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/inv.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/inv.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/norm.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/norm.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/warning.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/warning.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_mtimes_helper.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_mtimes_helper.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/mtimes.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/mtimes.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_int_forloop_overflow_check.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/eml_int_forloop_overflow_check.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/sort.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/sort.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/sortIdx.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/sortIdx.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_emxutil.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_emxutil.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_mexutil.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_mexutil.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_internal_types.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_internal_types.h'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/build.ninja'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/build.ninja'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/_clang-format'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/_clang-format'
+not found.] 
+[> In emcRemoveFile
+In emcBuildClean
+In emcBuildClean
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/tmp_configinfo.mat'
+not found.] 
+[> In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/tmp_configinfo.mat'
+not found.] 
+[> In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/fullBFGStoCompileToMex_mex.mexa64'
+not found.] 
+[> In emcRemoveFile
+In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/fullBFGStoCompileToMex_mex.mexa64'
+not found.] 
+[> In emcRemoveFile
+In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/fullBFGStoCompileToMex_mex.mexa64'
+not found.] 
+[> In emcRemoveFile
+In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_mex.mexa64'
+not found.] 
+[> In emcRemoveFile
+In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_mex.mexa64'
+not found.] 
+[> In emcRemoveFile
+In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/fullBFGStoCompileToMex_mex.mexa64'
+not found.] 
+[> In emcRemoveFile
+In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: Directory already exists.] 
+[> In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: Directory already exists.] 
+[> In emcBuildMEX
+In emcBuildMEX
+In emcBuildMEX
+In emcGenMakefileAndBuild
+In emcGenMakefileAndBuild
+In emcBuildTarget
+In emlcprivate
+In coder.internal.compile
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+[1/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  rt_nonfinite.c -o build/glnxa64/rt_nonfinite.o
+[2/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_info.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o
+[3/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o
+[4/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/[4/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o
+[5/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sort.c -o build/glnxa64/sort.o
+[6/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_mtimes_helper.c -o build/glnxa64/eml_mtimes_helper.o
+[7/25] /opt/apps/resif/aion/2020b/epyc/sof[7/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  find.c -o build/glnxa64/find.o
+[8/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_initialize.c -o build/glnxa64/fullBFGStoCompileToMex_initialize.o
+[9/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eye.c -o build/glnxa64/eye.o
+[10/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_mexutil.c -o build/glnxa64/fullBFGStoCompileToMex_mexutil.o
+[11/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  warning.c -o build/glnxa64/warning.o
+[12/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-fra[12/25] /opt/apps/resif/ai[12/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  find.c -o build/glnxa64/find.o
+[13/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  norm.c -o build/glnxa64/norm.o
+[14/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_emxutil.c -o build/glnxa64/fullBFGStoCompileToMex_emxutil.o
+[15/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_S[16/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit[16/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  inv.c -o build/glnxa64/inv.o
+[17/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  mtimes.c -o build/glnxa64/mtimes.o
+[18/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  warning.c -o build/glnxa64/warning.o
+[19/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_setop.c -o build/glnxa64/eml_setop.o
+[20/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xgetrf.c -o build/glnxa64/xgetrf.o
+[21/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_api.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_api.[22/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xgetrf.c -o build/glnxa64/xgetrf.o
+[23/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sortIdx.c -o build/glnxa64/sortIdx.o
+[24/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex.c -o build/glnxa64/fullBFGStoCompileToMex.o
+[25/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc build/glnxa64/fullBFGStoCompileToMex_data.o build/glnxa64/rt_nonfinite.o build/glnxa64/fullBFGStoCompileToMex_initialize.o build/glnxa64/fullBFGStoCompileToMex_terminate.o build/glnxa64/find.o build/glnxa64/fullBFGStoCompileToMex.o build/glnxa64/eml_int_forloop_overflow_check.o build/glnxa64/eml_setop.o build/glnxa64/eye.o build/glnxa64/inv.o build/glnxa64/norm.o build/glnxa64/warning.o build/glnxa64/eml_mtimes_helper.o build/glnxa64/mtimes.o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o build/glnxa64/sort.o build/glnxa64/sortIdx.o build/glnxa64/xgetrf.o build/glnxa64/xtrsm.o build/glnxa64/fullBFGStoCompileToMex_emxutil.o build/glnxa64/fullBFGStoCompileToMex_mexutil.o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o build/glnxa64/c_mexapi_version.o -pthread -Wl,--no-undefined -Wl,-rpath-link,/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64 -shared  -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmx -lmex -lmat -lm -lstdc++  -o fullBFGStoCompileToMex_mex.mexa64 -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmwlapack -lmwblas -lemlrt -lcovrt -lut -lmwmathutil  -Wl,--version-script,fullBFGStoCompileToMex_mex.map
+FAILED: fullBFGStoCompileToMex_mex.mexa64 
+/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc build/glnxa64/fullBFGStoCompileToMex_data.o build/glnxa64/rt_nonfinite.o build/glnxa64/fullBFGStoCompileToMex_initialize.o build/glnxa64/fullBFGStoCompileToMex_terminate.o build/glnxa64/find.o build/glnxa64/fullBFGStoCompileToMex.o build/glnxa64/eml_int_forloop_overflow_check.o build/glnxa64/eml_setop.o build/glnxa64/eye.o build/glnxa64/inv.o build/glnxa64/norm.o build/glnxa64/warning.o build/glnxa64/eml_mtimes_helper.o build/glnxa64/mtimes.o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o build/glnxa64/sort.o build/glnxa64/sortIdx.o build/glnxa64/xgetrf.o build/glnxa64/xtrsm.o build/glnxa64/fullBFGStoCompileToMex_emxutil.o build/glnxa64/fullBFGStoCompileToMex_mexutil.o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o build/glnxa64/c_mexapi_version.o -pthread -Wl,--no-undefined -Wl,-rpath-link,/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64 -shared  -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmx -lmex -lmat -lm -lstdc++  -o fullBFGStoCompileToMex_mex.mexa64 -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmwlapack -lmwblas -lemlrt -lcovrt -lut -lmwmathutil  -Wl,--version-script,fullBFGStoCompileToMex_mex.map
+collect2: fatal error: ld terminated with signal 7 [Bus error], core dumped
+compilation terminated.
+ninja: build stopped: subcommand failed.
+ror: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+------------------------------------------------------------------------
+[1/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  rt_nonfinite.c -o build/glnxa64/rt_nonfinite.o
+[2/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_info.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o
+[3/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o
+[4/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/[4/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o
+[5/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sort.c -o build/glnxa64/sort.o
+[6/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_mtimes_helper.c -o build/glnxa64/eml_mtimes_helper.o
+[7/25] /opt/apps/resif/aion/2020b/epyc/sof[7/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  find.c -o build/glnxa64/find.o
+[8/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_initialize.c -o build/glnxa64/fullBFGStoCompileToMex_initialize.o
+[9/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eye.c -o build/glnxa64/eye.o
+[10/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_mexutil.c -o build/glnxa64/fullBFGStoCompileToMex_mexutil.o
+[11/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  warning.c -o build/glnxa64/warning.o
+[12/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-fra[12/25] /opt/apps/resif/ai[12/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  find.c -o build/glnxa64/find.o
+[13/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  norm.c -o build/glnxa64/norm.o
+[14/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_emxutil.c -o build/glnxa64/fullBFGStoCompileToMex_emxutil.o
+[15/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_S[16/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit[16/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  inv.c -o build/glnxa64/inv.o
+[17/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  mtimes.c -o build/glnxa64/mtimes.o
+[18/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  warning.c -o build/glnxa64/warning.o
+[19/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_setop.c -o build/glnxa64/eml_setop.o
+[20/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xgetrf.c -o build/glnxa64/xgetrf.o
+[21/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_api.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_api.[22/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xgetrf.c -o build/glnxa64/xgetrf.o
+[23/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sortIdx.c -o build/glnxa64/sortIdx.o
+[24/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex.c -o build/glnxa64/fullBFGStoCompileToMex.o
+[25/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc build/glnxa64/fullBFGStoCompileToMex_data.o build/glnxa64/rt_nonfinite.o build/glnxa64/fullBFGStoCompileToMex_initialize.o build/glnxa64/fullBFGStoCompileToMex_terminate.o build/glnxa64/find.o build/glnxa64/fullBFGStoCompileToMex.o build/glnxa64/eml_int_forloop_overflow_check.o build/glnxa64/eml_setop.o build/glnxa64/eye.o build/glnxa64/inv.o build/glnxa64/norm.o build/glnxa64/warning.o build/glnxa64/eml_mtimes_helper.o build/glnxa64/mtimes.o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o build/glnxa64/sort.o build/glnxa64/sortIdx.o build/glnxa64/xgetrf.o build/glnxa64/xtrsm.o build/glnxa64/fullBFGStoCompileToMex_emxutil.o build/glnxa64/fullBFGStoCompileToMex_mexutil.o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o build/glnxa64/c_mexapi_version.o -pthread -Wl,--no-undefined -Wl,-rpath-link,/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64 -shared  -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmx -lmex -lmat -lm -lstdc++  -o fullBFGStoCompileToMex_mex.mexa64 -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmwlapack -lmwblas -lemlrt -lcovrt -lut -lmwmathutil  -Wl,--version-script,fullBFGStoCompileToMex_mex.map
+FAILED: fullBFGStoCompileToMex_mex.mexa64 
+/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc build/glnxa64/fullBFGStoCompileToMex_data.o build/glnxa64/rt_nonfinite.o build/glnxa64/fullBFGStoCompileToMex_initialize.o build/glnxa64/fullBFGStoCompileToMex_terminate.o build/glnxa64/find.o build/glnxa64/fullBFGStoCompileToMex.o build/glnxa64/eml_int_forloop_overflow_check.o build/glnxa64/eml_setop.o build/glnxa64/eye.o build/glnxa64/inv.o build/glnxa64/norm.o build/glnxa64/warning.o build/glnxa64/eml_mtimes_helper.o build/glnxa64/mtimes.o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o build/glnxa64/sort.o build/glnxa64/sortIdx.o build/glnxa64/xgetrf.o build/glnxa64/xtrsm.o build/glnxa64/fullBFGStoCompileToMex_emxutil.o build/glnxa64/fullBFGStoCompileToMex_mexutil.o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o build/glnxa64/c_mexapi_version.o -pthread -Wl,--no-undefined -Wl,-rpath-link,/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64 -shared  -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmx -lmex -lmat -lm -lstdc++  -o fullBFGStoCompileToMex_mex.mexa64 -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmwlapack -lmwblas -lemlrt -lcovrt -lut -lmwmathutil  -Wl,--version-script,fullBFGStoCompileToMex_mex.map
+/opt/apps/resif/aion/2020b/epyc/software/binutils/2.35-GCCcore-10.2.0/bin/ld.gold: internal error in relocate, at x86_64.cc:4937
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+------------------------------------------------------------------------
+[1/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  rt_nonfinite.c -o build/glnxa64/rt_nonfinite.o
+[2/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_info.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o
+[3/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o
+[4/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/[4/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o
+[5/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sort.c -o build/glnxa64/sort.o
+[6/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_mtimes_helper.c -o build/glnxa64/eml_mtimes_helper.o
+[7/25] /opt/apps/resif/aion/2020b/epyc/sof[7/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  find.c -o build/glnxa64/find.o
+[8/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_initialize.c -o build/glnxa64/fullBFGStoCompileToMex_initialize.o
+[9/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eye.c -o build/glnxa64/eye.o
+[10/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_mexutil.c -o build/glnxa64/fullBFGStoCompileToMex_mexutil.o
+[11/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  warning.c -o build/glnxa64/warning.o
+[12/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-fra[12/25] /opt/apps/resif/ai[12/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  find.c -o build/glnxa64/find.o
+[13/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  norm.c -o build/glnxa64/norm.o
+[14/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex_emxutil.c -o build/glnxa64/fullBFGStoCompileToMex_emxutil.o
+[15/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_S[16/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit[16/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  inv.c -o build/glnxa64/inv.o
+[17/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  mtimes.c -o build/glnxa64/mtimes.o
+[18/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  warning.c -o build/glnxa64/warning.o
+[19/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  eml_setop.c -o build/glnxa64/eml_setop.o
+[20/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xgetrf.c -o build/glnxa64/xgetrf.o
+[21/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  interface/_coder_fullBFGStoCompileToMex_api.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_api.[22/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  xgetrf.c -o build/glnxa64/xgetrf.o
+[23/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  sortIdx.c -o build/glnxa64/sortIdx.o
+[24/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I "." -I "/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp" -I "./interface" -I "/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/extern/include" -I "." -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -c  fullBFGStoCompileToMex.c -o build/glnxa64/fullBFGStoCompileToMex.o
+[25/25] /opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc build/glnxa64/fullBFGStoCompileToMex_data.o build/glnxa64/rt_nonfinite.o build/glnxa64/fullBFGStoCompileToMex_initialize.o build/glnxa64/fullBFGStoCompileToMex_terminate.o build/glnxa64/find.o build/glnxa64/fullBFGStoCompileToMex.o build/glnxa64/eml_int_forloop_overflow_check.o build/glnxa64/eml_setop.o build/glnxa64/eye.o build/glnxa64/inv.o build/glnxa64/norm.o build/glnxa64/warning.o build/glnxa64/eml_mtimes_helper.o build/glnxa64/mtimes.o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o build/glnxa64/sort.o build/glnxa64/sortIdx.o build/glnxa64/xgetrf.o build/glnxa64/xtrsm.o build/glnxa64/fullBFGStoCompileToMex_emxutil.o build/glnxa64/fullBFGStoCompileToMex_mexutil.o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o build/glnxa64/c_mexapi_version.o -pthread -Wl,--no-undefined -Wl,-rpath-link,/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64 -shared  -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmx -lmex -lmat -lm -lstdc++  -o fullBFGStoCompileToMex_mex.mexa64 -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmwlapack -lmwblas -lemlrt -lcovrt -lut -lmwmathutil  -Wl,--version-script,fullBFGStoCompileToMex_mex.map
+FAILED: fullBFGStoCompileToMex_mex.mexa64 
+/opt/apps/resif/aion/2020b/epyc/software/GCCcore/10.2.0/bin/gcc build/glnxa64/fullBFGStoCompileToMex_data.o build/glnxa64/rt_nonfinite.o build/glnxa64/fullBFGStoCompileToMex_initialize.o build/glnxa64/fullBFGStoCompileToMex_terminate.o build/glnxa64/find.o build/glnxa64/fullBFGStoCompileToMex.o build/glnxa64/eml_int_forloop_overflow_check.o build/glnxa64/eml_setop.o build/glnxa64/eye.o build/glnxa64/inv.o build/glnxa64/norm.o build/glnxa64/warning.o build/glnxa64/eml_mtimes_helper.o build/glnxa64/mtimes.o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o build/glnxa64/sort.o build/glnxa64/sortIdx.o build/glnxa64/xgetrf.o build/glnxa64/xtrsm.o build/glnxa64/fullBFGStoCompileToMex_emxutil.o build/glnxa64/fullBFGStoCompileToMex_mexutil.o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o build/glnxa64/c_mexapi_version.o -pthread -Wl,--no-undefined -Wl,-rpath-link,/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64 -shared  -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmx -lmex -lmat -lm -lstdc++  -o fullBFGStoCompileToMex_mex.mexa64 -L"/mnt/irisgpfs/apps/resif/aion/2020b/epyc/software/MATLAB/2021a/bin/glnxa64" -lmwlapack -lmwblas -lemlrt -lcovrt -lut -lmwmathutil  -Wl,--version-script,fullBFGStoCompileToMex_mex.map
+/opt/apps/resif/aion/2020b/epyc/software/binutils/2.35-GCCcore-10.2.0/bin/ld.gold: internal error in relocate, at x86_64.cc:4937
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+------------------------------------------------------------------------
+??? Build error: C compiler produced errors. See the Build Log for further
+details.
+<a href="matlab:helpview('coder','msginfo_Coder_FE_TargetBuildError');">More
+information</a>
+??? Build error: C compiler produced errors. See the Build Log for further
+details.
+<a href="matlab:helpview('coder','msginfo_Coder_FE_TargetBuildError');">More
+information</a>
+??? Build error: C compiler produced errors. See the Build Log for further
+details.
+<a href="matlab:helpview('coder','msginfo_Coder_FE_TargetBuildError');">More
+information</a>
+??? Compilation failed: Failed to build target.
+
+[Warning: Directory already exists.] 
+[> In coder.report.contrib/GeneratedCodeContributor/copySourceFiles
+In coder.report.contrib/GeneratedCodeContributor/contribute
+In coder.internal.gui/Advisable/subsref
+In genReportData
+In codergui.evalprivate
+In codergui/ReportServices/defaultReportGenerator
+In coder.internal.gui/Serviceable/doInvoke
+In coder.internal.gui/Serviceable/run
+In coder.internal.gui/Advisable/subsref
+In coder.report/NewReportInfoAdapter/emitHTML
+In coder.internal.gui/Advisable/subsref
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: Directory already exists.] 
+[> In coder.report.contrib/GeneratedCodeContributor/copySourceFiles
+In coder.report.contrib/GeneratedCodeContributor/contribute
+In coder.internal.gui/Advisable/subsref
+In genReportData
+In codergui.evalprivate
+In codergui/ReportServices/defaultReportGenerator
+In coder.internal.gui/Serviceable/doInvoke
+In coder.internal.gui/Serviceable/run
+In coder.internal.gui/Advisable/subsref
+In coder.report/NewReportInfoAdapter/emitHTML
+In coder.internal.gui/Advisable/subsref
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+Code generation failed: To view the report, open('codegen/mex/fullBFGStoCompileToMex/html/report.mldatx').
+
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/html/data.json'
+not found.] 
+[> In genReportContainer
+In genReportContainer
+In genReportData
+In codergui.evalprivate
+In codergui/ReportServices/defaultReportGenerator
+In coder.internal.gui/Serviceable/doInvoke
+In coder.internal.gui/Serviceable/run
+In coder.internal.gui/Advisable/subsref
+In coder.report/NewReportInfoAdapter/emitHTML
+In coder.internal.gui/Advisable/subsref
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/html/info.mat'
+not found.] 
+[> In genReportContainer
+In genReportContainer
+In genReportData
+In codergui.evalprivate
+In codergui/ReportServices/defaultReportGenerator
+In coder.internal.gui/Serviceable/doInvoke
+In coder.internal.gui/Serviceable/run
+In coder.internal.gui/Advisable/subsref
+In coder.report/NewReportInfoAdapter/emitHTML
+In coder.internal.gui/Advisable/subsref
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/html/manifest.json'
+not found.] 
+[> In genReportContainer
+In genReportContainer
+In genReportData
+In codergui.evalprivate
+In codergui/ReportServices/defaultReportGenerator
+In coder.internal.gui/Serviceable/doInvoke
+In coder.internal.gui/Serviceable/run
+In coder.internal.gui/Advisable/subsref
+In coder.report/NewReportInfoAdapter/emitHTML
+In coder.internal.gui/Advisable/subsref
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+[Warning: File
+'/mnt/irisgpfs/users/dihurtado/Matlab/LarsNet_mp/codegen/mex/fullBFGStoCompileToMex/html/manifest.mat'
+not found.] 
+[> In genReportContainer
+In genReportContainer
+In genReportData
+In codergui.evalprivate
+In codergui/ReportServices/defaultReportGenerator
+In coder.internal.gui/Serviceable/doInvoke
+In coder.internal.gui/Serviceable/run
+In coder.internal.gui/Advisable/subsref
+In coder.report/NewReportInfoAdapter/emitHTML
+In coder.internal.gui/Advisable/subsref
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlckernel
+In emlcprivate
+In codegen
+In LarsNet (line 140)
+In run (line 91)] 
+Code generation failed: To view the report, open('codegen/mex/fullBFGStoCompileToMex/html/report.mldatx').
+
+Code generation failed: To view the report, open('codegen/mex/fullBFGStoCompileToMex/html/report.mldatx').
+
+Code generation failed: To view the report, open('codegen/mex/fullBFGStoCompileToMex/html/report.mldatx').
+

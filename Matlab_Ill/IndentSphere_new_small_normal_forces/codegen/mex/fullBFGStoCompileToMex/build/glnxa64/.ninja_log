@@ -1,0 +1,26 @@
+# ninja log v5
+0	66	1718025574230531933	build/glnxa64/rt_nonfinite.o	fa5cbf7722c165ed
+1	68	1718025574234531955	build/glnxa64/fullBFGStoCompileToMex_initialize.o	be512e2588acbc0a
+1	84	1718025574246532023	build/glnxa64/fullBFGStoCompileToMex_terminate.o	40080e1901997b16
+1	90	1718025574254532068	build/glnxa64/eml_setop.o	c82c0b75a8bee24e
+1	93	1718025574254532068	build/glnxa64/find.o	b510eed4a94b592d
+0	108	1718025574262532113	build/glnxa64/fullBFGStoCompileToMex_data.o	46fb95a5da43e48f
+1	109	1718025574258532090	build/glnxa64/norm.o	47fd55e3f0f5c415
+1	136	1718025574298532314	build/glnxa64/inv.o	892c3622f23a2e05
+0	152	1718025574302532337	build/glnxa64/eye.o	f16e13ba1fe5c5de
+66	153	1718025574310532381	build/glnxa64/warning.o	835d30f0bdd3adc9
+68	158	1718025574322532449	build/glnxa64/eml_mtimes_helper.o	27a9ba7c3ec18459
+108	177	1718025574342532561	build/glnxa64/eml_int_forloop_overflow_check.o	c065b9f327300d44
+93	195	1718025574358532651	build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o	d472b53ee13c156d
+84	208	1718025574370532718	build/glnxa64/mtimes.o	caf34b929ca517b4
+109	212	1718025574374532741	build/glnxa64/sort.o	bc84b3d650195fc0
+90	219	1718025574382532786	build/glnxa64/_coder_fullBFGStoCompileToMex_api.o	223bf094a6a9d701
+158	240	1718025574402532898	build/glnxa64/fullBFGStoCompileToMex_emxutil.o	d3d90a33629510d0
+208	242	1718025574406532920	build/glnxa64/c_mexapi_version.o	bd486b7125b2a02b
+195	243	1718025574406532920	build/glnxa64/_coder_fullBFGStoCompileToMex_info.o	43cbe73bfdea5198
+153	244	1718025574406532920	build/glnxa64/xtrsm.o	c5d1493d11424864
+177	251	1718025574414532965	build/glnxa64/fullBFGStoCompileToMex_mexutil.o	b6007c8051e95788
+152	273	1718025574438533099	build/glnxa64/xgetrf.o	c5c315c9e9871ee7
+136	300	1718025574462533234	build/glnxa64/sortIdx.o	9b0c1cc4b555ecf3
+1	510	1718025574674534423	build/glnxa64/fullBFGStoCompileToMex.o	8854dbef438f46f8
+510	557	1718025574718534670	fullBFGStoCompileToMex_mex.mexa64	fedd81c94d8f5c70

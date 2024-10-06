@@ -1,0 +1,51 @@
+/*
+ * Academic License - for use in teaching, academic research, and meeting
+ * course requirements at degree granting institutions only.  Not for
+ * government, commercial, or other organizational use.
+ *
+ * xtrsm.c
+ *
+ * Code generation for function 'xtrsm'
+ *
+ */
+
+/* Include files */
+#include "xtrsm.h"
+#include "fullBFGStoCompileToMex_types.h"
+#include "rt_nonfinite.h"
+#include "blas.h"
+#include <stddef.h>
+
+/* Function Definitions */
+void xtrsm(int32_T m, int32_T n, const emxArray_real_T *A, int32_T lda,
+           emxArray_real_T *B, int32_T ldb)
+{
+  ptrdiff_t lda_t;
+  ptrdiff_t ldb_t;
+  ptrdiff_t m_t;
+  ptrdiff_t n_t;
+  const real_T *A_data;
+  real_T alpha1;
+  real_T *B_data;
+  char_T DIAGA1;
+  char_T SIDE1;
+  char_T TRANSA1;
+  char_T UPLO1;
+  B_data = B->data;
+  A_data = A->data;
+  if ((m >= 1) && (n >= 1)) {
+    alpha1 = 1.0;
+    DIAGA1 = 'N';
+    TRANSA1 = 'N';
+    UPLO1 = 'U';
+    SIDE1 = 'L';
+    m_t = (ptrdiff_t)m;
+    n_t = (ptrdiff_t)n;
+    lda_t = (ptrdiff_t)lda;
+    ldb_t = (ptrdiff_t)ldb;
+    dtrsm(&SIDE1, &UPLO1, &TRANSA1, &DIAGA1, &m_t, &n_t, &alpha1,
+          (real_T *)&A_data[0], &lda_t, &B_data[0], &ldb_t);
+  }
+}
+
+/* End of code generation (xtrsm.c) */

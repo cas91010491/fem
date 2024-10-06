@@ -1,0 +1,1769 @@
+
+incr =
+
+     1
+
+Matrix is ILL!!! (cond = 1.81731e+51) 
+
+incr =
+
+     2
+
+Matrix is ILL!!! (cond = 3.76162e+25) 
+
+incr =
+
+     3
+
+Matrix is ILL!!! (cond = 7.9138e+26) 
+
+incr =
+
+     4
+
+Matrix is ILL!!! (cond = 2.38803e+26) 
+
+incr =
+
+     5
+
+Matrix is ILL!!! (cond = 3.73902e+25) 
+
+incr =
+
+     6
+
+Matrix is ILL!!! (cond = 2.9046e+26) 
+node 20 just entered. Increment will Redo...
+
+incr =
+
+     6
+
+Matrix is ILL!!! (cond = 1.7164833755848932184940991e+20) 
+node 20 first slide
+
+incr =
+
+     7
+
+Matrix is ILL!!! (cond = 3.4599158436949427692006689e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    5.995291e-03     8.241e-17     1.000e+00     0.000e+00     1.508e+00  
+Matrix is ILL!!! (cond = 2.3100730058628719231629370e+20) 
+Matrix is ILL!!! (cond = 2.3100730058628719231629370e+20) 
+    1           3    4.916599e-03     7.357e-08     1.000e+00     7.507e-04     5.744e-01  
+Matrix is ILL!!! (cond = 1.0753301201448733223498059e+20) 
+Matrix is ILL!!! (cond = 1.0753301201448733223498059e+20) 
+    2           5    4.932361e-03     5.304e-10     1.000e+00     1.153e-05     9.980e-03  
+Matrix is ILL!!! (cond = 3.0290274715596982496263770e+20) 
+Matrix is ILL!!! (cond = 3.0290274715596982496263770e+20) 
+    3           7    4.932476e-03     9.308e-12     1.000e+00     8.416e-08     1.809e-06  
+
+Feasible point with lower objective function value found.
+
+
+Optimization completed: The relative first-order optimality measure, 1.322135e-06,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 9.307559e-12, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 3.0290274715596982496263770e+20) 
+node 20 plastic
+
+incr =
+
+     8
+
+Matrix is ILL!!! (cond = 1.5765354349607350498633667e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    9.933413e-04     5.743e-06     1.000e+00     0.000e+00     6.139e-01  
+Matrix is ILL!!! (cond = 1.7771407945059197125595312e+20) 
+Matrix is ILL!!! (cond = 1.7771407945059197125595312e+20) 
+    1           3    1.174192e-03     5.473e-07     1.000e+00     2.823e-04     1.629e-01  
+Matrix is ILL!!! (cond = 1.7215564933592589668681714e+20) 
+Matrix is ILL!!! (cond = 1.7215564933592589668681714e+20) 
+    2           5    1.196149e-03     6.901e-09     1.000e+00     3.275e-05     1.862e-03  
+Matrix is ILL!!! (cond = 1.7213519423247619314974365e+20) 
+Matrix is ILL!!! (cond = 1.7213519423247619314974365e+20) 
+    3           7    1.196433e-03     1.178e-11     1.000e+00     4.218e-07     3.481e-06  
+
+Feasible point with lower objective function value found.
+
+
+Optimization completed: The relative first-order optimality measure, 3.480718e-06,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 1.178137e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.7213519423247619314974365e+20) 
+node 20 plastic
+
+incr =
+
+     9
+
+Matrix is ILL!!! (cond = 1.8286090882128788348968018e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    1.196433e-03     1.399e-06     1.000e+00     0.000e+00     6.737e-01  
+Matrix is ILL!!! (cond = 2.1917878473686774843923511e+20) 
+Matrix is ILL!!! (cond = 2.1917878473686774843923511e+20) 
+    1           3    1.227239e-03     1.884e-08     1.000e+00     4.544e-05     2.314e-02  
+Matrix is ILL!!! (cond = 2.2077383169774103734428101e+20) 
+Matrix is ILL!!! (cond = 2.2077383169774103734428101e+20) 
+    2           5    1.227666e-03     9.920e-11     1.000e+00     6.254e-07     3.740e-06  
+
+Feasible point with lower objective function value found.
+
+
+Optimization completed: The relative first-order optimality measure, 3.739568e-06,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 9.919864e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 2.2077383169774103734428101e+20) 
+node 15 just entered. Increment will Redo...
+node 20 plastic
+node 25 just entered. Increment will Redo...
+
+incr =
+
+     9
+
+Matrix is ILL!!! (cond = 3.8885324549168722042890332e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    9.933413e-04     1.576e-05     1.000e+00     0.000e+00     6.139e-01  
+Matrix is ILL!!! (cond = 1.2335883426841787548645166e+20) 
+Matrix is ILL!!! (cond = 1.2335883426841787548645166e+20) 
+    1           3    1.269717e-03     1.621e-06     1.000e+00     4.226e-04     1.969e-01  
+Matrix is ILL!!! (cond = 3.5055150087285811714730127e+20) 
+Matrix is ILL!!! (cond = 3.5055150087285811714730127e+20) 
+    2           5    1.307272e-03     2.405e-08     1.000e+00     5.372e-05     2.761e-03  
+Matrix is ILL!!! (cond = 3.5016913682545763733326709e+20) 
+Matrix is ILL!!! (cond = 3.5016913682545763733326709e+20) 
+    3           7    1.307847e-03     1.898e-11     1.000e+00     8.168e-07     6.523e-06  
+
+Feasible point with lower objective function value found.
+
+
+Optimization completed: The relative first-order optimality measure, 6.523193e-06,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 1.898106e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 3.5016913682545763733326709e+20) 
+node 15 first slide
+node 20 plastic
+node 25 first slide
+
+incr =
+
+    10
+
+Matrix is ILL!!! (cond = 1.2345672922007526105625208e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    1.232736e-02     3.541e-04     1.000e+00     0.000e+00     1.441e+00  
+Matrix is ILL!!! (cond = 1.9375893176821320755737646e+20) 
+Matrix is ILL!!! (cond = 1.9375893176821320755737646e+20) 
+    1           3    1.115051e-02     2.106e-06     1.000e+00     5.649e-04     1.291e+02  
+Matrix is ILL!!! (cond = 1.5040964672319172086320044e+20) 
+Matrix is ILL!!! (cond = 1.5040964672319172086320044e+20) 
+    2           5    1.135565e-02     1.161e-07     1.000e+00     1.057e-04     7.718e+01  
+Matrix is ILL!!! (cond = 1.4601682852379481388969006e+20) 
+Matrix is ILL!!! (cond = 1.4601682852379481388969006e+20) 
+    3           7    1.136495e-02     1.674e-08     1.000e+00     4.723e-06     5.672e+01  
+Matrix is ILL!!! (cond = 1.4489727823517021311149561e+20) 
+Matrix is ILL!!! (cond = 1.4489727823517021311149561e+20) 
+    4           9    1.136670e-02     4.164e-09     1.000e+00     8.824e-07     4.508e+01  
+Matrix is ILL!!! (cond = 1.4428312975905045698523047e+20) 
+Matrix is ILL!!! (cond = 1.4428312975905045698523047e+20) 
+    5          11    1.136756e-02     1.099e-09     1.000e+00     4.342e-07     4.207e+01  
+Matrix is ILL!!! (cond = 1.4404972883081905884175366e+20) 
+Matrix is ILL!!! (cond = 1.4404972883081905884175366e+20) 
+    6          13    1.136800e-02     2.810e-10     1.000e+00     2.200e-07     4.132e+01  
+Matrix is ILL!!! (cond = 1.4395933422252587363526050e+20) 
+Matrix is ILL!!! (cond = 1.4395933422252587363526050e+20) 
+    7          15    1.136821e-02     9.833e-11     1.000e+00     1.062e-07     4.111e+01  
+Matrix is ILL!!! (cond = 1.4392332176251127169105396e+20) 
+Matrix is ILL!!! (cond = 1.4392332176251127169105396e+20) 
+    8          17    1.136832e-02     3.212e-11     1.000e+00     5.396e-08     4.114e+01  
+Matrix is ILL!!! (cond = 1.4381646172897299366541858e+20) 
+Matrix is ILL!!! (cond = 1.4382378835509794127267834e+20) 
+    9          19    1.136832e-02     3.212e-11     4.900e-01     1.316e-08     3.212e-11  
+
+Feasible point with lower objective function value found.
+
+
+Optimization completed: The relative first-order optimality measure, 2.318478e-11,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 3.212279e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.4392332176251127169105396e+20) 
+node 15 plastic
+node 20 plastic
+node 25 plastic
+
+incr =
+
+    11
+
+Matrix is ILL!!! (cond = 1.1024590820252733037461987e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    3.527831e-03     2.632e-04     1.000e+00     0.000e+00     6.693e-01  
+Matrix is ILL!!! (cond = 3.5806703006937350457454590e+20) 
+Matrix is ILL!!! (cond = 3.5806703006937350457454590e+20) 
+    1           3    3.902974e-03     1.804e-05     1.000e+00     3.168e-04     1.301e+01  
+Matrix is ILL!!! (cond = 3.4898498327450285417939648e+20) 
+Matrix is ILL!!! (cond = 3.4898498327450285417939648e+20) 
+    2           5    3.891237e-03     3.500e-06     1.000e+00     9.706e-06     2.384e+01  
+Matrix is ILL!!! (cond = 1.2845866511525459487168884e+20) 
+Matrix is ILL!!! (cond = 1.2845866511525459487168884e+20) 
+    3           7    3.873537e-03     8.437e-07     1.000e+00     1.462e-05     2.562e+01  
+Matrix is ILL!!! (cond = 4.0561447012076115418298438e+20) 
+Matrix is ILL!!! (cond = 4.0561447012076115418298438e+20) 
+    4           9    3.864918e-03     2.094e-07     1.000e+00     7.133e-06     2.606e+01  
+Matrix is ILL!!! (cond = 1.2463272703941005192993591e+20) 
+Matrix is ILL!!! (cond = 1.2463272703941005192993591e+20) 
+    5          11    3.860728e-03     5.230e-08     1.000e+00     3.470e-06     2.622e+01  
+Matrix is ILL!!! (cond = 3.7502647022128766757327100e+20) 
+Matrix is ILL!!! (cond = 3.7502647022128766757327100e+20) 
+    6          13    3.858641e-03     1.308e-08     1.000e+00     1.729e-06     2.627e+01  
+Matrix is ILL!!! (cond = 2.8794911739405152098310718e+20) 
+Matrix is ILL!!! (cond = 2.8794911739405152098310718e+20) 
+    7          15    3.857593e-03     3.270e-09     1.000e+00     8.686e-07     2.628e+01  
+Matrix is ILL!!! (cond = 1.4913755026929483995046069e+20) 
+Matrix is ILL!!! (cond = 1.4913755026929483995046069e+20) 
+    8          17    3.857076e-03     8.177e-10     1.000e+00     4.286e-07     2.638e+01  
+Matrix is ILL!!! (cond = 3.3324120456537993280033496e+20) 
+Matrix is ILL!!! (cond = 3.3324120456537993280033496e+20) 
+    9          19    3.856809e-03     2.062e-10     1.000e+00     2.212e-07     2.584e+01  
+Matrix is ILL!!! (cond = 1.2448855945976183799028918e+20) 
+Matrix is ILL!!! (cond = 1.2448855945976183799028918e+20) 
+   10          21    3.856680e-03     2.370e-10     1.000e+00     1.072e-07     2.731e+01  
+Matrix is ILL!!! (cond = 1.2979216630496599145417639e+20) 
+Matrix is ILL!!! (cond = 1.2979216630496599145417639e+20) 
+   11          23    3.856617e-03     1.335e-10     1.000e+00     5.180e-08     3.060e+01  
+Matrix is ILL!!! (cond = 1.2967085883714349257875696e+20) 
+Matrix is ILL!!! (cond = 1.2967085883714349257875696e+20) 
+   12          25    3.856588e-03     1.578e-11     1.000e+00     2.399e-08     4.383e+01  
+Matrix is ILL!!! (cond = 1.2901414747100931054771265e+20) 
+Matrix is ILL!!! (cond = 1.2901414747100931054771265e+20) 
+   13          27    3.856588e-03     7.969e-13     1.000e+00     3.728e-09     8.638e-01  
+
+Feasible point with lower objective function value found.
+
+
+Optimization stopped because the relative changes in all elements of x are
+less than options.StepTolerance = 1.000000e-08, and the relative maximum constraint
+violation, 7.969137e-13, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.2901414747100931054771265e+20) 
+node 15 plastic
+node 20 plastic
+node 25 plastic
+
+incr =
+
+    12
+
+Matrix is ILL!!! (cond = 1.2955367382874643098919482e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    3.856559e-03     1.410e-04     1.000e+00     0.000e+00     6.998e-01  
+Matrix is ILL!!! (cond = 1.1775906501472352828281384e+20) 
+Matrix is ILL!!! (cond = 1.1775906501472352828281384e+20) 
+    1           3    4.025091e-03     1.682e-05     1.000e+00     1.381e-04     1.439e+01  
+Matrix is ILL!!! (cond = 1.1390573527018647682891956e+20) 
+Matrix is ILL!!! (cond = 1.1390573527018647682891956e+20) 
+    2           5    3.987840e-03     3.773e-06     1.000e+00     3.031e-05     1.894e+01  
+Matrix is ILL!!! (cond = 1.1349990898766849961946765e+20) 
+Matrix is ILL!!! (cond = 1.1349990898766849961946765e+20) 
+    3           7    3.968774e-03     9.249e-07     1.000e+00     1.556e-05     1.965e+01  
+Matrix is ILL!!! (cond = 1.1364593897146397436713440e+20) 
+Matrix is ILL!!! (cond = 1.1364593897146397436713440e+20) 
+    4           9    3.959523e-03     2.304e-07     1.000e+00     7.566e-06     1.986e+01  
+Matrix is ILL!!! (cond = 1.1385189699552626856798267e+20) 
+Matrix is ILL!!! (cond = 1.1385189699552626856798267e+20) 
+    5          11    3.954943e-03     5.758e-08     1.000e+00     3.749e-06     1.993e+01  
+Matrix is ILL!!! (cond = 1.1396215949907940151076831e+20) 
+Matrix is ILL!!! (cond = 1.1396215949907940151076831e+20) 
+    6          13    3.952646e-03     1.440e-08     1.000e+00     1.881e-06     1.995e+01  
+Matrix is ILL!!! (cond = 1.1402569340598364498475183e+20) 
+Matrix is ILL!!! (cond = 1.1402569340598364498475183e+20) 
+    7          15    3.951501e-03     3.601e-09     1.000e+00     9.384e-07     1.996e+01  
+Matrix is ILL!!! (cond = 1.1405987373309547006441650e+20) 
+Matrix is ILL!!! (cond = 1.1405987373309547006441650e+20) 
+    8          17    3.950924e-03     9.003e-10     1.000e+00     4.720e-07     1.996e+01  
+Matrix is ILL!!! (cond = 1.1407695243396055899992041e+20) 
+Matrix is ILL!!! (cond = 1.1407695243396055899992041e+20) 
+    9          19    3.950637e-03     2.921e-10     1.000e+00     2.351e-07     1.998e+01  
+Matrix is ILL!!! (cond = 1.1408572437575011183167310e+20) 
+Matrix is ILL!!! (cond = 1.1408572437575011183167310e+20) 
+   10          21    3.950496e-03     1.290e-10     1.000e+00     1.156e-07     2.014e+01  
+Matrix is ILL!!! (cond = 1.1409016866961034758768042e+20) 
+Matrix is ILL!!! (cond = 1.1409016866961034758768042e+20) 
+   11          23    3.950425e-03     1.865e-11     1.000e+00     5.858e-08     1.973e+01  
+Matrix is ILL!!! (cond = 1.1409273509381767781571521e+20) 
+Matrix is ILL!!! (cond = 1.1409273509381767781571521e+20) 
+   12          25    3.950382e-03     6.745e-12     1.000e+00     3.520e-08     6.743e+00  
+Matrix is ILL!!! (cond = 1.1409433759768181238785706e+20) 
+Matrix is ILL!!! (cond = 1.1409433759768181238785706e+20) 
+   13          27    3.950360e-03     3.919e-10     1.000e+00     1.765e-08     1.317e+01  
+Matrix is ILL!!! (cond = 1.1409424366581514303777612e+20) 
+Matrix is ILL!!! (cond = 1.1409424366581514303777612e+20) 
+   14          29    3.950361e-03     1.597e-10     1.000e+00     1.075e-09     1.597e-10  
+
+Feasible point with lower objective function value found.
+
+
+Optimization completed: The relative first-order optimality measure, 1.596685e-10,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 1.596685e-10, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.1409424366581514303777612e+20) 
+node 15 plastic
+node 20 plastic
+node 25 plastic
+
+incr =
+
+    13
+
+Matrix is ILL!!! (cond = 1.6938050540612118058538770e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    3.950327e-03     7.535e-05     1.000e+00     0.000e+00     7.082e-01  
+Matrix is ILL!!! (cond = 1.0776375932573985203590637e+20) 
+Matrix is ILL!!! (cond = 1.0776375932573985203590637e+20) 
+    1           3    4.107753e-03     1.240e-05     1.000e+00     1.276e-04     1.307e+01  
+Matrix is ILL!!! (cond = 3.9777077991656415838925635e+20) 
+Matrix is ILL!!! (cond = 3.9777077991656415838925635e+20) 
+    2           5    4.077280e-03     2.921e-06     1.000e+00     2.454e-05     1.547e+01  
+Matrix is ILL!!! (cond = 1.9065017597736667498538208e+20) 
+Matrix is ILL!!! (cond = 1.9065017597736667498538208e+20) 
+    3           7    4.060452e-03     7.241e-07     1.000e+00     1.359e-05     1.577e+01  
+Matrix is ILL!!! (cond = 1.1128897805225816560536707e+20) 
+Matrix is ILL!!! (cond = 1.1128897805225816560536707e+20) 
+    4           9    4.052157e-03     1.808e-07     1.000e+00     6.709e-06     1.586e+01  
+Matrix is ILL!!! (cond = 1.0242792811530507079343774e+20) 
+Matrix is ILL!!! (cond = 1.0242792811530507079343774e+20) 
+    5          11    4.048011e-03     4.521e-08     1.000e+00     3.356e-06     1.589e+01  
+Matrix is ILL!!! (cond = 1.0932527038527350020173572e+20) 
+Matrix is ILL!!! (cond = 1.0932527038527350020173572e+20) 
+    6          13    4.045940e-03     1.130e-08     1.000e+00     1.676e-06     1.590e+01  
+Matrix is ILL!!! (cond = 1.1004034017637093696100623e+20) 
+Matrix is ILL!!! (cond = 1.1004034017637093696100623e+20) 
+    7          15    4.044912e-03     2.827e-09     1.000e+00     8.326e-07     1.591e+01  
+Matrix is ILL!!! (cond = 1.1066818132428026384389978e+20) 
+Matrix is ILL!!! (cond = 1.1066818132428026384389978e+20) 
+    8          17    4.044397e-03     7.067e-10     1.000e+00     4.174e-07     1.591e+01  
+Matrix is ILL!!! (cond = 1.1067819496426642430417444e+20) 
+Matrix is ILL!!! (cond = 1.1067819496426642430417444e+20) 
+    9          19    4.044136e-03     2.272e-10     1.000e+00     2.114e-07     1.587e+01  
+Matrix is ILL!!! (cond = 1.1068560895262263316232874e+20) 
+Matrix is ILL!!! (cond = 1.1068560895262263316232874e+20) 
+   10          21    4.044006e-03     8.887e-11     1.000e+00     1.053e-07     1.592e+01  
+Matrix is ILL!!! (cond = 1.1068713938777457731423193e+20) 
+Matrix is ILL!!! (cond = 1.1068713938777457731423193e+20) 
+   11          23    4.043931e-03     1.187e-09     1.000e+00     6.091e-08     1.274e+01  
+Matrix is ILL!!! (cond = 1.1069012669443706299427625e+20) 
+Matrix is ILL!!! (cond = 1.1069012669443706299427625e+20) 
+   12          25    4.043914e-03     2.764e-12     1.000e+00     1.336e-08     4.647e-10  
+
+Optimization completed: The relative first-order optimality measure, 4.646567e-10,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 2.764459e-12, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.1069012669443706299427625e+20) 
+node 15 plastic
+node 20 plastic
+node 25 plastic
+
+incr =
+
+    14
+
+Matrix is ILL!!! (cond = 1.7405877929725490848346606e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    4.043877e-03     3.502e-05     1.000e+00     0.000e+00     7.165e-01  
+Matrix is ILL!!! (cond = 1.7436126989772769567413940e+20) 
+Matrix is ILL!!! (cond = 1.7436126989772769567413940e+20) 
+    1           3    4.180150e-03     5.854e-06     1.000e+00     1.094e-04     1.173e+01  
+Matrix is ILL!!! (cond = 1.7448242516270056393443359e+20) 
+Matrix is ILL!!! (cond = 1.7448242516270056393443359e+20) 
+    2           5    4.160036e-03     1.408e-06     1.000e+00     1.606e-05     1.300e+01  
+Matrix is ILL!!! (cond = 1.7858198467254249419888892e+20) 
+Matrix is ILL!!! (cond = 1.7858198467254249419888892e+20) 
+    3           7    4.148395e-03     3.513e-07     1.000e+00     9.306e-06     1.310e+01  
+Matrix is ILL!!! (cond = 1.7445625133810821937915527e+20) 
+Matrix is ILL!!! (cond = 1.7445625133810821937915527e+20) 
+    4           9    4.142601e-03     8.783e-08     1.000e+00     4.637e-06     1.313e+01  
+Matrix is ILL!!! (cond = 1.7404665713197666021845459e+20) 
+Matrix is ILL!!! (cond = 1.7404665713197666021845459e+20) 
+    5          11    4.139718e-03     2.196e-08     1.000e+00     2.309e-06     1.314e+01  
+Matrix is ILL!!! (cond = 1.7398752261294883626670581e+20) 
+Matrix is ILL!!! (cond = 1.7398752261294883626670581e+20) 
+    6          13    4.138269e-03     5.492e-09     1.000e+00     1.161e-06     1.315e+01  
+Matrix is ILL!!! (cond = 1.7397389554818122961401831e+20) 
+Matrix is ILL!!! (cond = 1.7397389554818122961401831e+20) 
+    7          15    4.137535e-03     1.508e-09     1.000e+00     5.876e-07     1.315e+01  
+Matrix is ILL!!! (cond = 1.7396890904027553831241309e+20) 
+Matrix is ILL!!! (cond = 1.7396890904027553831241309e+20) 
+    8          17    4.137170e-03     7.452e-10     1.000e+00     2.928e-07     1.315e+01  
+Matrix is ILL!!! (cond = 1.7385739306447408927302148e+20) 
+Matrix is ILL!!! (cond = 1.7385739306447408927302148e+20) 
+    9          19    4.136998e-03     8.583e-11     1.000e+00     1.379e-07     1.327e+01  
+Matrix is ILL!!! (cond = 1.7385698170170370815804712e+20) 
+Matrix is ILL!!! (cond = 1.7385698170170370815804712e+20) 
+   10          21    4.136899e-03     9.402e-10     1.000e+00     7.929e-08     1.253e+01  
+Matrix is ILL!!! (cond = 1.7385330134588801938723755e+20) 
+Matrix is ILL!!! (cond = 1.7385330134588801938723755e+20) 
+   11          23    4.136860e-03     1.847e-10     1.000e+00     3.067e-08     1.596e+01  
+Matrix is ILL!!! (cond = 1.7384942106438340754736792e+20) 
+Matrix is ILL!!! (cond = 1.7384942106438340754736792e+20) 
+   12          25    4.136837e-03     4.131e-10     1.000e+00     1.859e-08     9.649e+00  
+Matrix is ILL!!! (cond = 1.7384759795634946855683032e+20) 
+Matrix is ILL!!! (cond = 1.7384759795634946855683032e+20) 
+   13          27    4.136830e-03     2.250e-11     1.000e+00     6.176e-09     1.449e-09  
+
+Optimization completed: The relative first-order optimality measure, 1.448610e-09,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 2.249896e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.7384759795634946855683032e+20) 
+node 15 plastic
+node 20 plastic
+node 25 plastic
+
+incr =
+
+    15
+
+Matrix is ILL!!! (cond = 3.6306230517522417483386523e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    4.136790e-03     1.582e-05     1.000e+00     0.000e+00     7.247e-01  
+Matrix is ILL!!! (cond = 2.2233200278000160560558203e+20) 
+Matrix is ILL!!! (cond = 2.2233200278000160560558203e+20) 
+    1           3    4.252424e-03     1.843e-06     1.000e+00     9.188e-05     1.038e+01  
+Matrix is ILL!!! (cond = 2.3373217529122579773049927e+20) 
+Matrix is ILL!!! (cond = 2.3373217529122579773049927e+20) 
+    2           5    4.241880e-03     4.317e-07     1.000e+00     8.346e-06     1.115e+01  
+Matrix is ILL!!! (cond = 2.3803331528652771673241357e+20) 
+Matrix is ILL!!! (cond = 2.3803331528652771673241357e+20) 
+    3           7    4.235478e-03     1.079e-07     1.000e+00     5.070e-06     1.117e+01  
+Matrix is ILL!!! (cond = 2.3904150006975290749428418e+20) 
+Matrix is ILL!!! (cond = 2.3904150006975290749428418e+20) 
+    4           9    4.232281e-03     2.699e-08     1.000e+00     2.532e-06     1.118e+01  
+Matrix is ILL!!! (cond = 2.4848079047793739426310352e+20) 
+Matrix is ILL!!! (cond = 2.4848079047793739426310352e+20) 
+    5          11    4.230681e-03     6.748e-09     1.000e+00     1.269e-06     1.119e+01  
+Matrix is ILL!!! (cond = 2.5364901290230196283743018e+20) 
+Matrix is ILL!!! (cond = 2.5364901290230196283743018e+20) 
+    6          13    4.229882e-03     1.687e-09     1.000e+00     6.329e-07     1.119e+01  
+Matrix is ILL!!! (cond = 2.5746050584951508211015869e+20) 
+Matrix is ILL!!! (cond = 2.5746050584951508211015869e+20) 
+    7          15    4.229476e-03     4.219e-10     1.000e+00     3.214e-07     1.119e+01  
+Matrix is ILL!!! (cond = 2.5970546009583725023114600e+20) 
+Matrix is ILL!!! (cond = 2.5970546009583725023114600e+20) 
+    8          17    4.229273e-03     7.438e-10     1.000e+00     1.611e-07     1.119e+01  
+Matrix is ILL!!! (cond = 2.6090689462171480525911597e+20) 
+Matrix is ILL!!! (cond = 2.6090689462171480525911597e+20) 
+    9          19    4.229174e-03     5.135e-10     1.000e+00     7.844e-08     1.122e+01  
+Matrix is ILL!!! (cond = 2.6146885127707294156981323e+20) 
+Matrix is ILL!!! (cond = 2.6146885127707294156981323e+20) 
+   10          21    4.229131e-03     6.592e-12     1.000e+00     3.453e-08     1.150e+01  
+Matrix is ILL!!! (cond = 2.6181322299084374340699829e+20) 
+Matrix is ILL!!! (cond = 2.6181322299084374340699829e+20) 
+   11          23    4.229103e-03     1.391e-10     1.000e+00     2.223e-08     9.859e+00  
+Matrix is ILL!!! (cond = 2.6203727730599232534073682e+20) 
+Matrix is ILL!!! (cond = 2.6203727730599232534073682e+20) 
+   12          25    4.229087e-03     5.140e-10     1.000e+00     1.226e-08     5.140e-10  
+
+Optimization completed: The relative first-order optimality measure, 5.139740e-10,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 5.139740e-10, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 2.6203727730599232534073682e+20) 
+node 10 just entered. Increment will Redo...
+node 15 plastic
+node 20 plastic
+node 25 plastic
+node 30 just entered. Increment will Redo...
+
+incr =
+
+    15
+
+Matrix is ILL!!! (cond = 1.4683692362756629242637683e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    4.043838e-03     9.080e-05     1.000e+00     0.000e+00     7.165e-01  
+Matrix is ILL!!! (cond = 1.4849622527465096816222192e+20) 
+Matrix is ILL!!! (cond = 1.4849622527465096816222192e+20) 
+    1           3    4.539552e-03     1.453e-05     1.000e+00     3.896e-04     7.904e+00  
+Matrix is ILL!!! (cond = 1.2068668775538426582445471e+20) 
+Matrix is ILL!!! (cond = 1.2068668775538426582445471e+20) 
+    2           5    4.533279e-03     3.127e-06     1.000e+00     4.943e-06     1.219e+01  
+Matrix is ILL!!! (cond = 1.4933662633824433759120435e+20) 
+Matrix is ILL!!! (cond = 1.4933662633824433759120435e+20) 
+    3           7    4.516222e-03     7.782e-07     1.000e+00     1.307e-05     1.128e+01  
+Matrix is ILL!!! (cond = 1.4812509601515396974917310e+20) 
+Matrix is ILL!!! (cond = 1.4812509601515396974917310e+20) 
+    4           9    4.507673e-03     1.944e-07     1.000e+00     6.561e-06     1.117e+01  
+Matrix is ILL!!! (cond = 1.4858579598524880272094116e+20) 
+Matrix is ILL!!! (cond = 1.4858579598524880272094116e+20) 
+    5          11    4.503409e-03     4.862e-08     1.000e+00     3.275e-06     1.132e+01  
+Matrix is ILL!!! (cond = 1.4863664322746629766859424e+20) 
+Matrix is ILL!!! (cond = 1.4863664322746629766859424e+20) 
+    6          13    4.501274e-03     1.216e-08     1.000e+00     1.640e-06     1.140e+01  
+Matrix is ILL!!! (cond = 1.4860676259158435292090015e+20) 
+Matrix is ILL!!! (cond = 1.4860676259158435292090015e+20) 
+    7          15    4.500209e-03     3.040e-09     1.000e+00     8.183e-07     1.149e+01  
+Matrix is ILL!!! (cond = 1.4863792893680391681315698e+20) 
+Matrix is ILL!!! (cond = 1.4863792893680391681315698e+20) 
+    8          17    4.499675e-03     7.599e-10     1.000e+00     4.102e-07     1.140e+01  
+Matrix is ILL!!! (cond = 1.4862165542583124555821362e+20) 
+Matrix is ILL!!! (cond = 1.4862165542583124555821362e+20) 
+    9          19    4.499409e-03     1.900e-10     1.000e+00     2.049e-07     1.154e+01  
+Matrix is ILL!!! (cond = 1.4879788539518926873671387e+20) 
+Matrix is ILL!!! (cond = 1.4879788539518926873671387e+20) 
+   10          21    4.499274e-03     9.407e-11     1.000e+00     1.035e-07     9.057e+00  
+Matrix is ILL!!! (cond = 1.4888617310437839416851636e+20) 
+Matrix is ILL!!! (cond = 1.4888617310437839416851636e+20) 
+   11          23    4.499274e-03     6.894e-11     1.000e+00     1.337e-08     9.322e-01  
+
+Optimization stopped because the relative changes in all elements of x are
+less than options.StepTolerance = 1.000000e-08, and the relative maximum constraint
+violation, 6.894449e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.4888617310437839416851636e+20) 
+node 10 first slide
+node 15 plastic
+node 20 plastic
+node 25 plastic
+node 30 first slide
+
+incr =
+
+    16
+
+Matrix is ILL!!! (cond = 3.1957731410640582979195996e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    1.675052e-02     3.996e-04     1.000e+00     0.000e+00     1.504e+00  
+Matrix is ILL!!! (cond = 1.6765505044836643143170142e+20) 
+Matrix is ILL!!! (cond = 1.6765505044836643143170142e+20) 
+    1           3    1.535006e-02     2.593e-05     1.000e+00     5.805e-04     3.305e+01  
+Matrix is ILL!!! (cond = 1.4861531444649010463135913e+20) 
+Matrix is ILL!!! (cond = 1.4861531444649010463135913e+20) 
+    2           5    1.549834e-02     4.967e-06     1.000e+00     6.290e-05     2.030e+01  
+Matrix is ILL!!! (cond = 2.3402663737115013822526709e+20) 
+Matrix is ILL!!! (cond = 2.3402663737115013822526709e+20) 
+    3           7    1.548936e-02     1.232e-06     1.000e+00     7.543e-06     2.195e+01  
+Matrix is ILL!!! (cond = 1.3742094436395853978895508e+20) 
+Matrix is ILL!!! (cond = 1.3742094436395853978895508e+20) 
+    4           9    1.548353e-02     3.075e-07     1.000e+00     4.268e-06     1.857e+01  
+Matrix is ILL!!! (cond = 1.3909581356121353414839355e+20) 
+Matrix is ILL!!! (cond = 1.3909581356121353414839355e+20) 
+    5          11    1.548061e-02     7.686e-08     1.000e+00     2.135e-06     1.835e+01  
+Matrix is ILL!!! (cond = 1.3825985026888988165410120e+20) 
+Matrix is ILL!!! (cond = 1.3825985026888988165410120e+20) 
+    6          13    1.547914e-02     1.922e-08     1.000e+00     1.067e-06     1.843e+01  
+Matrix is ILL!!! (cond = 1.3653410862840587937793774e+20) 
+Matrix is ILL!!! (cond = 1.3653410862840587937793774e+20) 
+    7          15    1.547841e-02     4.804e-09     1.000e+00     5.360e-07     1.846e+01  
+Matrix is ILL!!! (cond = 1.3652833959342698812954126e+20) 
+Matrix is ILL!!! (cond = 1.3652833959342698812954126e+20) 
+    8          17    1.547802e-02     2.151e-09     1.000e+00     2.759e-07     1.806e+01  
+Matrix is ILL!!! (cond = 1.3651674190442171368395874e+20) 
+Matrix is ILL!!! (cond = 1.3651674190442171368395874e+20) 
+    9          19    1.547786e-02     3.431e-10     1.000e+00     1.256e-07     2.176e+01  
+Matrix is ILL!!! (cond = 1.3710065021099265048843127e+20) 
+Matrix is ILL!!! (cond = 1.3710065021099265048843127e+20) 
+   10          21    1.547777e-02     1.267e-10     1.000e+00     6.609e-08     1.559e+01  
+Matrix is ILL!!! (cond = 1.3649880703968955066040784e+20) 
+Matrix is ILL!!! (cond = 1.3649880703968955066040784e+20) 
+   11          23    1.547772e-02     2.212e-10     1.000e+00     3.411e-08     1.097e+01  
+Matrix is ILL!!! (cond = 1.3708571009060141988478333e+20) 
+Matrix is ILL!!! (cond = 1.3708571009060141988478333e+20) 
+   12          25    1.547770e-02     1.238e-10     1.000e+00     1.763e-08     4.476e+00  
+Matrix is ILL!!! (cond = 1.3707796914738189837755420e+20) 
+Matrix is ILL!!! (cond = 1.3707796914738189837755420e+20) 
+   13          27    1.547768e-02     3.569e-10     1.000e+00     1.170e-08     3.569e-10  
+
+Optimization completed: The relative first-order optimality measure, 2.457919e-10,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 3.569194e-10, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.3707796914738189837755420e+20) 
+node 10 plastic
+node 15 plastic
+node 20 plastic
+node 25 plastic
+node 30 plastic
+
+incr =
+
+    17
+
+Matrix is ILL!!! (cond = 2.2118656860770753339529370e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    6.712698e-03     1.937e-04     1.000e+00     0.000e+00     7.178e-01  
+Matrix is ILL!!! (cond = 2.1042346900141310248657178e+20) 
+Matrix is ILL!!! (cond = 2.1042346900141310248657178e+20) 
+    1           3    7.348912e-03     2.802e-05     1.000e+00     3.925e-04     7.024e+00  
+Matrix is ILL!!! (cond = 2.0867399493680356292895825e+20) 
+Matrix is ILL!!! (cond = 2.0867399493680356292895825e+20) 
+    2           5    7.346368e-03     5.339e-06     1.000e+00     2.311e-06     1.041e+01  
+Matrix is ILL!!! (cond = 2.2404990143939347742109351e+20) 
+Matrix is ILL!!! (cond = 2.2404990143939347742109351e+20) 
+    3           7    7.321608e-03     1.320e-06     1.000e+00     1.501e-05     1.027e+01  
+Matrix is ILL!!! (cond = 2.0038863993118832855193701e+20) 
+Matrix is ILL!!! (cond = 2.0038863993118832855193701e+20) 
+    4           9    7.309286e-03     3.293e-07     1.000e+00     7.478e-06     1.060e+01  
+Matrix is ILL!!! (cond = 2.2143984751915843725439136e+20) 
+Matrix is ILL!!! (cond = 2.2143984751915843725439136e+20) 
+    5          11    7.303150e-03     8.232e-08     1.000e+00     3.727e-06     1.096e+01  
+Matrix is ILL!!! (cond = 2.2164586597092899941108472e+20) 
+Matrix is ILL!!! (cond = 2.2164586597092899941108472e+20) 
+    6          13    7.300087e-03     2.059e-08     1.000e+00     1.860e-06     1.118e+01  
+Matrix is ILL!!! (cond = 2.2167497897223062446254907e+20) 
+Matrix is ILL!!! (cond = 2.2167497897223062446254907e+20) 
+    7          15    7.298549e-03     5.148e-09     1.000e+00     9.346e-07     1.117e+01  
+Matrix is ILL!!! (cond = 2.2224417871144561878941333e+20) 
+Matrix is ILL!!! (cond = 2.2224417871144561878941333e+20) 
+    8          17    7.297787e-03     1.287e-09     1.000e+00     4.628e-07     1.186e+01  
+Matrix is ILL!!! (cond = 2.2259080748589345254109009e+20) 
+Matrix is ILL!!! (cond = 2.2259080748589345254109009e+20) 
+    9          19    7.297390e-03     8.720e-10     1.000e+00     2.413e-07     7.351e+00  
+Matrix is ILL!!! (cond = 2.2274868985157278640220898e+20) 
+Matrix is ILL!!! (cond = 2.2274868985157278640220898e+20) 
+   10          21    7.297188e-03     1.645e-09     1.000e+00     1.228e-07     8.925e+00  
+Matrix is ILL!!! (cond = 2.2280801500916819828508667e+20) 
+Matrix is ILL!!! (cond = 2.2280801500916819828508667e+20) 
+   11          23    7.297116e-03     2.012e-11     1.000e+00     4.418e-08     9.247e+00  
+Matrix is ILL!!! (cond = 2.2232797736830422804139136e+20) 
+Matrix is ILL!!! (cond = 2.2248283161088994519184814e+20) 
+Matrix is ILL!!! (cond = 2.2258387209139829534374878e+20) 
+Matrix is ILL!!! (cond = 2.2265226629889034055620142e+20) 
+Matrix is ILL!!! (cond = 2.2269939695219276351336890e+20) 
+Matrix is ILL!!! (cond = 2.2273213477347141705141528e+20) 
+Matrix is ILL!!! (cond = 2.2275495848336659288069995e+20) 
+Matrix is ILL!!! (cond = 2.2277089982139479066388086e+20) 
+Matrix is ILL!!! (cond = 2.2278204367331528810933374e+20) 
+   12          32    7.297116e-03     2.012e-11     4.035e-02     1.207e-08     1.005e+00  
+
+Optimization stopped because the relative changes in all elements of x are
+less than options.StepTolerance = 1.000000e-08, and the relative maximum constraint
+violation, 2.012483e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 2.2280801500916819828508667e+20) 
+node 10 plastic
+node 15 plastic
+node 20 plastic
+node 25 plastic
+node 30 plastic
+
+incr =
+
+    18
+
+Matrix is ILL!!! (cond = 1.6460453904425877489925024e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    7.296888e-03     2.254e-05     1.000e+00     0.000e+00     7.485e-01  
+Matrix is ILL!!! (cond = 1.6465503395140903866086523e+20) 
+Matrix is ILL!!! (cond = 1.6465503395140903866086523e+20) 
+    1           3    7.459572e-03     1.005e-06     1.000e+00     9.799e-05     8.217e+00  
+Matrix is ILL!!! (cond = 1.6460299744451153657756396e+20) 
+Matrix is ILL!!! (cond = 1.6460299744451153657756396e+20) 
+    2           5    7.453091e-03     1.819e-07     1.000e+00     3.917e-06     1.005e+01  
+Matrix is ILL!!! (cond = 1.6460857317211306273060962e+20) 
+Matrix is ILL!!! (cond = 1.6460857317211306273060962e+20) 
+    3           7    7.448150e-03     4.550e-08     1.000e+00     2.974e-06     1.008e+01  
+Matrix is ILL!!! (cond = 1.6462835444011120810953247e+20) 
+Matrix is ILL!!! (cond = 1.6462835444011120810953247e+20) 
+    4           9    7.445679e-03     1.138e-08     1.000e+00     1.488e-06     1.009e+01  
+Matrix is ILL!!! (cond = 1.6462957028415107626679224e+20) 
+Matrix is ILL!!! (cond = 1.6462957028415107626679224e+20) 
+    5          11    7.444436e-03     2.845e-09     1.000e+00     7.480e-07     1.013e+01  
+Matrix is ILL!!! (cond = 1.6462950737522390979278955e+20) 
+Matrix is ILL!!! (cond = 1.6462950737522390979278955e+20) 
+    6          13    7.443819e-03     7.112e-10     1.000e+00     3.717e-07     1.016e+01  
+Matrix is ILL!!! (cond = 1.6462931008003534125437744e+20) 
+Matrix is ILL!!! (cond = 1.6462931008003534125437744e+20) 
+    7          15    7.443511e-03     3.523e-10     1.000e+00     1.858e-07     1.016e+01  
+Matrix is ILL!!! (cond = 1.6462864825908917638733984e+20) 
+Matrix is ILL!!! (cond = 1.6462864825908917638733984e+20) 
+    8          17    7.443356e-03     4.448e-11     1.000e+00     9.305e-08     1.024e+01  
+Matrix is ILL!!! (cond = 1.6463439184377504479587476e+20) 
+Matrix is ILL!!! (cond = 1.6463439184377504479587476e+20) 
+    9          19    7.443265e-03     1.385e-09     1.000e+00     5.457e-08     1.035e+01  
+Matrix is ILL!!! (cond = 1.6463722841859292976553760e+20) 
+Matrix is ILL!!! (cond = 1.6463722841859292976553760e+20) 
+   10          21    7.443242e-03     1.239e-11     1.000e+00     1.429e-08     3.021e-10  
+
+Optimization completed: The relative first-order optimality measure, 3.020909e-10,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 1.238735e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.6463722841859292976553760e+20) 
+node 10 plastic
+node 15 plastic
+node 18 just entered. Increment will Redo...
+node 20 plastic
+node 25 plastic
+node 30 plastic
+
+incr =
+
+    18
+
+Matrix is ILL!!! (cond = 4.3783465057911344697377881e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    6.712488e-03     2.536e-04     1.000e+00     0.000e+00     7.178e-01  
+Matrix is ILL!!! (cond = 2.3310284210174964483415601e+20) 
+Matrix is ILL!!! (cond = 2.3310284210174964483415601e+20) 
+    1           3    7.499853e-03     3.874e-05     1.000e+00     4.833e-04     5.884e+00  
+Matrix is ILL!!! (cond = 2.3299973967662060406951270e+20) 
+Matrix is ILL!!! (cond = 2.3299973967662060406951270e+20) 
+    2           5    7.505639e-03     7.176e-06     1.000e+00     4.060e-06     9.113e+00  
+Matrix is ILL!!! (cond = 2.2053372563677150185362109e+20) 
+Matrix is ILL!!! (cond = 2.2053372563677150185362109e+20) 
+    3           7    7.474420e-03     1.776e-06     1.000e+00     1.874e-05     9.177e+00  
+Matrix is ILL!!! (cond = 2.7228541032795444594497974e+20) 
+Matrix is ILL!!! (cond = 2.7228541032795444594497974e+20) 
+    4           9    7.458797e-03     4.433e-07     1.000e+00     9.394e-06     9.447e+00  
+Matrix is ILL!!! (cond = 2.8739036043417904014089087e+20) 
+Matrix is ILL!!! (cond = 2.8739036043417904014089087e+20) 
+    5          11    7.450993e-03     1.108e-07     1.000e+00     4.696e-06     9.759e+00  
+Matrix is ILL!!! (cond = 2.7631843149169052998034668e+20) 
+Matrix is ILL!!! (cond = 2.7631843149169052998034668e+20) 
+    6          13    7.447098e-03     2.772e-08     1.000e+00     2.344e-06     9.962e+00  
+Matrix is ILL!!! (cond = 2.7567468646000476731371387e+20) 
+Matrix is ILL!!! (cond = 2.7567468646000476731371387e+20) 
+    7          15    7.445155e-03     6.931e-09     1.000e+00     1.170e-06     1.009e+01  
+Matrix is ILL!!! (cond = 2.7638424384547756634964209e+20) 
+Matrix is ILL!!! (cond = 2.7638424384547756634964209e+20) 
+    8          17    7.444173e-03     1.733e-09     1.000e+00     5.910e-07     9.608e+00  
+Matrix is ILL!!! (cond = 2.4329641123099941487723486e+20) 
+Matrix is ILL!!! (cond = 2.4329641123099941487723486e+20) 
+    9          19    7.443687e-03     4.333e-10     1.000e+00     2.926e-07     1.128e+01  
+Matrix is ILL!!! (cond = 2.7457101930615037104601294e+20) 
+Matrix is ILL!!! (cond = 2.7457101930615037104601294e+20) 
+   10          21    7.443444e-03     1.255e-10     1.000e+00     1.463e-07     1.083e+01  
+Matrix is ILL!!! (cond = 2.7427489213649390929687329e+20) 
+Matrix is ILL!!! (cond = 2.7427489213649390929687329e+20) 
+   11          23    7.443322e-03     5.356e-11     1.000e+00     7.340e-08     7.921e+00  
+Matrix is ILL!!! (cond = 2.7566230141255755487238428e+20) 
+   12          24    7.443322e-03     5.356e-11     7.000e-01     1.224e-08     1.014e+00  
+
+Optimization stopped because the relative changes in all elements of x are
+less than options.StepTolerance = 1.000000e-08, and the relative maximum constraint
+violation, 5.355799e-11, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 2.7427489213649390929687329e+20) 
+node 10 plastic
+node 15 plastic
+node 18 exited. Increment will Redo...
+node 20 plastic
+node 25 plastic
+node 30 plastic
+
+incr =
+
+    18
+
+Matrix is ILL!!! (cond = 1.6461699643567386944578540e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    6.712488e-03     2.536e-04     1.000e+00     0.000e+00     7.178e-01  
+Matrix is ILL!!! (cond = 1.6415499135998129492338354e+20) 
+Matrix is ILL!!! (cond = 1.6415499135998129492338354e+20) 
+    1           3    7.499846e-03     3.874e-05     1.000e+00     4.833e-04     5.883e+00  
+Matrix is ILL!!! (cond = 1.6492544077900034121307983e+20) 
+Matrix is ILL!!! (cond = 1.6492544077900034121307983e+20) 
+    2           5    7.505640e-03     7.176e-06     1.000e+00     4.064e-06     9.114e+00  
+Matrix is ILL!!! (cond = 1.6489797716980809486592725e+20) 
+Matrix is ILL!!! (cond = 1.6489797716980809486592725e+20) 
+    3           7    7.474430e-03     1.776e-06     1.000e+00     1.874e-05     9.175e+00  
+Matrix is ILL!!! (cond = 1.6466027762791385812477588e+20) 
+Matrix is ILL!!! (cond = 1.6466027762791385812477588e+20) 
+    4           9    7.458792e-03     4.433e-07     1.000e+00     9.402e-06     9.444e+00  
+Matrix is ILL!!! (cond = 1.6461949881650531082117651e+20) 
+Matrix is ILL!!! (cond = 1.6461949881650531082117651e+20) 
+    5          11    7.451000e-03     1.108e-07     1.000e+00     4.689e-06     9.769e+00  
+Matrix is ILL!!! (cond = 1.6465178151662465677915112e+20) 
+Matrix is ILL!!! (cond = 1.6465178151662465677915112e+20) 
+    6          13    7.447099e-03     2.772e-08     1.000e+00     2.348e-06     9.945e+00  
+Matrix is ILL!!! (cond = 1.6462925304402369880768530e+20) 
+Matrix is ILL!!! (cond = 1.6462925304402369880768530e+20) 
+    7          15    7.445150e-03     6.931e-09     1.000e+00     1.174e-06     1.004e+01  
+Matrix is ILL!!! (cond = 1.6463329375699138547533838e+20) 
+Matrix is ILL!!! (cond = 1.6463329375699138547533838e+20) 
+    8          17    7.444172e-03     1.733e-09     1.000e+00     5.890e-07     9.940e+00  
+Matrix is ILL!!! (cond = 1.6462639758699941889709961e+20) 
+Matrix is ILL!!! (cond = 1.6462639758699941889709961e+20) 
+    9          19    7.443687e-03     4.332e-10     1.000e+00     2.920e-07     1.118e+01  
+Matrix is ILL!!! (cond = 1.6463141386889283774361890e+20) 
+Matrix is ILL!!! (cond = 1.6463141386889283774361890e+20) 
+   10          21    7.443444e-03     1.083e-10     1.000e+00     1.463e-07     9.794e+00  
+Matrix is ILL!!! (cond = 1.6429905433618527458851440e+20) 
+Matrix is ILL!!! (cond = 1.6430126725924949681196582e+20) 
+Matrix is ILL!!! (cond = 1.6431939080187268140383154e+20) 
+Matrix is ILL!!! (cond = 1.6475441939731595156899780e+20) 
+Matrix is ILL!!! (cond = 1.6465539576244668107071802e+20) 
+Matrix is ILL!!! (cond = 1.6464250059977489572045630e+20) 
+Matrix is ILL!!! (cond = 1.6468780845603513966980786e+20) 
+Matrix is ILL!!! (cond = 1.6436910192523950094303101e+20) 
+Matrix is ILL!!! (cond = 1.6472076498137386461158301e+20) 
+Matrix is ILL!!! (cond = 1.6438912463355837555263843e+20) 
+Matrix is ILL!!! (cond = 1.6459659369823101766601172e+20) 
+Matrix is ILL!!! (cond = 1.6464903040462867934333960e+20) 
+Matrix is ILL!!! (cond = 1.6482517171455694187830688e+20) 
+Matrix is ILL!!! (cond = 1.6462540501816471938148315e+20) 
+Matrix is ILL!!! (cond = 1.6464930563672842907346045e+20) 
+Matrix is ILL!!! (cond = 1.6450747344446552541945825e+20) 
+Matrix is ILL!!! (cond = 1.6462873211308297888352881e+20) 
+Matrix is ILL!!! (cond = 1.6462997260159743482577563e+20) 
+Matrix is ILL!!! (cond = 1.6462961668218156162815771e+20) 
+Matrix is ILL!!! (cond = 1.6462875033303443712788916e+20) 
+Matrix is ILL!!! (cond = 1.6463231443890863634097925e+20) 
+Matrix is ILL!!! (cond = 1.6462916205105716537378125e+20) 
+Matrix is ILL!!! (cond = 1.6462729317746800577592261e+20) 
+Matrix is ILL!!! (cond = 1.6462761883684855904946509e+20) 
+Matrix is ILL!!! (cond = 1.6463415794678701085152393e+20) 
+Matrix is ILL!!! (cond = 1.6462915440892747601814209e+20) 
+Matrix is ILL!!! (cond = 1.6462867507562992872455054e+20) 
+Matrix is ILL!!! (cond = 1.6463144276008032709534497e+20) 
+Matrix is ILL!!! (cond = 1.6463079093190769193408911e+20) 
+Matrix is ILL!!! (cond = 1.6463939331047003730765601e+20) 
+Matrix is ILL!!! (cond = 1.6484379552746712419615186e+20) 
+Matrix is ILL!!! (cond = 1.6463769072318880954989404e+20) 
+Matrix is ILL!!! (cond = 1.6481780742947517422391724e+20) 
+Matrix is ILL!!! (cond = 1.6463746179527628459190771e+20) 
+Matrix is ILL!!! (cond = 1.6463762451532782232962671e+20) 
+   11          56    7.443444e-03     1.083e-10     3.788e-06     1.127e-08     7.171e-10  
+
+Optimization completed: The relative first-order optimality measure, 7.170827e-10,
+is less than options.OptimalityTolerance = 1.000000e-05, and the relative maximum constraint
+violation, 1.083367e-10, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 1.6463141386889283774361890e+20) 
+node 10 plastic
+node 13 just entered. Increment will Redo...
+node 15 plastic
+node 18 just entered. Increment will Redo...
+node 20 plastic
+node 25 plastic
+node 30 plastic
+
+incr =
+
+    18
+
+Matrix is ILL!!! (cond = 3.9608907699358337166910498e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    6.712488e-03     2.536e-04     1.000e+00     0.000e+00     7.178e-01  
+Matrix is ILL!!! (cond = 1.1769416428929060602454614e+20) 
+Matrix is ILL!!! (cond = 1.1769416428929060602454614e+20) 
+    1           3    7.499851e-03     3.874e-05     1.000e+00     4.833e-04     5.884e+00  
+Matrix is ILL!!! (cond = 1.1338388456432984822005505e+20) 
+Matrix is ILL!!! (cond = 1.1338388456432984822005505e+20) 
+    2           5    7.505641e-03     7.176e-06     1.000e+00     4.062e-06     9.113e+00  
+Matrix is ILL!!! (cond = 1.1494235148585775927442371e+20) 
+Matrix is ILL!!! (cond = 1.1494235148585775927442371e+20) 
+    3           7    7.474431e-03     1.776e-06     1.000e+00     1.874e-05     9.175e+00  
+Matrix is ILL!!! (cond = 1.1764669000818357200776221e+20) 
+Matrix is ILL!!! (cond = 1.1764669000818357200776221e+20) 
+    4           9    7.458790e-03     4.433e-07     1.000e+00     9.404e-06     9.445e+00  
+Matrix is ILL!!! (cond = 2.9809495026089276304844678e+20) 
+Matrix is ILL!!! (cond = 2.9809495026089276304844678e+20) 
+    5          11    7.450997e-03     1.108e-07     1.000e+00     4.690e-06     9.769e+00  
+Matrix is ILL!!! (cond = 2.9579296208217240017426221e+20) 
+Matrix is ILL!!! (cond = 2.9579296208217240017426221e+20) 
+    6          13    7.447098e-03     2.772e-08     1.000e+00     2.347e-06     9.940e+00  
+Matrix is ILL!!! (cond = 2.8366779009874415047409351e+20) 
+Matrix is ILL!!! (cond = 2.8366779009874415047409351e+20) 
+    7          15    7.445151e-03     6.931e-09     1.000e+00     1.172e-06     1.007e+01  
+Matrix is ILL!!! (cond = 2.8473994596151265166474707e+20) 
+Matrix is ILL!!! (cond = 2.8473994596151265166474707e+20) 
+    8          17    7.444175e-03     1.733e-09     1.000e+00     5.874e-07     9.996e+00  
+Matrix is ILL!!! (cond = 3.1980771983178017693427344e+20) 
+Matrix is ILL!!! (cond = 3.1980771983178017693427344e+20) 
+    9          19    7.443688e-03     4.994e-10     1.000e+00     2.936e-07     1.013e+01  
+Matrix is ILL!!! (cond = 3.0853314449804426225750879e+20) 
+Matrix is ILL!!! (cond = 3.0853314449804426225750879e+20) 
+   10          21    7.443443e-03     2.293e-10     1.000e+00     1.470e-07     9.862e+00  
+Matrix is ILL!!! (cond = 3.0889965197045184879962988e+20) 
+Matrix is ILL!!! (cond = 3.0889965197045184879962988e+20) 
+   11          23    7.443322e-03     2.708e-11     1.000e+00     7.295e-08     1.494e+01  
+Matrix is ILL!!! (cond = 1.3873883706948058555903162e+20) 
+Matrix is ILL!!! (cond = 1.3770604132073546749235999e+20) 
+Matrix is ILL!!! (cond = 2.1993578643640861943150391e+20) 
+Matrix is ILL!!! (cond = 1.3429184203850522904309595e+20) 
+Matrix is ILL!!! (cond = 2.6269072751873715767550684e+20) 
+Matrix is ILL!!! (cond = 1.0316892668413078825945032e+20) 
+Matrix is ILL!!! (cond = 4.0065818476728777009161377e+20) 
+Matrix is ILL!!! (cond = 3.6293195847822222430087402e+20) 
+Matrix is ILL!!! (cond = 1.7064529347723281093780151e+20) 
+Matrix is ILL!!! (cond = 3.9910699623507960716042969e+20) 
+Matrix is ILL!!! (cond = 3.5245929838126066109770752e+20) 
+Matrix is ILL!!! (cond = 3.4629624014224409987405908e+20) 
+Matrix is ILL!!! (cond = 3.7028598112130577105146875e+20) 
+Matrix is ILL!!! (cond = 2.9334647128138705632678320e+20) 
+Matrix is ILL!!! (cond = 1.4556737308664215760002966e+20) 
+Matrix is ILL!!! (cond = 1.1962787841828965890812683e+20) 
+Matrix is ILL!!! (cond = 1.8092975029332404181203540e+20) 
+Matrix is ILL!!! (cond = 2.0118244363096912790426831e+20) 
+Matrix is ILL!!! (cond = 1.1125079189036051681211694e+20) 
+Matrix is ILL!!! (cond = 2.8198738249489742169711865e+20) 
+Matrix is ILL!!! (cond = 2.0118611748255596318564062e+20) 
+Matrix is ILL!!! (cond = 3.0309785661087385256550684e+20) 
+Matrix is ILL!!! (cond = 3.0309785661087385256550684e+20) 
+   12          46    7.440193e-03     9.890e-07     5.585e-04     3.296e-06     2.323e+05  
+Matrix is ILL!!! (cond = 1.7236066144636272058205371e+20) 
+Matrix is ILL!!! (cond = 1.3496538350090036813214600e+20) 
+Matrix is ILL!!! (cond = 2.2165895402965220657669946e+20) 
+Matrix is ILL!!! (cond = 1.7181591857327130215050464e+20) 
+Matrix is ILL!!! (cond = 2.3521877709029766002128247e+20) 
+Matrix is ILL!!! (cond = 1.0816828566340015643688306e+20) 
+Matrix is ILL!!! (cond = 3.3736247588493960712864697e+20) 
+Matrix is ILL!!! (cond = 3.7470715991532474737071484e+20) 
+Matrix is ILL!!! (cond = 1.2754039655028579547968860e+20) 
+Matrix is ILL!!! (cond = 3.8362548253210787388752783e+20) 
+Matrix is ILL!!! (cond = 1.0484607126037248021658582e+20) 
+Matrix is ILL!!! (cond = 1.7140169597751247370314551e+20) 
+Matrix is ILL!!! (cond = 3.3453896974802999982767920e+20) 
+Matrix is ILL!!! (cond = 3.3435277596064018080053076e+20) 
+Matrix is ILL!!! (cond = 3.6549870201980259805502100e+20) 
+Matrix is ILL!!! (cond = 3.8115441275016161267570215e+20) 
+Matrix is ILL!!! (cond = 2.8849106649857736723001855e+20) 
+Matrix is ILL!!! (cond = 3.1508654881706656280900439e+20) 
+Matrix is ILL!!! (cond = 1.0143654042919560407972534e+20) 
+Matrix is ILL!!! (cond = 2.9967490080677067794597266e+20) 
+Matrix is ILL!!! (cond = 3.0305970582214458755375488e+20) 
+Matrix is ILL!!! (cond = 3.0399628283569226649843506e+20) 
+Matrix is ILL!!! (cond = 3.1474081264193027297861816e+20) 
+Matrix is ILL!!! (cond = 3.0126815531042652125537305e+20) 
+Matrix is ILL!!! (cond = 2.8953021527894920450019629e+20) 
+Matrix is ILL!!! (cond = 2.9243054463867678211790747e+20) 
+Matrix is ILL!!! (cond = 2.9295804499570978328916895e+20) 
+Matrix is ILL!!! (cond = 2.9068936875646423130632153e+20) 
+Matrix is ILL!!! (cond = 1.0953832427822516450086707e+20) 
+Matrix is ILL!!! (cond = 2.7688331010239864830217163e+20) 
+Matrix is ILL!!! (cond = 3.1099063285783652838962354e+20) 
+Matrix is ILL!!! (cond = 1.0143509129164305888168054e+20) 
+Matrix is ILL!!! (cond = 3.3569931081300008045175586e+20) 
+Matrix is ILL!!! (cond = 3.2410566516368265786340332e+20) 
+Matrix is ILL!!! (cond = 3.2343299129968814353756152e+20) 
+Matrix is ILL!!! (cond = 3.1793982787855950435461768e+20) 
+Matrix is ILL!!! (cond = 3.1093353583644074153588184e+20) 
+Matrix is ILL!!! (cond = 4.0780447439919635322389844e+20) 
+Matrix is ILL!!! (cond = 3.1835887986075255442931592e+20) 
+Matrix is ILL!!! (cond = 2.9459757050400807522193774e+20) 
+Matrix is ILL!!! (cond = 3.0124530536088018644280420e+20) 
+Matrix is ILL!!! (cond = 3.0124530536088018644280420e+20) 
+   13          88    7.440193e-03     9.891e-07     6.367e-07     2.229e-08     2.323e+05  
+Matrix is ILL!!! (cond = 2.9917521211782565200448828e+20) 
+Matrix is ILL!!! (cond = 2.9917521211782565200448828e+20) 
+   14          90    7.441862e-03     2.468e-07     1.000e+00     2.921e-06     1.161e+05  
+Matrix is ILL!!! (cond = 2.4535540182247848516972974e+20) 
+Matrix is ILL!!! (cond = 2.9462379307830255186693555e+20) 
+Matrix is ILL!!! (cond = 1.1544530616136886132158362e+20) 
+Matrix is ILL!!! (cond = 3.4482288387302148975665234e+20) 
+Matrix is ILL!!! (cond = 1.9620506969599839451176025e+20) 
+Matrix is ILL!!! (cond = 2.7458031954982851106566724e+20) 
+Matrix is ILL!!! (cond = 1.3899595070020535993332141e+20) 
+Matrix is ILL!!! (cond = 3.9366955196691626438463623e+20) 
+Matrix is ILL!!! (cond = 3.4074403954029231533079785e+20) 
+Matrix is ILL!!! (cond = 1.2373223867206210014538049e+20) 
+Matrix is ILL!!! (cond = 3.7533698321350273070547168e+20) 
+Matrix is ILL!!! (cond = 1.0564241311206061102350549e+20) 
+Matrix is ILL!!! (cond = 2.8929247055410932837150391e+20) 
+Matrix is ILL!!! (cond = 1.5565447166244010040835547e+20) 
+Matrix is ILL!!! (cond = 2.9908536633592542947325342e+20) 
+Matrix is ILL!!! (cond = 1.8372601232510602544474097e+20) 
+Matrix is ILL!!! (cond = 1.1558005075874993458247217e+20) 
+Matrix is ILL!!! (cond = 1.5747591471335546858647119e+20) 
+Matrix is ILL!!! (cond = 2.3334147536876388129636108e+20) 
+Matrix is ILL!!! (cond = 1.1815737977264347962135144e+20) 
+Matrix is ILL!!! (cond = 3.0838009450398245637643994e+20) 
+Matrix is ILL!!! (cond = 1.4981643519202290641449658e+20) 
+Matrix is ILL!!! (cond = 2.9708651164025039045518555e+20) 
+Matrix is ILL!!! (cond = 2.7663051605470559226590356e+20) 
+Matrix is ILL!!! (cond = 3.0812312495372101601345801e+20) 
+Matrix is ILL!!! (cond = 3.0290703343256910295365869e+20) 
+Matrix is ILL!!! (cond = 3.0635436339974650888956348e+20) 
+Matrix is ILL!!! (cond = 3.0368926409372838744945117e+20) 
+Matrix is ILL!!! (cond = 3.0262319440631815479450537e+20) 
+Matrix is ILL!!! (cond = 3.0178255748302680921856934e+20) 
+Matrix is ILL!!! (cond = 3.0122185040304892129330859e+20) 
+Matrix is ILL!!! (cond = 3.0161639736715659973268408e+20) 
+Matrix is ILL!!! (cond = 3.0175680278978317733230713e+20) 
+Matrix is ILL!!! (cond = 3.0141309698059167217284277e+20) 
+Matrix is ILL!!! (cond = 3.0104777389146566332156299e+20) 
+Matrix is ILL!!! (cond = 2.9997745852123926568885449e+20) 
+Matrix is ILL!!! (cond = 2.9997745852123926568885449e+20) 
+   15         127    7.441858e-03     2.468e-07     3.788e-06     2.256e-08     1.161e+05  
+Matrix is ILL!!! (cond = 2.9516498469510249445428027e+20) 
+Matrix is ILL!!! (cond = 2.9516498469510249445428027e+20) 
+   16         129    7.442701e-03     6.233e-08     1.000e+00     2.216e-06     1.198e+03  
+Matrix is ILL!!! (cond = 3.0371822558678572264228564e+20) 
+Matrix is ILL!!! (cond = 3.0599736545526054386835986e+20) 
+Matrix is ILL!!! (cond = 1.1658785808627143635668896e+20) 
+Matrix is ILL!!! (cond = 1.7717295836923135432429956e+20) 
+Matrix is ILL!!! (cond = 1.7717295836923135432429956e+20) 
+   17         134    7.442805e-03     4.284e-08     3.430e-01     3.091e-07     9.937e+02  
+Matrix is ILL!!! (cond = 2.9219964098009312359912231e+20) 
+Matrix is ILL!!! (cond = 3.0114781098985016825049707e+20) 
+Matrix is ILL!!! (cond = 3.0184733027637515313949268e+20) 
+Matrix is ILL!!! (cond = 3.0184733027637515313949268e+20) 
+   18         138    7.444292e-03     2.701e-08     4.900e-01     1.007e-06     8.059e+04  
+Matrix is ILL!!! (cond = 2.9933531950678197900906689e+20) 
+Matrix is ILL!!! (cond = 2.9865873301198063610701221e+20) 
+Matrix is ILL!!! (cond = 2.9621789934819749551546387e+20) 
+Matrix is ILL!!! (cond = 2.9661011469218555076264404e+20) 
+Matrix is ILL!!! (cond = 2.9747819078518664463275000e+20) 
+Matrix is ILL!!! (cond = 2.9846070878277308562537891e+20) 
+Matrix is ILL!!! (cond = 2.9833750833210209718240088e+20) 
+Matrix is ILL!!! (cond = 2.1110067144009325829758301e+20) 
+Matrix is ILL!!! (cond = 3.0172872670515624420171875e+20) 
+Matrix is ILL!!! (cond = 3.0224018748026228439950342e+20) 
+   19         148    7.444292e-03     2.701e-08     2.825e-02     9.941e-09     8.059e+04  
+
+Feasible point with lower objective function value found.
+
+
+Optimization stopped because the relative changes in all elements of x are
+less than options.StepTolerance = 1.000000e-08, and the relative maximum constraint
+violation, 2.700772e-08, is less than options.ConstraintTolerance = 1.000000e-07.
+
+Matrix is ILL!!! (cond = 3.0184733027637515313949268e+20) 
+node 10 plastic
+node 13 first slide
+node 15 plastic
+node 18 first slide
+node 20 plastic
+node 25 plastic
+node 30 plastic
+
+incr =
+
+    19
+
+Matrix is ILL!!! (cond = 2.5501218016304704389528516e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+    0           1    1.983630e-02     6.634e-03     1.000e+00     0.000e+00     1.588e+00  
+Matrix is ILL!!! (cond = 1.6805248909889336813984131e+20) 
+Matrix is ILL!!! (cond = 1.2437839046485157794116296e+20) 
+Matrix is ILL!!! (cond = 3.7925472967183274761925293e+20) 
+Matrix is ILL!!! (cond = 1.3312616650755515787933386e+20) 
+Matrix is ILL!!! (cond = 1.4177892352299126241753833e+20) 
+Matrix is ILL!!! (cond = 1.1494663402575996559226343e+20) 
+Matrix is ILL!!! (cond = 1.2650499413483643697885242e+20) 
+Matrix is ILL!!! (cond = 2.6717759530515358469746313e+20) 
+Matrix is ILL!!! (cond = 1.3750908054012933312321057e+20) 
+Matrix is ILL!!! (cond = 2.4822347509805844710553003e+20) 
+Matrix is ILL!!! (cond = 1.6272364887887507382408276e+20) 
+Matrix is ILL!!! (cond = 1.0638046301423357330025366e+20) 
+Matrix is ILL!!! (cond = 3.8694714496755335848767822e+20) 
+Matrix is ILL!!! (cond = 2.0672693425547167375094702e+20) 
+Matrix is ILL!!! (cond = 2.0168803601632476895440063e+20) 
+Matrix is ILL!!! (cond = 2.0168803601632476895440063e+20) 
+    1          17    1.262857e-02     6.627e-03     6.782e-03     4.052e-03     1.040e+00  
+Matrix is ILL!!! (cond = 2.1486039608784669021773389e+20) 
+Matrix is ILL!!! (cond = 2.3186507154606208372716138e+20) 
+Matrix is ILL!!! (cond = 1.3992060031425564643848767e+20) 
+Matrix is ILL!!! (cond = 3.5082461673292643172199316e+20) 
+Matrix is ILL!!! (cond = 1.2426906400218662047473328e+20) 
+Matrix is ILL!!! (cond = 2.0851860032488200926704443e+20) 
+Matrix is ILL!!! (cond = 2.2013650477266323078459131e+20) 
+Matrix is ILL!!! (cond = 2.9334211462108606760708813e+20) 
+Matrix is ILL!!! (cond = 2.1257791100424811855617529e+20) 
+Matrix is ILL!!! (cond = 2.1257791100424811855617529e+20) 
+    2          27    1.130214e-02     6.252e-03     5.765e-02     1.038e-03     9.145e-01  
+Matrix is ILL!!! (cond = 1.9367471955263517103116602e+20) 
+Matrix is ILL!!! (cond = 1.0266422970332893426611572e+20) 
+Matrix is ILL!!! (cond = 3.0975681044630584173158447e+20) 
+Matrix is ILL!!! (cond = 2.6269195989328063557932080e+20) 
+Matrix is ILL!!! (cond = 3.1189005533023862172893896e+20) 
+Matrix is ILL!!! (cond = 2.5488133942744188387329321e+20) 
+Matrix is ILL!!! (cond = 1.3130360579479430158342419e+20) 
+Matrix is ILL!!! (cond = 2.3169800798856812304476733e+20) 
+Matrix is ILL!!! (cond = 1.8599968022171188260069092e+20) 
+Matrix is ILL!!! (cond = 1.2005299197352602566179089e+20) 
+Matrix is ILL!!! (cond = 1.0666029332685101847446570e+20) 
+Matrix is ILL!!! (cond = 1.0919789376465215143415527e+20) 
+Matrix is ILL!!! (cond = 1.2058044846215988514422827e+20) 
+Matrix is ILL!!! (cond = 1.2058044846215988514422827e+20) 
+    3          41    1.104316e-02     5.941e-03     1.384e-02     2.297e-04     9.161e+01  
+Matrix is ILL!!! (cond = 2.0463316167817271638168066e+20) 
+Matrix is ILL!!! (cond = 1.0971342253263548089896228e+20) 
+Matrix is ILL!!! (cond = 1.9914891744453260375639966e+20) 
+Matrix is ILL!!! (cond = 1.8107994147400854295206738e+20) 
+Matrix is ILL!!! (cond = 3.0740231956385355776907666e+20) 
+Matrix is ILL!!! (cond = 2.0949371450835087497851953e+20) 
+Matrix is ILL!!! (cond = 1.0237683252382547718467688e+20) 
+Matrix is ILL!!! (cond = 2.8187554831794734506650488e+20) 
+Matrix is ILL!!! (cond = 2.1054591260442382824867188e+20) 
+Matrix is ILL!!! (cond = 1.0862266978597399874119067e+20) 
+Matrix is ILL!!! (cond = 2.3293394065866538348738159e+20) 
+Matrix is ILL!!! (cond = 1.5838761592960352723321265e+20) 
+Matrix is ILL!!! (cond = 1.3624460824303622706431189e+20) 
+Matrix is ILL!!! (cond = 1.1430953718668992899082458e+20) 
+Matrix is ILL!!! (cond = 1.3113105753388175152925110e+20) 
+Matrix is ILL!!! (cond = 1.2214895964309896353053040e+20) 
+Matrix is ILL!!! (cond = 1.2214895964309896353053040e+20) 
+    4          58    5.430611e-03     1.783e-02     4.748e-03     3.732e-03     2.304e+02  
+Matrix is ILL!!! (cond = 3.4447438484359712007122900e+20) 
+Matrix is ILL!!! (cond = 1.8855530773290222462571973e+20) 
+Matrix is ILL!!! (cond = 2.4736156932355101953059692e+20) 
+Matrix is ILL!!! (cond = 3.8499824572452919518632910e+20) 
+Matrix is ILL!!! (cond = 2.3911074658175006152947510e+20) 
+Matrix is ILL!!! (cond = 3.1091403086780321363817236e+20) 
+Matrix is ILL!!! (cond = 1.6822824856946617265871362e+20) 
+Matrix is ILL!!! (cond = 1.3852284105094217642393494e+20) 
+Matrix is ILL!!! (cond = 1.0246778236394368591820300e+20) 
+Matrix is ILL!!! (cond = 1.2659627970458260859218201e+20) 
+Matrix is ILL!!! (cond = 1.5923600350139680828893311e+20) 
+Matrix is ILL!!! (cond = 2.9470234605690817696191309e+20) 
+Matrix is ILL!!! (cond = 1.9825765994200597978849683e+20) 
+Matrix is ILL!!! (cond = 1.2022880342732188912759204e+20) 
+Matrix is ILL!!! (cond = 1.3912525353322524759840503e+20) 
+Matrix is ILL!!! (cond = 3.2314942398725138267294238e+20) 
+Matrix is ILL!!! (cond = 2.8455434745380615229626562e+20) 
+Matrix is ILL!!! (cond = 2.8455434745380615229626562e+20) 
+    5          76    2.965472e-03     2.144e-02     3.323e-03     2.618e-03     2.747e+02  
+Matrix is ILL!!! (cond = 2.3671899022829074051991089e+20) 
+Matrix is ILL!!! (cond = 1.3650902985018885968731921e+20) 
+Matrix is ILL!!! (cond = 1.7698233090686576724386426e+20) 
+Matrix is ILL!!! (cond = 1.0459353457046086181877942e+20) 
+Matrix is ILL!!! (cond = 2.2396338204479205938093970e+20) 
+Matrix is ILL!!! (cond = 3.2684899522913226510275342e+20) 
+Matrix is ILL!!! (cond = 3.5182845762772052070253369e+20) 
+Matrix is ILL!!! (cond = 1.7991887382165466754669702e+20) 
+Matrix is ILL!!! (cond = 1.0326212035704810626986523e+20) 
+Matrix is ILL!!! (cond = 2.8288265918756016019419458e+20) 
+Matrix is ILL!!! (cond = 2.0479254509316294939819214e+20) 
+Matrix is ILL!!! (cond = 1.4279149486636615333758154e+20) 
+Matrix is ILL!!! (cond = 1.0346469204723289498763770e+20) 
+Matrix is ILL!!! (cond = 3.9981991619993457409611035e+20) 
+Matrix is ILL!!! (cond = 3.6062983974796939495231787e+20) 
+Matrix is ILL!!! (cond = 3.6062983974796939495231787e+20) 
+    6          92    1.678641e-03     3.174e-02     6.782e-03     6.094e-03     2.314e+02  
+Matrix is ILL!!! (cond = 1.5825128814397444208738647e+20) 
+Matrix is ILL!!! (cond = 3.5505994635927007775395459e+20) 
+Matrix is ILL!!! (cond = 1.4262805059337626797817871e+20) 
+Matrix is ILL!!! (cond = 1.6507698828937179440969141e+20) 
+Matrix is ILL!!! (cond = 1.0208743676262732380760315e+20) 
+Matrix is ILL!!! (cond = 3.6883374190990445833183936e+20) 
+Matrix is ILL!!! (cond = 1.6808368210464309050433643e+20) 
+Matrix is ILL!!! (cond = 1.4762841663551590029151050e+20) 
+Matrix is ILL!!! (cond = 3.4317128209842951414762988e+20) 
+Matrix is ILL!!! (cond = 2.7609951101771361386156396e+20) 
+Matrix is ILL!!! (cond = 3.3456015281479710406733398e+20) 
+Matrix is ILL!!! (cond = 1.2383608629305861735298828e+20) 
+Matrix is ILL!!! (cond = 3.7324870762411459848604443e+20) 
+Matrix is ILL!!! (cond = 1.0254698019171899262363525e+20) 
+Matrix is ILL!!! (cond = 1.2632537070768039630206433e+20) 
+Matrix is ILL!!! (cond = 1.0678546819378152912210034e+20) 
+Matrix is ILL!!! (cond = 1.4138903333758795759958691e+20) 
+Matrix is ILL!!! (cond = 3.0796953208803313935169775e+20) 
+Matrix is ILL!!! (cond = 1.0499439867507228409479126e+20) 
+Matrix is ILL!!! (cond = 1.0499439867507228409479126e+20) 
+    7         112    1.429391e-03     3.236e-02     1.628e-03     1.537e-03     2.477e+02  
+Matrix is ILL!!! (cond = 1.6210728759784750952743896e+20) 
+Matrix is ILL!!! (cond = 2.8634266752500556445032739e+20) 
+Matrix is ILL!!! (cond = 3.1438002741761777805462744e+20) 
+Matrix is ILL!!! (cond = 2.1715198150408674208087671e+20) 
+Matrix is ILL!!! (cond = 1.5720000749404903336758008e+20) 
+Matrix is ILL!!! (cond = 1.3380944908981940299765918e+20) 
+Matrix is ILL!!! (cond = 1.0848464121652307283732080e+20) 
+Matrix is ILL!!! (cond = 3.5129259486943580912767041e+20) 
+Matrix is ILL!!! (cond = 1.0632939749263070402088074e+20) 
+Matrix is ILL!!! (cond = 2.7978757305768505089716943e+20) 
+Matrix is ILL!!! (cond = 2.7978757305768505089716943e+20) 
+    8         123    1.968759e-03     3.079e-02     4.035e-02     1.715e-03     3.030e+02  
+Matrix is ILL!!! (cond = 1.0457743520151821694143970e+20) 
+Matrix is ILL!!! (cond = 1.3771731716318411844165967e+20) 
+Matrix is ILL!!! (cond = 1.8911161747269702083426367e+20) 
+Matrix is ILL!!! (cond = 1.8911161747269702083426367e+20) 
+    9         127    2.466572e-03     1.733e-02     4.900e-01     3.358e-03     2.110e+02  
+Matrix is ILL!!! (cond = 1.4962329043481307485124316e+20) 
+Matrix is ILL!!! (cond = 1.4998613636441318667582471e+20) 
+Matrix is ILL!!! (cond = 3.5759165002752644885675781e+20) 
+Matrix is ILL!!! (cond = 1.7035440557498983608185620e+20) 
+Matrix is ILL!!! (cond = 1.1410385937431340453585144e+20) 
+Matrix is ILL!!! (cond = 1.0075679694357698252780432e+20) 
+Matrix is ILL!!! (cond = 1.9468134338543597569321338e+20) 
+Matrix is ILL!!! (cond = 1.4273845528515519590151294e+20) 
+Matrix is ILL!!! (cond = 1.4273845528515519590151294e+20) 
+   10         136    6.017033e-03     1.916e-02     8.235e-02     3.622e-03     2.494e+02  
+Matrix is ILL!!! (cond = 2.8788596801344673705500049e+20) 
+Matrix is ILL!!! (cond = 3.7450098995219316709197607e+20) 
+Matrix is ILL!!! (cond = 3.7450098995219316709197607e+20) 
+   11         139    1.106353e-02     1.321e-02     7.000e-01     3.250e-03     5.819e+01  
+Matrix is ILL!!! (cond = 2.0330259022809969052388257e+20) 
+Matrix is ILL!!! (cond = 2.0330259022809969052388257e+20) 
+   12         141    5.289448e-03     5.385e-03     1.000e+00     3.731e-03     2.013e+02  
+Matrix is ILL!!! (cond = 3.2971067965552492268622559e+20) 
+Matrix is ILL!!! (cond = 3.4081018340901413621739453e+20) 
+Matrix is ILL!!! (cond = 3.4081018340901413621739453e+20) 
+   13         144    2.856792e-03     1.225e-02     7.000e-01     3.642e-03     1.681e+02  
+Matrix is ILL!!! (cond = 1.8306718106228000657228052e+20) 
+Matrix is ILL!!! (cond = 1.8306718106228000657228052e+20) 
+   14         146    4.962234e-03     5.783e-03     1.000e+00     2.198e-03     8.427e+04  
+Matrix is ILL!!! (cond = 2.3515711748084267983808716e+20) 
+Matrix is ILL!!! (cond = 3.4537542139781349718698535e+20) 
+Matrix is ILL!!! (cond = 1.1394930289287834017228552e+20) 
+Matrix is ILL!!! (cond = 2.8262819767975405943334082e+20) 
+Matrix is ILL!!! (cond = 2.4084797669854296867713159e+20) 
+Matrix is ILL!!! (cond = 1.0839904761322683164855920e+20) 
+Matrix is ILL!!! (cond = 2.2140509029097718595823999e+20) 
+Matrix is ILL!!! (cond = 2.3497050676195367612830322e+20) 
+Matrix is ILL!!! (cond = 1.9699528416636890400389062e+20) 
+Matrix is ILL!!! (cond = 1.9699528416636890400389062e+20) 
+   15         156    5.445464e-03     5.182e-03     5.765e-02     9.210e-04     8.749e+04  
+Matrix is ILL!!! (cond = 3.2560117146067822216986670e+20) 
+Matrix is ILL!!! (cond = 3.2560117146067822216986670e+20) 
+   16         158    2.966189e-03     5.106e-03     1.000e+00     2.935e-03     8.995e+04  
+Matrix is ILL!!! (cond = 2.8812833065600119726623218e+20) 
+Matrix is ILL!!! (cond = 2.8812833065600119726623218e+20) 
+   17         160    2.812709e-03     3.060e-03     1.000e+00     8.525e-04     1.079e+05  
+Matrix is ILL!!! (cond = 1.6532035962104490404667700e+20) 
+Matrix is ILL!!! (cond = 3.1912633549327723811327100e+20) 
+Matrix is ILL!!! (cond = 1.2869229137816461214980847e+20) 
+Matrix is ILL!!! (cond = 1.4546512136562544333725854e+20) 
+Matrix is ILL!!! (cond = 2.8301149864647565529041431e+20) 
+Matrix is ILL!!! (cond = 2.8301149864647565529041431e+20) 
+   18         166    2.661173e-03     2.772e-03     3.430e-01     3.678e-04     1.084e+05  
+Matrix is ILL!!! (cond = 2.1875562394012110150610571e+20) 
+Matrix is ILL!!! (cond = 1.6330932038284293965170312e+20) 
+Matrix is ILL!!! (cond = 1.0038240476937748214004883e+20) 
+Matrix is ILL!!! (cond = 2.9132159898515241309708911e+20) 
+Matrix is ILL!!! (cond = 2.6195829594471803549386621e+20) 
+Matrix is ILL!!! (cond = 2.6195829594471803549386621e+20) 
+   19         172    2.820302e-03     2.879e-03     2.401e-01     2.792e-04     1.098e+05  
+Matrix is ILL!!! (cond = 1.3286650281708064392371729e+20) 
+Matrix is ILL!!! (cond = 1.7333281873930482032734448e+20) 
+Matrix is ILL!!! (cond = 1.5772203260261292035039722e+20) 
+Matrix is ILL!!! (cond = 1.5588086434279711652811572e+20) 
+Matrix is ILL!!! (cond = 2.5124450825997601479799805e+20) 
+Matrix is ILL!!! (cond = 2.5124450825997601479799805e+20) 
+   20         178    2.715737e-03     2.980e-03     2.401e-01     2.578e-04     1.102e+05  
+Matrix is ILL!!! (cond = 2.0197556189774444887678198e+20) 
+Matrix is ILL!!! (cond = 1.6333850296199601809675952e+20) 
+Matrix is ILL!!! (cond = 3.9492658845612325984395459e+20) 
+Matrix is ILL!!! (cond = 2.9425323808962796374542065e+20) 
+Matrix is ILL!!! (cond = 2.6450634657059187616178687e+20) 
+Matrix is ILL!!! (cond = 2.6450634657059187616178687e+20) 
+   21         184    2.829941e-03     2.950e-03     2.401e-01     2.385e-04     1.107e+05  
+Matrix is ILL!!! (cond = 1.2475691670116234492263232e+20) 
+Matrix is ILL!!! (cond = 1.4080000046119556266677100e+20) 
+Matrix is ILL!!! (cond = 1.6662824086950028308957690e+20) 
+Matrix is ILL!!! (cond = 2.1378448859203187030682422e+20) 
+Matrix is ILL!!! (cond = 2.6787792641117663130713379e+20) 
+Matrix is ILL!!! (cond = 2.2975844438720729080681934e+20) 
+Matrix is ILL!!! (cond = 2.2975844438720729080681934e+20) 
+   22         191    2.747214e-03     2.962e-03     1.681e-01     2.036e-04     1.111e+05  
+Matrix is ILL!!! (cond = 3.0356450070441699056879590e+20) 
+Matrix is ILL!!! (cond = 2.9711995474692232043773291e+20) 
+Matrix is ILL!!! (cond = 1.2878597095951700667699915e+20) 
+Matrix is ILL!!! (cond = 3.4301151258931629542445850e+20) 
+Matrix is ILL!!! (cond = 2.9051440780835316164094800e+20) 
+Matrix is ILL!!! (cond = 2.6791366483844874741896216e+20) 
+Matrix is ILL!!! (cond = 2.6791366483844874741896216e+20) 
+   23         198    2.845682e-03     2.979e-03     1.681e-01     2.071e-04     1.116e+05  
+Matrix is ILL!!! (cond = 1.0737708914003737720357239e+20) 
+Matrix is ILL!!! (cond = 3.9496522006704719557451123e+20) 
+Matrix is ILL!!! (cond = 1.6551203032641290926213232e+20) 
+Matrix is ILL!!! (cond = 1.6134696174161753252643848e+20) 
+Matrix is ILL!!! (cond = 2.5105328026053527663732178e+20) 
+Matrix is ILL!!! (cond = 2.2896464021774518611031494e+20) 
+Matrix is ILL!!! (cond = 2.2896464021774518611031494e+20) 
+   24         205    2.763593e-03     2.996e-03     1.681e-01     2.058e-04     1.122e+05  
+Matrix is ILL!!! (cond = 3.3374471749218591103828760e+20) 
+Matrix is ILL!!! (cond = 2.5172556823875126996154614e+20) 
+Matrix is ILL!!! (cond = 1.1786605392535247461966736e+20) 
+Matrix is ILL!!! (cond = 3.3693497929604619338635791e+20) 
+Matrix is ILL!!! (cond = 2.8558325368871566147852588e+20) 
+Matrix is ILL!!! (cond = 2.6611648199828796391000317e+20) 
+Matrix is ILL!!! (cond = 2.6611648199828796391000317e+20) 
+   25         212    2.860531e-03     2.977e-03     1.681e-01     2.021e-04     1.130e+05  
+Matrix is ILL!!! (cond = 3.2194833005215218373375830e+20) 
+Matrix is ILL!!! (cond = 2.1279221512239414605830371e+20) 
+Matrix is ILL!!! (cond = 1.68927e+20) 
+Matrix is ILL!!! (cond = 1.4302806917631559244740430e+20) 
+Matrix is ILL!!! (cond = 2.7761691316177288323233960e+20) 
+Matrix is ILL!!! (cond = 2.2740914505211309587475000e+20) 
+Matrix is ILL!!! (cond = 2.3244493301388997537478003e+20) 
+Matrix is ILL!!! (cond = 2.3244493301388997537478003e+20) 
+   26         220    2.798400e-03     2.925e-03     1.176e-01     1.572e-04     1.136e+05  
+Matrix is ILL!!! (cond = 3.7673085515117043213235791e+20) 
+Matrix is ILL!!! (cond = 2.7338963311395777253676831e+20) 
+Matrix is ILL!!! (cond = 3.2747258662400220243345752e+20) 
+Matrix is ILL!!! (cond = 1.3616307334824850133171838e+20) 
+Matrix is ILL!!! (cond = 1.0007676837631927111484106e+20) 
+Matrix is ILL!!! (cond = 3.3556617153014859129952783e+20) 
+Matrix is ILL!!! (cond = 2.8144347538525977420889722e+20) 
+Matrix is ILL!!! (cond = 2.6254976624489841884265161e+20) 
+Matrix is ILL!!! (cond = 2.5084264942034097512382031e+20) 
+Matrix is ILL!!! (cond = 2.5084264942034097512382031e+20) 
+   27         230    2.848166e-03     2.894e-03     5.765e-02     1.058e-04     1.139e+05  
+Matrix is ILL!!! (cond = 2.0954250965774275203666333e+20) 
+Matrix is ILL!!! (cond = 2.7284401410644237250501294e+20) 
+Matrix is ILL!!! (cond = 3.5514521807564557981063281e+20) 
+Matrix is ILL!!! (cond = 1.1267706129139684476962732e+20) 
+Matrix is ILL!!! (cond = 1.4272092050813032638675745e+20) 
+Matrix is ILL!!! (cond = 1.6179836665925597730893213e+20) 
+Matrix is ILL!!! (cond = 1.6134786727975677614859668e+20) 
+Matrix is ILL!!! (cond = 2.5885081713811304581732715e+20) 
+Matrix is ILL!!! (cond = 2.2535887955656209866875806e+20) 
+Matrix is ILL!!! (cond = 2.2905666508168466075797852e+20) 
+Matrix is ILL!!! (cond = 2.3379809279236110163213940e+20) 
+Matrix is ILL!!! (cond = 2.3886292891288874647775952e+20) 
+Matrix is ILL!!! (cond = 2.3886292891288874647775952e+20) 
+   28         243    2.822406e-03     2.883e-03     1.977e-02     6.122e-05     1.141e+05  
+Matrix is ILL!!! (cond = 3.6799934638513785569284326e+20) 
+Matrix is ILL!!! (cond = 1.0597527690001456635985999e+20) 
+Matrix is ILL!!! (cond = 1.0182599498439006866466467e+20) 
+Matrix is ILL!!! (cond = 1.0197229033480650500287964e+20) 
+Matrix is ILL!!! (cond = 3.8720776714528476543061670e+20) 
+Matrix is ILL!!! (cond = 3.3185665722052800388252588e+20) 
+Matrix is ILL!!! (cond = 1.4381540150302613478673779e+20) 
+Matrix is ILL!!! (cond = 3.9990896436114708513987354e+20) 
+Matrix is ILL!!! (cond = 3.1820520163336071479295605e+20) 
+Matrix is ILL!!! (cond = 2.8334467618045644182503711e+20) 
+Matrix is ILL!!! (cond = 2.7266543337253303376933545e+20) 
+Matrix is ILL!!! (cond = 2.6040778576373348244826099e+20) 
+Matrix is ILL!!! (cond = 2.5278261321547343620422021e+20) 
+Matrix is ILL!!! (cond = 2.7011063154764703924028149e+20) 
+Matrix is ILL!!! (cond = 2.4687561137442312007757837e+20) 
+Matrix is ILL!!! (cond = 2.4687561137442312007757837e+20) 
+   29         259    2.837924e-03     2.878e-03     6.782e-03     3.422e-05     1.141e+05  
+Matrix is ILL!!! (cond = 2.9681641248157661666853467e+20) 
+Matrix is ILL!!! (cond = 2.8399687603359654416879346e+20) 
+Matrix is ILL!!! (cond = 2.0124713723106089546462158e+20) 
+Matrix is ILL!!! (cond = 1.5609462194723223545298926e+20) 
+Matrix is ILL!!! (cond = 2.2163330048120059724727026e+20) 
+Matrix is ILL!!! (cond = 1.3724648608067566703139526e+20) 
+Matrix is ILL!!! (cond = 1.7507885216787994738655176e+20) 
+Matrix is ILL!!! (cond = 2.5605166420419754438168701e+20) 
+Matrix is ILL!!! (cond = 1.7060813544913952033065698e+20) 
+Matrix is ILL!!! (cond = 1.4462113636592939630854883e+20) 
+Matrix is ILL!!! (cond = 1.9493567452496965035653784e+20) 
+Matrix is ILL!!! (cond = 2.4757501848867759437552002e+20) 
+Matrix is ILL!!! (cond = 2.2532349873882957165966846e+20) 
+Matrix is ILL!!! (cond = 2.2826239851647563674720264e+20) 
+Matrix is ILL!!! (cond = 2.3233867294679022056326123e+20) 
+Matrix is ILL!!! (cond = 2.3454451796074210235530298e+20) 
+Matrix is ILL!!! (cond = 2.3850249074684840535676001e+20) 
+Matrix is ILL!!! (cond = 2.4073396104911030830799341e+20) 
+Matrix is ILL!!! (cond = 2.4236396290218581480875439e+20) 
+Matrix is ILL!!! (cond = 2.4236396290218581480875439e+20) 
+ Iter  Func-count            Fval   Feasibility   Step Length       Norm of   First-order  
+                                                                       step    optimality
+   30         279    2.830218e-03     2.877e-03     1.628e-03     1.767e-05     1.141e+05  
+Matrix is ILL!!! (cond = 2.7196700318670954085417920e+20) 
+Matrix is ILL!!! (cond = 3.7212007242031058741653467e+20) 
+Matrix is ILL!!! (cond = 2.6142859226107708818608057e+20) 
+Matrix is ILL!!! (cond = 2.7575020481553233049988867e+20) 
+Matrix is ILL!!! (cond = 1.4964960743086715678046509e+20) 
+Matrix is ILL!!! (cond = 3.4071306704857051966572168e+20) 
+Matrix is ILL!!! (cond = 2.9055030191377733320631592e+20) 
+Matrix is ILL!!! (cond = 2.1119986995723446408991724e+20) 
+Matrix is ILL!!! (cond = 1.3550485179868005868698010e+20) 
+Matrix is ILL!!! (cond = 1.7133930718798143888579590e+20) 
+Matrix is ILL!!! (cond = 1.0643510311889712320683948e+20) 
+Matrix is ILL!!! (cond = 3.3546094492146790075615381e+20) 
+Matrix is ILL!!! (cond = 2.9532289805917546661424854e+20) 
+Matrix is ILL!!! (cond = 2.8123929275116797884766187e+20) 
+Matrix is ILL!!! (cond = 2.6740964718706699340988159e+20) 
+Matrix is ILL!!! (cond = 2.5851315945631872284057007e+20) 
+Matrix is ILL!!! (cond = 2.5239081909922752847331226e+20) 
+Matrix is ILL!!! (cond = 1.7765929576301959760283179e+20) 
+Matrix is ILL!!! (cond = 2.4937670538567362800523364e+20) 
+Matrix is ILL!!! (cond = 2.4676520966440436813555615e+20) 
+Matrix is ILL!!! (cond = 2.4531099143696314849756641e+20) 
+Matrix is ILL!!! (cond = 2.4531099143696314849756641e+20) 
+   31         301    2.838816e-03     2.877e-03     7.979e-04     1.466e-05     1.142e+05  
+Matrix is ILL!!! (cond = 3.0896763475829100988329443e+20) 
+Matrix is ILL!!! (cond = 3.1098868873084115508655957e+20) 
+Matrix is ILL!!! (cond = 1.8317883293074203951886768e+20) 
+Matrix is ILL!!! (cond = 1.7481623605061729956602612e+20) 
+Matrix is ILL!!! (cond = 1.3171220227312454096420557e+20) 
+Matrix is ILL!!! (cond = 3.7970087483213553859382910e+20) 
+Matrix is ILL!!! (cond = 2.3352417546973509528453931e+20) 
+Matrix is ILL!!! (cond = 2.7274849220443832958258813e+20) 
+Matrix is ILL!!! (cond = 1.1512140976791862714903870e+20) 
+Matrix is ILL!!! (cond = 1.5579627997900747635182837e+20) 
+Matrix is ILL!!! (cond = 1.6399907115639816314376562e+20) 
+Matrix is ILL!!! (cond = 1.5121619051751269381974316e+20) 
+Matrix is ILL!!! (cond = 2.9621868811199302185169873e+20) 
+Matrix is ILL!!! (cond = 2.2845830271533729703224487e+20) 
+Matrix is ILL!!! (cond = 2.2636035011664163961539185e+20) 
+Matrix is ILL!!! (cond = 2.3004204186698964293817114e+20) 
+Matrix is ILL!!! (cond = 2.3179839350863858096432227e+20) 
+Matrix is ILL!!! (cond = 2.3603754513884048720429321e+20) 
+Matrix is ILL!!! (cond = 2.3897874867212828849286133e+20) 
+Matrix is ILL!!! (cond = 2.4067443090457649861796509e+20) 
+Matrix is ILL!!! (cond = 2.4197747898606795239671558e+20) 
+Matrix is ILL!!! (cond = 2.4290216657802541916027734e+20) 
+Matrix is ILL!!! (cond = 2.4290216657802541916027734e+20) 
+   32         324    2.834453e-03     2.877e-03     5.585e-04     9.954e-06     1.142e+05  
+Matrix is ILL!!! (cond = 1.8085400522101679914386133e+20) 
+Matrix is ILL!!! (cond = 1.9065816487489262696430225e+20) 
+Matrix is ILL!!! (cond = 2.4534105495809265315003394e+20) 
+Matrix is ILL!!! (cond = 1.7086149017001065459317822e+20) 
+Matrix is ILL!!! (cond = 2.3381636250691563310692090e+20) 
+Matrix is ILL!!! (cond = 2.1299263267544289827538159e+20) 
+Matrix is ILL!!! (cond = 2.4769369570985877787513403e+20) 
+Matrix is ILL!!! (cond = 3.2564004394126403142037500e+20) 
+Matrix is ILL!!! (cond = 1.5436855887619847409100024e+20) 
+Matrix is ILL!!! (cond = 3.7353679949681686904877246e+20) 
+Matrix is ILL!!! (cond = 2.7359755846092244811908496e+20) 
+Matrix is ILL!!! (cond = 2.4143754705385760899618286e+20) 
+Matrix is ILL!!! (cond = 2.2423487988427341569549878e+20) 
+Matrix is ILL!!! (cond = 2.1896733628108003408646704e+20) 
+Matrix is ILL!!! (cond = 2.1819804679360298242235620e+20) 
+Matrix is ILL!!! (cond = 2.0578634022774304843449902e+20) 
+Matrix is ILL!!! (cond = 1.0842176936991805337398767e+20) 
+Matrix is ILL!!! (cond = 2.5778167065725068007613379e+20) 
+Matrix is ILL!!! (cond = 2.4273473676591737998889282e+20) 
+Matrix is ILL!!! (cond = 2.4336358814447533448780493e+20) 
+Matrix is ILL!!! (cond = 2.4040691816510403848865894e+20) 
+Matrix is ILL!!! (cond = 2.4232991076006017052412500e+20) 
+Matrix is ILL!!! (cond = 2.4240694076995707982049487e+20) 
+Matrix is ILL!!! (cond = 2.4253777874261640127432983e+20) 
+Matrix is ILL!!! (cond = 2.4262694880541051812252856e+20) 
+Matrix is ILL!!! (cond = 2.4269887243527110033192505e+20) 
+Matrix is ILL!!! (cond = 2.4275659600655555154617993e+20) 
+Matrix is ILL!!! (cond = 2.4281752954034802554580273e+20) 
+Matrix is ILL!!! (cond = 2.4283519734197198078531689e+20) 
+Matrix is ILL!!! (cond = 2.4285567899089927280735205e+20) 
+Matrix is ILL!!! (cond = 2.4287561870614829588958447e+20) 
+Matrix is ILL!!! (cond = 2.4289018685198901914095410e+20) 
+Matrix is ILL!!! (cond = 2.4289018685198901914095410e+20) 
+   33         357    2.836300e-03     2.877e-03     1.578e-05     3.498e-06     1.142e+05  
+Matrix is ILL!!! (cond = 3.4171517999595004594906201e+20) 
+Matrix is ILL!!! (cond = 1.4964715516689962618481543e+20) 
+Matrix is ILL!!! (cond = 3.1842562328853463599710498e+20) 
+Matrix is ILL!!! (cond = 2.1572519724132352427034912e+20) 
+Matrix is ILL!!! (cond = 2.7180347497523050944954102e+20) 
+Matrix is ILL!!! (cond = 3.1342808315824895897158984e+20) 
+Matrix is ILL!!! (cond = 1.6425981839287655287682324e+20) 
+Matrix is ILL!!! (cond = 1.6939789633294156522481348e+20) 
+Matrix is ILL!!! (cond = 1.0926675961898765264791418e+20) 
+Matrix is ILL!!! (cond = 1.1693964350988524588548755e+20) 
+Matrix is ILL!!! (cond = 3.2949194203328460159208057e+20) 
+Matrix is ILL!!! (cond = 3.1119028849788725377809424e+20) 
+Matrix is ILL!!! (cond = 1.4292902148468750965337244e+20) 
+Matrix is ILL!!! (cond = 4.0197229603303085157171875e+20) 
+Matrix is ILL!!! (cond = 3.2182714517434445015661963e+20) 
+Matrix is ILL!!! (cond = 3.1193987115509804434983203e+20) 
+Matrix is ILL!!! (cond = 2.7669841043850454025347021e+20) 
+Matrix is ILL!!! (cond = 2.6465130623931334302731836e+20) 
+Matrix is ILL!!! (cond = 2.5715644438276287360501416e+20) 
+Matrix is ILL!!! (cond = 2.5162028791621348254885620e+20) 
+Matrix is ILL!!! (cond = 2.9135578521306807990862573e+20) 
+Matrix is ILL!!! (cond = 2.4935862558041517320842114e+20) 
+Matrix is ILL!!! (cond = 2.4692729938176478917841040e+20) 
+Matrix is ILL!!! (cond = 2.4558668651781497304452881e+20) 
+Matrix is ILL!!! (cond = 2.4474150851672488792399585e+20) 
+Matrix is ILL!!! (cond = 2.4416622933439537928030688e+20) 
+Matrix is ILL!!! (cond = 2.4416622933439537928030688e+20) 
+   34         384    2.838732e-03     2.877e-03     1.341e-04     5.483e-06     1.142e+05  
+Matrix is ILL!!! (cond = 1.3912210501663174745584851e+20) 
+Matrix is ILL!!! (cond = 2.9307220724779379348022925e+20) 
+Matrix is ILL!!! (cond = 1.0112491547135478994381262e+20) 
+Matrix is ILL!!! (cond = 2.1627058567422217344001221e+20) 
+Matrix is ILL!!! (cond = 2.5979682082678743892036621e+20) 
+Matrix is ILL!!! (cond = 1.8162855075525680639916162e+20) 
+Matrix is ILL!!! (cond = 4.0012538376482759599279053e+20) 
+Matrix is ILL!!! (cond = 2.5705363144668019816971191e+20) 
+Matrix is ILL!!! (cond = 2.2560489315400775324306396e+20) 
+Matrix is ILL!!! (cond = 1.5745953716719249377583203e+20) 
+Matrix is ILL!!! (cond = 1.8254204566684472022879419e+20) 
+Matrix is ILL!!! (cond = 2.5322964722927556405596680e+20) 
+Matrix is ILL!!! (cond = 1.7123872628196813874270703e+20) 
+Matrix is ILL!!! (cond = 1.4562691847608257856381323e+20) 
+Matrix is ILL!!! (cond = 2.4453495509119080894078198e+20) 
+Matrix is ILL!!! (cond = 2.5201642327108056117273364e+20) 
+Matrix is ILL!!! (cond = 2.2555532193440728559176196e+20) 
+Matrix is ILL!!! (cond = 2.2737437713218117054366870e+20) 
+Matrix is ILL!!! (cond = 2.3121034069040021422100195e+20) 
+Matrix is ILL!!! (cond = 2.3460830254714514863839478e+20) 
+Matrix is ILL!!! (cond = 2.3647298638725898617691357e+20) 
+Matrix is ILL!!! (cond = 2.3898260082408127106412817e+20) 
+Matrix is ILL!!! (cond = 2.4034511258003886995111011e+20) 
+Matrix is ILL!!! (cond = 2.4140009574479332092093262e+20) 
+Matrix is ILL!!! (cond = 2.4219803659791249849147290e+20) 
+Matrix is ILL!!! (cond = 2.4276145814300715547595410e+20) 
+Matrix is ILL!!! (cond = 2.4317944066848549865858081e+20) 
+Matrix is ILL!!! (cond = 2.4317944066848549865858081e+20) 
+   35         412    2.836888e-03     2.877e-03     9.387e-05     4.187e-06     1.142e+05  
+Matrix is ILL!!! (cond = 2.2424225193452787364593237e+20) 
+Matrix is ILL!!! (cond = 1.8203057211353724481435474e+20) 
+Matrix is ILL!!! (cond = 2.7150157544013654988490942e+20) 
+Matrix is ILL!!! (cond = 3.0843726009649720657203613e+20) 
+Matrix is ILL!!! (cond = 3.1651813923562902716543311e+20) 
+Matrix is ILL!!! (cond = 2.0792231211122474265064282e+20) 
+Matrix is ILL!!! (cond = 3.2448947351734743148013232e+20) 
+Matrix is ILL!!! (cond = 1.5228037995915359901932812e+20) 
+Matrix is ILL!!! (cond = 1.1665130283197833426613062e+20) 
+Matrix is ILL!!! (cond = 2.1550519486576933585531226e+20) 
+Matrix is ILL!!! (cond = 1.4930532061589822715911279e+20) 
+Matrix is ILL!!! (cond = 2.3150497374260492985364624e+20) 
+Matrix is ILL!!! (cond = 1.4512401758171191744511670e+20) 
+Matrix is ILL!!! (cond = 2.3539790417149365967369702e+20) 
+Matrix is ILL!!! (cond = 1.2310381486029494002708667e+20) 
+Matrix is ILL!!! (cond = 1.1598970384366867129943799e+20) 
+Matrix is ILL!!! (cond = 3.0941056436699337348975049e+20) 
+Matrix is ILL!!! (cond = 2.8025287906430181556874561e+20) 
+Matrix is ILL!!! (cond = 2.7273463455657637719318701e+20) 
+Matrix is ILL!!! (cond = 2.6214512203688645167668140e+20) 
+Matrix is ILL!!! (cond = 2.5553958992120879801608276e+20) 
+Matrix is ILL!!! (cond = 2.5043647415894545981840820e+20) 
+Matrix is ILL!!! (cond = 2.6875107635090396148167139e+20) 
+Matrix is ILL!!! (cond = 2.4889335562542650443627344e+20) 
+Matrix is ILL!!! (cond = 2.4679937215721771502275952e+20) 
+Matrix is ILL!!! (cond = 2.4563581009003508151563086e+20) 
+Matrix is ILL!!! (cond = 2.4483643048513957721663550e+20) 
+Matrix is ILL!!! (cond = 2.4432432156030095081498364e+20) 
+Matrix is ILL!!! (cond = 2.4398711353879153172123926e+20) 
+Matrix is ILL!!! (cond = 2.4373759119820090822439502e+20) 
+Matrix is ILL!!! (cond = 2.4373759119820090822439502e+20) 
+   36         443    2.837952e-03     2.877e-03     3.220e-05     2.403e-06     1.142e+05  
+Matrix is ILL!!! (cond = 3.7622633581361480137179932e+20) 
+Matrix is ILL!!! (cond = 1.1871450653110821682006519e+20) 
+Matrix is ILL!!! (cond = 1.1237342258894171795273120e+20) 
+Matrix is ILL!!! (cond = 1.3841399295277864326360254e+20) 
+Matrix is ILL!!! (cond = 2.5073253990322235230976978e+20) 
+Matrix is ILL!!! (cond = 3.0708968639956417509020850e+20) 
+Matrix is ILL!!! (cond = 1.0788580860882799995098120e+20) 
+Matrix is ILL!!! (cond = 3.3726672388486333752796680e+20) 
+Matrix is ILL!!! (cond = 1.5653162968277945195103687e+20) 
+Matrix is ILL!!! (cond = 1.9902435290535147866914771e+20) 
+Matrix is ILL!!! (cond = 2.0657021941208347368326172e+20) 
+Matrix is ILL!!! (cond = 2.3984065356601257952602637e+20) 
+Matrix is ILL!!! (cond = 2.6687075650504622022243433e+20) 
+Matrix is ILL!!! (cond = 3.9034266285141978003278027e+20) 
+Matrix is ILL!!! (cond = 1.1463289885688446484699939e+20) 
+Matrix is ILL!!! (cond = 1.3604239852628026950628223e+20) 
+Matrix is ILL!!! (cond = 1.5853061167581557034308032e+20) 
+Matrix is ILL!!! (cond = 1.6718959997086696165733887e+20) 
+Matrix is ILL!!! (cond = 2.7441310381819130725912793e+20) 
+Matrix is ILL!!! (cond = 2.2685658721998693662881616e+20) 
+Matrix is ILL!!! (cond = 2.2655007889523202269725439e+20) 
+Matrix is ILL!!! (cond = 2.3009170821387976493239917e+20) 
+Matrix is ILL!!! (cond = 2.3344812427615690211666724e+20) 
+Matrix is ILL!!! (cond = 2.3525939837699267026433472e+20) 
+Matrix is ILL!!! (cond = 2.3347785625496840266351880e+20) 
+Matrix is ILL!!! (cond = 2.3973065399441161138100342e+20) 
+Matrix is ILL!!! (cond = 2.4084866686310083901712891e+20) 
+Matrix is ILL!!! (cond = 2.4168028182048895426365430e+20) 
+Matrix is ILL!!! (cond = 2.4226708478651412739610693e+20) 
+Matrix is ILL!!! (cond = 2.4270140552159103131469019e+20) 
+Matrix is ILL!!! (cond = 2.4299993551124027771474634e+20) 
+Matrix is ILL!!! (cond = 2.4322360015956109425546606e+20) 
+Matrix is ILL!!! (cond = 2.4338104615896483507196411e+20) 
+Matrix is ILL!!! (cond = 2.4338104615896483507196411e+20) 
+   37         477    2.837269e-03     2.877e-03     1.104e-05     1.546e-06     1.142e+05  
+Matrix is ILL!!! (cond = 1.4734952530080786922726123e+20) 
+Matrix is ILL!!! (cond = 3.0257047730886571944876904e+20) 
+Matrix is ILL!!! (cond = 1.4836721933772962252591675e+20) 
+Matrix is ILL!!! (cond = 1.2246406963307628189799036e+20) 
+Matrix is ILL!!! (cond = 2.0740864347600323864711768e+20) 
+Matrix is ILL!!! (cond = 1.7331017687956218101376538e+20) 
+Matrix is ILL!!! (cond = 3.1215333582868765452310547e+20) 
+Matrix is ILL!!! (cond = 2.6763704747813351918694238e+20) 
+Matrix is ILL!!! (cond = 1.9305364815367558728830127e+20) 
+Matrix is ILL!!! (cond = 2.5639795693504296144358740e+20) 
+Matrix is ILL!!! (cond = 1.1273484237935411909413672e+20) 
+Matrix is ILL!!! (cond = 1.7569964939960761933514526e+20) 
+Matrix is ILL!!! (cond = 1.2125366301227955395634290e+20) 
+Matrix is ILL!!! (cond = 1.4053902357244013389513611e+20) 
+Matrix is ILL!!! (cond = 1.1754313746951516510557129e+20) 
+Matrix is ILL!!! (cond = 2.7664558233359816974703223e+20) 
+Matrix is ILL!!! (cond = 1.3595097105566735897490491e+20) 
+Matrix is ILL!!! (cond = 3.9714847920069317981865283e+20) 
+Matrix is ILL!!! (cond = 3.1852845894239761457539551e+20) 
+Matrix is ILL!!! (cond = 2.8503882296546992988552100e+20) 
+Matrix is ILL!!! (cond = 2.7595344224951839599218433e+20) 
+Matrix is ILL!!! (cond = 2.6434599796695748263564673e+20) 
+Matrix is ILL!!! (cond = 2.5713449437496212430480713e+20) 
+Matrix is ILL!!! (cond = 2.5177918442597042875464429e+20) 
+Matrix is ILL!!! (cond = 3.2117419682389472217105273e+20) 
+Matrix is ILL!!! (cond = 2.5000668988796335071936304e+20) 
+Matrix is ILL!!! (cond = 2.4741378672862091061717310e+20) 
+Matrix is ILL!!! (cond = 2.4609146781307741454830688e+20) 
+Matrix is ILL!!! (cond = 2.4522547998855383776493872e+20) 
+Matrix is ILL!!! (cond = 2.4466522262320883054960645e+20) 
+Matrix is ILL!!! (cond = 2.4425201285725508192972729e+20) 
+Matrix is ILL!!! (cond = 2.4398484476564171126504004e+20) 
+Matrix is ILL!!! (cond = 2.4380254187482321958563867e+20) 
+Matrix is ILL!!! (cond = 2.4366103855151897205078955e+20) 
+Matrix is ILL!!! (cond = 2.4357773472374424404455493e+20) 
+Matrix is ILL!!! (cond = 2.4357773472374424404455493e+20) 
+   38         513    2.837663e-03     2.877e-03     5.412e-06     8.898e-07     1.142e+05  
+Matrix is ILL!!! (cond = 3.6517534258822749255049219e+20) 
+Matrix is ILL!!! (cond = 1.1167531040899274098927234e+20) 
+Matrix is ILL!!! (cond = 1.3916312549989468511873901e+20) 
+Matrix is ILL!!! (cond = 1.4628354423506973494289429e+20) 
+Matrix is ILL!!! (cond = 1.5826891641431903355013428e+20) 
+Matrix is ILL!!! (cond = 1.2864749776829877932259656e+20) 
+Matrix is ILL!!! (cond = 2.2602936532759571034690063e+20) 
+Matrix is ILL!!! (cond = 1.7413692190683362181395166e+20) 
+Matrix is ILL!!! (cond = 3.4439753899465947455487793e+20) 
+Matrix is ILL!!! (cond = 1.7154580619360857188302661e+20) 
+Matrix is ILL!!! (cond = 2.6540567894481636409213892e+20) 
+Matrix is ILL!!! (cond = 1.6530449393637389207976025e+20) 
+Matrix is ILL!!! (cond = 2.1150791708120666101951440e+20) 
+Matrix is ILL!!! (cond = 1.8534400918643492595565479e+20) 
+Matrix is ILL!!! (cond = 1.2999195274702589704550171e+20) 
+Matrix is ILL!!! (cond = 1.1110991118634586344538892e+20) 
+Matrix is ILL!!! (cond = 2.3592385630470649645244482e+20) 
+Matrix is ILL!!! (cond = 1.2781846374979346178607959e+20) 
+Matrix is ILL!!! (cond = 1.0958899324374897380388440e+20) 
+Matrix is ILL!!! (cond = 2.2231272031227723247957446e+20) 
+Matrix is ILL!!! (cond = 1.6677024034617796257735645e+20) 
+Matrix is ILL!!! (cond = 1.4304533166594638915532080e+20) 
+Matrix is ILL!!! (cond = 3.1630651336928896908764648e+20) 
+Matrix is ILL!!! (cond = 2.3363077349563525614215234e+20) 
+Matrix is ILL!!! (cond = 2.2571463158360470523237476e+20) 
+Matrix is ILL!!! (cond = 2.2883700691010323152202124e+20) 
+Matrix is ILL!!! (cond = 2.3230779780685952514254810e+20) 
+Matrix is ILL!!! (cond = 2.3626403826016394665120483e+20) 
+Matrix is ILL!!! (cond = 2.3643116197692391006728955e+20) 
+Matrix is ILL!!! (cond = 2.3920273947979172415108130e+20) 
+Matrix is ILL!!! (cond = 2.4038997392432891149883911e+20) 
+Matrix is ILL!!! (cond = 2.4127751961560935097022217e+20) 
+Matrix is ILL!!! (cond = 2.4195846133418622974424512e+20) 
+Matrix is ILL!!! (cond = 2.4243125296013450507910449e+20) 
+Matrix is ILL!!! (cond = 2.4276661746747889826231738e+20) 
+Matrix is ILL!!! (cond = 2.4301158013399823832322510e+20) 
+Matrix is ILL!!! (cond = 2.4318052733761275138712231e+20) 
+Matrix is ILL!!! (cond = 2.4328365574801903902875586e+20) 
+Matrix is ILL!!! (cond = 2.4337594912216069276089453e+20) 
+Matrix is ILL!!! (cond = 2.4344548114297448756754761e+20) 
+Matrix is ILL!!! (cond = 2.4348797360806670926194824e+20) 
+Matrix is ILL!!! (cond = 2.4348797360806670926194824e+20) 
+   39         555    2.837479e-03     2.877e-03     6.367e-07     4.167e-07     1.142e+05  
+Matrix is ILL!!! (cond = 3.5149569467289116818548047e+20) 
+Matrix is ILL!!! (cond = 1.0524179753286630531495801e+20) 
+Matrix is ILL!!! (cond = 2.9966607804335897317746924e+20) 
+Matrix is ILL!!! (cond = 2.1643494466663948579296729e+20) 
+Matrix is ILL!!! (cond = 1.4406488767050601683218091e+20) 
+Matrix is ILL!!! (cond = 1.3693756407441008258993835e+20) 
+Matrix is ILL!!! (cond = 1.1278265197491345320426282e+20) 
+Matrix is ILL!!! (cond = 1.6617950705879075500770874e+20) 
+Matrix is ILL!!! (cond = 1.5698633556496157484568652e+20) 
+Matrix is ILL!!! (cond = 1.1074477265401707355674524e+20) 
+Matrix is ILL!!! (cond = 1.7289063305940380838695142e+20) 
+Matrix is ILL!!! (cond = 2.4166019226730384770777954e+20) 
+Matrix is ILL!!! (cond = 1.8176199324303921144110742e+20) 
+Matrix is ILL!!! (cond = 3.8051558923642724817115137e+20) 
+Matrix is ILL!!! (cond = 1.9765576903027126802852881e+20) 
+Matrix is ILL!!! (cond = 1.2371027910673351737568591e+20) 
+Matrix is ILL!!! (cond = 1.2204234124451156766330957e+20) 
+Matrix is ILL!!! (cond = 1.5900713090959316451426831e+20) 
+Matrix is ILL!!! (cond = 3.0369724760883804002097217e+20) 
+Matrix is ILL!!! (cond = 1.3688210665450230512455029e+20) 
+Matrix is ILL!!! (cond = 4.0134094246902015213239014e+20) 
+Matrix is ILL!!! (cond = 3.2183675514355951946613037e+20) 
+Matrix is ILL!!! (cond = 2.9586623017810074020418359e+20) 
+Matrix is ILL!!! (cond = 2.7712294641854965966281885e+20) 
+Matrix is ILL!!! (cond = 2.6511476960820834326286328e+20) 
+Matrix is ILL!!! (cond = 2.5778009507837247297216675e+20) 
+Matrix is ILL!!! (cond = 2.5223887731103531466475171e+20) 
+Matrix is ILL!!! (cond = 2.4161950661997664244140942e+20) 
+Matrix is ILL!!! (cond = 2.5053886569869761333015845e+20) 
+Matrix is ILL!!! (cond = 2.4772470854234356551709229e+20) 
+Matrix is ILL!!! (cond = 2.4627859496798516695135620e+20) 
+Matrix is ILL!!! (cond = 2.4537569807048181943901831e+20) 
+Matrix is ILL!!! (cond = 2.4480355737172916386846069e+20) 
+Matrix is ILL!!! (cond = 2.4438793484538448334726807e+20) 
+Matrix is ILL!!! (cond = 2.4410444750842376816134619e+20) 
+Matrix is ILL!!! (cond = 2.4391007453721863729294458e+20) 
+Matrix is ILL!!! (cond = 2.4378170541903099907650659e+20) 
+Matrix is ILL!!! (cond = 2.4369284412063551689726489e+20) 
+Matrix is ILL!!! (cond = 2.4362855779035505199987231e+20) 
+Matrix is ILL!!! (cond = 2.4358179270374127697727295e+20) 
+Matrix is ILL!!! (cond = 2.4354454190778046287958813e+20) 
+Matrix is ILL!!! (cond = 2.4353231983128279144248120e+20) 
+Matrix is ILL!!! (cond = 2.4353982548229560316193091e+20) 
+Matrix is ILL!!! (cond = 2.4351049074398045557839111e+20) 
+Matrix is ILL!!! (cond = 2.4349852323659160096245459e+20) 
+Matrix is ILL!!! (cond = 2.4349615332514762328286377e+20) 
+Matrix is ILL!!! (cond = 2.4349615332514762328286377e+20) 
+   40         602    2.837502e-03     2.877e-03     1.070e-07     5.256e-08     1.142e+05  
+Matrix is ILL!!! (cond = 3.6221115573498386658489551e+20) 
+Matrix is ILL!!! (cond = 3.2702317362634891917025439e+20) 
+Matrix is ILL!!! (cond = 3.8885100787422877189722363e+20) 
+Matrix is ILL!!! (cond = 1.9829574560977626651429443e+20) 
+Matrix is ILL!!! (cond = 3.5036357469843688769756738e+20) 
+Matrix is ILL!!! (cond = 3.5774284482975938478721338e+20) 
+Matrix is ILL!!! (cond = 3.5291379244000776107957715e+20) 
+Matrix is ILL!!! (cond = 2.5944831004322156530331250e+20) 
+Matrix is ILL!!! (cond = 1.2693030423164912779734375e+20) 
+Matrix is ILL!!! (cond = 2.7178781215949756273725317e+20) 
+Matrix is ILL!!! (cond = 2.0505960258558775729358252e+20) 
+Matrix is ILL!!! (cond = 3.7143783326649816292433984e+20) 
+Matrix is ILL!!! (cond = 2.6632300970665151913431714e+20) 
+Matrix is ILL!!! (cond = 3.4771521951581795760813232e+20) 
+Matrix is ILL!!! (cond = 2.9067417839021094716174585e+20) 
+Matrix is ILL!!! (cond = 3.6308178773132933157652588e+20) 
+Matrix is ILL!!! (cond = 3.3696935658092655894614697e+20) 
+Matrix is ILL!!! (cond = 3.5612527952493282408125928e+20) 
+Matrix is ILL!!! (cond = 1.1041985067322967510895386e+20) 
+Matrix is ILL!!! (cond = 1.6003962307942818992711279e+20) 
+Matrix is ILL!!! (cond = 1.0300576325626686529956885e+20) 
+Matrix is ILL!!! (cond = 3.3007273929775803190760059e+20) 
+Matrix is ILL!!! (cond = 2.8982029580247758544005078e+20) 
+Matrix is ILL!!! (cond = 2.8180526348761119095275830e+20) 
+Matrix is ILL!!! (cond = 2.6767445450909831487011182e+20) 
+Matrix is ILL!!! (cond = 2.5886568535778334963629663e+20) 
+Matrix is ILL!!! (cond = 2.5278791346705474265196973e+20) 
+Matrix is ILL!!! (cond = 2.7236390669240973863254761e+20) 
+Matrix is ILL!!! (cond = 2.5022448024680804406591382e+20) 
+Matrix is ILL!!! (cond = 2.4774628617154746904398828e+20) 
+Matrix is ILL!!! (cond = 2.4634939161567873208397241e+20) 
+Matrix is ILL!!! (cond = 2.4545123338718275569674512e+20) 
+Matrix is ILL!!! (cond = 2.4486816241967162140798584e+20) 
+Matrix is ILL!!! (cond = 2.4443802302865656344659497e+20) 
+Matrix is ILL!!! (cond = 2.4414521053962434870640942e+20) 
+Matrix is ILL!!! (cond = 2.4396033504023621528004541e+20) 
+Matrix is ILL!!! (cond = 2.4378817484586933596631738e+20) 
+Matrix is ILL!!! (cond = 2.4372989779512247636980225e+20) 
+Matrix is ILL!!! (cond = 2.4364020916810409674842578e+20) 
+Operation terminated by user during  * 
+
+
+In BFGS (line 39)
+            K_new_inv=K_old_inv+(delta_u'*delta_f+delta_f'*K_old_inv*delta_f)*(delta_u*delta_u')/(delta_u'*delta_f)^2-(K_old_inv*delta_f*delta_u'+delta_u*delta_f'*K_old_inv)/(delta_u'*delta_f);
+
+In nonlcon (line 8)
+        u = BFGS(@(uv) mf_with_constr(uv,X,conn,fr,idx_act,mu,ratio,k_pen,sph,slaves,dofs,s,sh),u0,fr);
+
+In FrictionSphere>@(sv)nonlcon(sv,u,X,conn,free_ind,actives,mu,ratio,k_pen,sph,slaves,dofs,sh) (line 126)
+            nlc = @(sv) nonlcon(sv,u,X,conn,free_ind,actives,mu,ratio,k_pen,sph,slaves,dofs,sh);
+
+In sqpInterface
+
+In fmincon (line 904)
+    [X,FVAL,EXITFLAG,OUTPUT,LAMBDA,GRAD,HESSIAN] = sqpInterface(funfcn,X,full(A),full(B),full(Aeq),full(Beq), ...
+
+In FrictionSphere (line 135)
+            [s_opt,~,~,OUT] = fmincon(@(sv) mgt2(sv,u,X,conn,free_ind,actives,mu,ratio,k_pen,sph,slaves,dofs,sh),s_opt,A,b,Aeq,beq,lb,ub,nlc,options);
+ 
+
+>> 

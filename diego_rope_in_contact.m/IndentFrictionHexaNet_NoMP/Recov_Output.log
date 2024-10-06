@@ -1,0 +1,62 @@
+Opening log file:  /home/users/dihurtado/java.log.62031
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2021 The MathWorks, Inc.
+                  R2021a (9.10.0.1602886) 64-bit (glnxa64)
+                             February 17, 2021
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+
+incr =
+
+     1
+
+
+err = 
+
+    0
+
+Matrix is ILL!!! (cond = Inf) 
+
+incr =
+
+     2
+
+
+err = 
+
+    3.105865489760720444652911426894811e-17
+
+Matrix is ILL!!! (cond = Inf) 
+
+incr =
+
+     3
+
+
+err = 
+
+    3.105865489762780033646836273229154e-17
+
+Matrix is ILL!!! (cond = Inf) 
+node 1 just entered. Increment will Redo...
+node 6 just entered. Increment will Redo...
+node 11 just entered. Increment will Redo...
+
+incr =
+
+     3
+
+Matrix is ILL!!! (cond = Inf) 
+node 1 first slide
+node 6 exited. Increment will Redo...
+node 11 first slide
+
+incr =
+
+     3
+
+Matrix is ILL!!! (cond = Inf) 

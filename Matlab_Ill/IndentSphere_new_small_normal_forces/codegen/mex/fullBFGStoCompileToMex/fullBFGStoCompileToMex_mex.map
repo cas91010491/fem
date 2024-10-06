@@ -1,0 +1,16 @@
+MEX {
+	global:
+		mexFunction;
+		mexfilerequiredapiversion;
+		emlrtMexFcnProperties;
+		fullBFGStoCompileToMex;
+		fullBFGStoCompileToMex_initialize;
+		fullBFGStoCompileToMex_terminate;
+		fullBFGStoCompileToMex_atexit;
+		emlrt_marshallOut;
+		emxEnsureCapacity_real_T;
+		emxFree_real_T;
+		emxInit_real_T;
+	local:
+		*;
+};

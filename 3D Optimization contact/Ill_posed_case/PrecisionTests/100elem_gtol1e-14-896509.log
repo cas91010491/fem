@@ -1,0 +1,14 @@
+SLURM_JOBID=896509
+SLURM_JOB_NODELIST=aion-0171
+SLURM_NNODES=1
+SLURMTMPDIR=
+working directory = /mnt/irisgpfs/users/dihurtado/HighPrecLine
+Traceback (most recent call last):
+  File "IllConditioned_line.py", line 7, in <module>
+    from _optimize import _minimize_bfgs as bfgs
+  File "/mnt/irisgpfs/users/dihurtado/HighPrecLine/_optimize.py", line 37, in <module>
+    from _linesearch import (line_search_wolfe1, line_search_wolfe2,
+  File "/mnt/irisgpfs/users/dihurtado/HighPrecLine/_linesearch.py", line 16, in <module>
+    from scipy.optimize import _minpack2 as minpack2
+ImportError: cannot import name '_minpack2' from 'scipy.optimize' (/home/users/dihurtado/.local/lib/python3.8/site-packages/scipy/optimize/__init__.py)
+==Ending run at Thu 27 Jul 14:42:46 CEST 2023

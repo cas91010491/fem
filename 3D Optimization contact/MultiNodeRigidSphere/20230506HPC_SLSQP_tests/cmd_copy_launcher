@@ -1,0 +1,1 @@
+for folder in */; do cp MyLauncher.sh $folder; done;

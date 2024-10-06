@@ -1,0 +1,259 @@
+clear
+close all
+clc
+
+% multiprecision
+addpath('~/AdvanpixMCT-5.0.0.15222')
+
+mp.Digits(34);
+format longG
+
+
+% SPHERE
+xR=mp('0');
+yR=mp('0');
+zR=mp('3');
+R =mp('2.99');
+sph = {{xR,yR,zR},R};
+% nfig = plotsphere(xR,yR,zR,R);
+
+
+figure()
+% hold on
+view(37.5,30.0)
+axis equal
+psph = plotsphere(sph);
+nfig=get(gcf,'Number');
+
+
+% NET
+dh = mp('0.5');                 % hexagon's height
+nx=5;                           % number of main rows (there will also be nx-1 secondary rows)
+ny=9;                           % hexagons per row
+[X,conn]=quarterHexaNet(nx,ny,dh);     % returns pos and connectivity
+
+X = [X zeros(length(X),1)];
+
+
+ratio = 0.0;      % comp_resist/tens_resist
+
+% NODES SELECTION
+all_nodes = SelectFlatSide(X,'+z');
+nodes_base= [SelectFlatSide(X,'+x'),SelectFlatSide(X,'+y'),];
+nodes_symmX = setdiff(SelectFlatSide(X,'-x'),nodes_base);
+nodes_symmY = setdiff(SelectFlatSide(X,'-y'),nodes_base);   % Symmentry BCs
+
+
+
+ndofs=length(X)*3;
+dofs=reshape(1:ndofs,3,[])';
+
+dofs_base_x = dofs(nodes_base,1);
+dofs_base_y = dofs(nodes_base,2);
+dofs_base_z = dofs(nodes_base,3);
+
+
+% BOUNDARY CONDITIONS
+bc1 = {dofs_base_x,"dir",mp('0.0'), 0.0,1.0};
+bc2 = {dofs_base_y,"dir",mp('0.0'), 0.0,1.0};
+bc3 = {dofs_base_z,"dir",mp('0.0'), 0.0,1.0};
+
+bc_symmX = {dofs(nodes_symmX,1),"dir",mp('0.0'), 0.0,1.0};
+bc_symmY = {dofs(nodes_symmY,2),"dir",mp('0.0'), 0.0,1.0};
+
+BCs = {bc1,bc2,bc3,bc_symmX,bc_symmY};
+
+
+% CONTACT
+k_pen=1000;
+mu = 0.5;
+% slaves = setdiff(all_nodes,[nodes_symmX,nodes_symmY,nodes_base]);
+slaves = setdiff(all_nodes,nodes_base); % If i find a way to relate dofs for the added nodes, then they can be out of the slave group (nodes_symmY)
+ns = length(slaves);
+
+% MODEL
+t0 = mp('0.0');
+tf = mp('1.0');
+nincr=100;
+
+
+% INITIALLIZE VARIABLES
+u=zeros(ndofs,1,'mp');
+% u=zeros(ndofs,1);
+u_pre=u;
+actives = [];
+sh = -1*ones(ns,2);          % '-1' indicates no contact
+shnew=-1*ones(ns,2);          % '-1' indicates no contact
+
+xs = X(slaves,:) + u(dofs(slaves,:));
+s = getProjs(xs,sph);
+s_pre = s;
+ds = zeros(ns,2);
+ds_pre=ds;
+t=t0;
+dt=(tf-t0)/nincr;
+% figure(nfig)
+% hold on
+ptrs=plotTruss_XY_symm(u,X,conn,true);
+drawnow
+
+
+% Storage variables
+trials = [];
+iters_tot = [];
+iters_last= [];
+Rxs = [];
+
+tic
+global BFGScache;
+BFGScache = memoize(@BFGS);
+
+for incr=1:nincr
+
+    Redo=1;
+    iter_out=0;
+    trials = [trials,1];
+    iters_tot = [iters_tot,0];
+
+
+    while Redo==1
+
+        iter_out=iter_out+1;
+
+        incr
+
+        [du,df,di]=ApplyBCs(t,t+dt, BCs,ndofs);
+        free_ind=setdiff(dofs,di);
+        u=u+du;
+        % f=f+df;
+        sph{1}{3} = zR+(-1.0)*(t+dt)/tf;
+
+
+        idxs_hooked = find(all(sh ~= -1, 2));
+        s_opt = s(idxs_hooked,:)+ds(idxs_hooked,:);
+
+        if ~isempty(idxs_hooked)
+            nh = length(idxs_hooked);
+    
+            idxs_at_X_axis = find(X(slaves(idxs_hooked),2)==0);
+            idxs_at_Y_axis = find(X(slaves(idxs_hooked),1)==0);
+            nhx = length(idxs_at_X_axis);
+            nhy = length(idxs_at_Y_axis);
+    
+            lb = zeros(size(s_opt));
+            ub =  ones(size(s_opt));
+            A = [];
+            b = [];
+            % Aeq = [];
+            % beq = [];
+            Aeq = zeros(nhx+nhy,2*nh);
+            beq = zeros(nhx+nhy,1);
+            for i = 1:nhy
+                Aeq(i,idxs_at_Y_axis(i)) = 1;
+                beq(i) = 0.5;
+            end
+            for i = 1:nhx
+                Aeq(nhy+i,nh+idxs_at_X_axis(i)) = 1;
+                beq(nhy+i)=0.5;
+            end
+
+            % if ~isempty(idxs_at_Y_axis) || ~isempty(idxs_at_X_axis)
+            %     0;
+            % end
+
+
+            nlc = @(sv) nonlcon(sv,u,X,conn,free_ind,actives,mu,ratio,k_pen,sph,slaves,dofs,sh);
+            options = optimoptions('fmincon','Algorithm','sqp'...
+                                  ,'UseParallel',true...
+                                  ,'Display','iter-detailed'...
+                                  ,'ConstraintTolerance',1e-4...
+                                  ,'StepTolerance',1e-8...
+                                  ,'OptimalityTolerance',1e-5...
+                                  ,'SpecifyObjectiveGradient',true...  
+                                  ,'SpecifyConstraintGradient',true);
+
+            [s_opt,~,~,OUT] = fmincon(@(sv) mgt2(sv,u,X,conn,free_ind,actives,mu,ratio,k_pen,sph,slaves,dofs,sh),s_opt,A,b,Aeq,beq,lb,ub,nlc,options);
+            s(idxs_hooked,:)=s_opt;
+
+
+            iters = OUT.iterations;
+            iters_tot(end)=iters_tot(end)+iters;
+        else 
+            iters=1;
+            iters_tot(end)=iters_tot(end)+1;
+            if isempty(idxs_hooked)
+                ui = zeros(3*length(X),1,'mp');
+                ui(3:3:end) = 0.0*(t+dt);
+                err=norm(u-ui)
+            end
+
+        end
+
+        uN = NEWTON(@(uv) mfk_with_constr(uv,X,conn,free_ind,actives,mu,ratio,k_pen,sph,slaves,dofs,s_opt,sh),u,free_ind);
+        if isnan(uN)
+            u = BFGScache(@(uv) mf_with_constr(uv,X,conn,free_ind,actives,mu,ratio,k_pen,sph,slaves,dofs,s_opt,sh),u,free_ind);
+        else
+            u=uN;
+        end
+
+
+
+        delete(ptrs);
+        delete(psph);
+        ptrs = plotTruss(u,X,conn);
+        psph = plotsphere(sph);
+        drawnow
+
+
+        [actives, sh, Redo] = checkContact(u, sph, actives, sh, s, X, dofs, slaves, conn, ns, mu,ratio);
+
+        if Redo     % only if nodes entered/exited
+            % u = u_pre;
+            trials(end)=trials(end)+1;
+            s = s_pre;
+            ds = ds_pre;
+
+        else
+            % u_pre=u;
+            t=t+dt;
+            iters_last=[iters_last,iters];
+            xs = X(slaves,:) + u(dofs(slaves,:));
+            unused = setdiff(1:ns,idxs_hooked);
+            s(unused,:)=getProjs(xs(unused,:),sph);
+            ds_pre = ds;
+            ds = s-s_pre;
+            s_pre = s;
+        end
+
+
+
+    end
+
+    [~,f] = mfk(u,X,conn,free_ind,ratio);
+    rx = sum(f(dofs_base_x));
+    ry = sum(f(dofs_base_y));
+    rz = sum(f(dofs_base_z));
+    Rxs=[Rxs;rx,ry,rz];
+
+
+
+    % delete(ptrs);
+    % delete(psph);
+    clf(nfig,'reset')
+    view(37.5,30.0)
+    axis equal
+    ptrs = plotTruss_XY_symm(u,X,conn,false);
+    psph = plotsphere(sph);
+    % drawnow
+    zlim([-1.0 3.0])
+    saveas(nfig,strcat(num2str(incr), '.png'))
+
+end
+
+toc
+
+figure(23)
+% hold on
+plot(1:100,Rxs(:,1))
+plot(1:100,Rxs(:,2))
+plot(1:100,Rxs(:,3))

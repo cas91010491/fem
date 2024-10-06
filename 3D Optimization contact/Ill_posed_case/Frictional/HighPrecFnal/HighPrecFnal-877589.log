@@ -1,0 +1,6 @@
+SLURM_JOBID=877589
+SLURM_JOB_NODELIST=aion-0258
+SLURM_NNODES=1
+SLURMTMPDIR=
+working directory = /mnt/irisgpfs/users/dihurtado/HighPrecFnal
+slurmstepd: error: *** JOB 877589 ON aion-0258 CANCELLED AT 2023-07-26T15:04:21 DUE TO TIME LIMIT ***

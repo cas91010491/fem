@@ -1,0 +1,4 @@
+if   idx==0: simplex = get_simplex(s0,0.001)
+elif idx==1: simplex = get_simplex2(s0,0.001,0.6)
+elif idx==2: simplex = get_simplex2(s0,0.001,0.75)
+elif idx==3: simplex = get_simplex2(s0,0.001,0.9)

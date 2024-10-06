@@ -1,0 +1,44 @@
+{Error using codegen
+
+
+Error in LarsNet (line 140)
+codegen -config:mex fullBFGStoCompileToMex.m -args
+{u,X,conn,is_free,is_active,mu,ratio,k_pen,Cx,Cy,Cz,R,slaves,dofs,zeros(ns,2,'double'),sh}
+-report
+
+Error in run (line 91)
+evalin('caller', strcat(script, ';'));
+} 
+{Error using codegen
+
+
+Error in LarsNet (line 140)
+codegen -config:mex fullBFGStoCompileToMex.m -args
+{u,X,conn,is_free,is_active,mu,ratio,k_pen,Cx,Cy,Cz,R,slaves,dofs,zeros(ns,2,'double'),sh}
+-report
+
+Error in run (line 91)
+evalin('caller', strcat(script, ';'));
+} 
+{Error using codegen
+
+
+Error in LarsNet (line 140)
+codegen -config:mex fullBFGStoCompileToMex.m -args
+{u,X,conn,is_free,is_active,mu,ratio,k_pen,Cx,Cy,Cz,R,slaves,dofs,zeros(ns,2,'double'),sh}
+-report
+
+Error in run (line 91)
+evalin('caller', strcat(script, ';'));
+} 
+{Error using codegen
+
+
+Error in LarsNet (line 140)
+codegen -config:mex fullBFGStoCompileToMex.m -args
+{u,X,conn,is_free,is_active,mu,ratio,k_pen,Cx,Cy,Cz,R,slaves,dofs,zeros(ns,2,'double'),sh}
+-report
+
+Error in run (line 91)
+evalin('caller', strcat(script, ';'));
+} 

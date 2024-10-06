@@ -1,0 +1,146 @@
+[
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  fullBFGStoCompileToMex_data.c -o build/glnxa64/fullBFGStoCompileToMex_data.o",
+    "file": "fullBFGStoCompileToMex_data.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_data.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  rt_nonfinite.c -o build/glnxa64/rt_nonfinite.o",
+    "file": "rt_nonfinite.c",
+    "output": "build/glnxa64/rt_nonfinite.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  fullBFGStoCompileToMex_initialize.c -o build/glnxa64/fullBFGStoCompileToMex_initialize.o",
+    "file": "fullBFGStoCompileToMex_initialize.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_initialize.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  fullBFGStoCompileToMex_terminate.c -o build/glnxa64/fullBFGStoCompileToMex_terminate.o",
+    "file": "fullBFGStoCompileToMex_terminate.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_terminate.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  find.c -o build/glnxa64/find.o",
+    "file": "find.c",
+    "output": "build/glnxa64/find.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  fullBFGStoCompileToMex.c -o build/glnxa64/fullBFGStoCompileToMex.o",
+    "file": "fullBFGStoCompileToMex.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  eml_setop.c -o build/glnxa64/eml_setop.o",
+    "file": "eml_setop.c",
+    "output": "build/glnxa64/eml_setop.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  eye.c -o build/glnxa64/eye.o",
+    "file": "eye.c",
+    "output": "build/glnxa64/eye.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  inv.c -o build/glnxa64/inv.o",
+    "file": "inv.c",
+    "output": "build/glnxa64/inv.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  norm.c -o build/glnxa64/norm.o",
+    "file": "norm.c",
+    "output": "build/glnxa64/norm.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  warning.c -o build/glnxa64/warning.o",
+    "file": "warning.c",
+    "output": "build/glnxa64/warning.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  eml_mtimes_helper.c -o build/glnxa64/eml_mtimes_helper.o",
+    "file": "eml_mtimes_helper.c",
+    "output": "build/glnxa64/eml_mtimes_helper.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  mtimes.c -o build/glnxa64/mtimes.o",
+    "file": "mtimes.c",
+    "output": "build/glnxa64/mtimes.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  interface/_coder_fullBFGStoCompileToMex_api.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_api.o",
+    "file": "interface/_coder_fullBFGStoCompileToMex_api.c",
+    "output": "build/glnxa64/_coder_fullBFGStoCompileToMex_api.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  interface/_coder_fullBFGStoCompileToMex_mex.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o",
+    "file": "interface/_coder_fullBFGStoCompileToMex_mex.c",
+    "output": "build/glnxa64/_coder_fullBFGStoCompileToMex_mex.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  eml_int_forloop_overflow_check.c -o build/glnxa64/eml_int_forloop_overflow_check.o",
+    "file": "eml_int_forloop_overflow_check.c",
+    "output": "build/glnxa64/eml_int_forloop_overflow_check.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  sort.c -o build/glnxa64/sort.o",
+    "file": "sort.c",
+    "output": "build/glnxa64/sort.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  sortIdx.c -o build/glnxa64/sortIdx.o",
+    "file": "sortIdx.c",
+    "output": "build/glnxa64/sortIdx.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  xgetrf.c -o build/glnxa64/xgetrf.o",
+    "file": "xgetrf.c",
+    "output": "build/glnxa64/xgetrf.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  xtrsm.c -o build/glnxa64/xtrsm.o",
+    "file": "xtrsm.c",
+    "output": "build/glnxa64/xtrsm.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  fullBFGStoCompileToMex_emxutil.c -o build/glnxa64/fullBFGStoCompileToMex_emxutil.o",
+    "file": "fullBFGStoCompileToMex_emxutil.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_emxutil.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  fullBFGStoCompileToMex_mexutil.c -o build/glnxa64/fullBFGStoCompileToMex_mexutil.o",
+    "file": "fullBFGStoCompileToMex_mexutil.c",
+    "output": "build/glnxa64/fullBFGStoCompileToMex_mexutil.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  interface/_coder_fullBFGStoCompileToMex_info.c -o build/glnxa64/_coder_fullBFGStoCompileToMex_info.o",
+    "file": "interface/_coder_fullBFGStoCompileToMex_info.c",
+    "output": "build/glnxa64/_coder_fullBFGStoCompileToMex_info.o"
+  },
+  {
+    "directory": "/home/diego/fem/Matlab_Ill/IndentSphere/codegen/mex/fullBFGStoCompileToMex",
+    "command": "/usr/bin/gcc -fexceptions -fPIC -fno-omit-frame-pointer -pthread -D_GNU_SOURCE -DMATLAB_MEX_FILE  -O2 -fwrapv -DNDEBUG -std=c99 -I \".\" -I \"/home/diego/fem/Matlab_Ill/IndentSphere\" -I \"./interface\" -I \"/usr/local/MATLAB/R2023a/extern/include\" -I \".\" -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -DMW_HAVE_LAPACK_DECLS -DMODEL=fullBFGStoCompileToMex_mex -msse2 -c  /usr/local/MATLAB/R2023a/extern/version/c_mexapi_version.c -o build/glnxa64/c_mexapi_version.o",
+    "file": "/usr/local/MATLAB/R2023a/extern/version/c_mexapi_version.c",
+    "output": "build/glnxa64/c_mexapi_version.o"
+  }
+]
