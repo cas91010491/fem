@@ -328,14 +328,14 @@ class Contact:
                     # If not correct, try next candidate
                     if not is_patch_correct:
                         if looper==len(self.candids[idx]):  # No candidate is projecting well...
+
                             if tried_updating_candidates==1:
                                 looper = 0
-                                ANNapprox = True
+                                recursive_seeding = 100
 
                             elif tried_updating_candidates>1:
                                 looper = 0
-                                ANNapprox = False
-                                recursive_seeding = 100
+                                ANNapprox = True
                                 
                                 # TODO: add more elif<2,3,.. cases in which other methods are adopted to make sure we find projections for the slave
                                 # for example include parameter "search_seeding" which in findProjections is 'recursive' to increase the search seeding 
@@ -345,22 +345,31 @@ class Contact:
                                 set_trace()
                                 fintC = np.nan                      # <- this will force RedoHalf
                                 break                               # ... and should be the last resource...
-                            self.candids[idx] = self.patch_classifier.Predict(points=[xs+ np.array([-6,0,0])], n=9)[0,:,0].astype(int).tolist()
+                            
+                            self.getCandidates(u)
+                            # set_trace()
+                            # self.candids[idx] = self.patch_classifier.Predict(points=[xs+ np.array([-6,0,0])], n=9)[0,:,0].astype(int).tolist()
                             tried_updating_candidates += 1
                             looper = 0
                             # continue
 
-                        patch_id = self.candids[idx][looper]    # this calls the next candidate patch
-                        looper += 1
                         changed = True
+                        if len(self.candids[idx])>0:
+                            patch_id = self.candids[idx][looper]    # this calls the next candidate patch
+                            looper += 1
+                        else:
+                            # At this point the distortion brings the node too far from any patch
+                            # patch_id = None
+                            is_patch_correct = True
+                            break
 
                 if is_patch_correct:        # if patch changed
                     node_id = self.slaveNodes[idx]
                     if changed:
                         eventList_iter.append(str(node_id)+": "+str(self.actives[idx])+"-->"+str(patch_id))
 
-                    if abs(gn)>10:
-                        set_trace()
+                    # if abs(gn)>10:
+                    #     set_trace()
 
                     if gn>0:
                         if changed:
@@ -646,7 +655,11 @@ class Contact:
                             #     gn = 1
                             #     patch_id = self.candids[0]
                             #                                     # this means structure is distorted
-                            # set_trace()
+
+                            # for the 2D-case only!!
+                            fintC = np.nan                      # <- this will force RedoHalf
+                            break
+
                             self.candids[idx] = self.patch_classifier.Predict(points=[xs+ np.array([-6,0,0])], n=9)[0,:,0].astype(int).tolist()
                             tried_updating_candidates = True
                             looper = 0
@@ -801,11 +814,13 @@ class Contact:
                 gn = self.proj[idx,3]
                 if abs(gn)>self.maxGN:
                     Redo = True
-                    self.alpha_p[idx] *= (2.0*abs(gn)/self.maxGN)
+                    # self.alpha_p[idx] *= (2.0*abs(gn)/self.maxGN)
+                    self.alpha_p[idx] *= (1.25*abs(gn)/self.maxGN)
                     print("too much penetration in node ",node)
                 elif abs(gn)<self.minGN and self.alpha_p[idx]>1:
                     Redo = True
-                    self.alpha_p[idx] = max(((2/3)*abs(gn)/self.minGN)*self.alpha_p[idx],1)       # alpha_p
+                    # self.alpha_p[idx] = max(((2/3)*abs(gn)/self.minGN)*self.alpha_p[idx],1)       # alpha_p
+                    self.alpha_p[idx] = max((0.85*abs(gn)/self.minGN)*self.alpha_p[idx],1)       # alpha_p
                     print("too little penetration in node ",node)
             else: self.alpha_p[idx] = 1.0
         return Redo
@@ -910,6 +925,52 @@ class Contact:
             slaveQuads = self.slaveBody.SelectQuadsByNodes(self.slaveNodes)
             for quad in slaveQuads:
                 self.slaveBody.surf.plotQuad(ax,u,quad,color=(0.5,0.5,0.5,0.5))
+
+    def SolveCycle(self):
+
+        print("Trying to exit the cycle...")
+
+        def result(list_of_actives):
+            import random
+            from collections import Counter
+
+            count = Counter(list_of_actives)
+            max_count = max(count.values())
+            most_frequent = [key for key, val in count.items() if val == max_count]
+            result = random.choice(most_frequent)
+
+            return result
+        
+        def asbool(list_of_actives):
+            boollist = []
+            for actives_i in self.actives_prev:
+                boollist.append([act is not None for act in actives_i])
+
+            return boollist
+
+
+        nsn = len(self.slaveNodes)
+        actives_prev_bool = asbool(self.actives_prev)
+        final_state_bool = actives_prev_bool[-1]
+
+        while final_state_bool in actives_prev_bool:
+            final_state_bool = np.random.choice(a=[False, True],size=nsn).tolist()  # It must be in list to compare in 'while' condition
+
+        final_state = [None]*nsn
+        
+        for i in range(nsn):
+            if final_state_bool[i]:
+                actives = []
+                for actives_i in self.actives_prev:
+                    if actives_i[i] is not None:
+                        actives.append(actives_i[i])
+                if len(actives)>0:
+                    final_state[i] = result(actives)
+
+        print("New active set proposed:", final_state)
+
+        self.actives = final_state
+
 
 
     def printStates(self,only_actives=True,veredict=False):

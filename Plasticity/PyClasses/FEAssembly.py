@@ -29,8 +29,8 @@ class FEAssembly:
         self.Cb =  self.Youngsmodulus*self.Poissonsratio/((1+self.Poissonsratio)*(1-2*self.Poissonsratio))
         self.isRigid = False
         # self.plastic_param = [My0,Hardening_modulus,Hardening_exponent]
-        self.plastic_param = [0.01,0.05,1.0]        # "Plastic"
-        # self.plastic_param = [1e50,0.05,1.0]        # "Elastic"
+        # self.plastic_param = [0.01,0.05,1.0]        # "Plastic"
+        self.plastic_param = [1e50,0.05,1.0]        # "Elastic"
         self.max_bisect_RM = 2**17
 
         self.FPconv = np.zeros((len(self.hexas),8,3,3))
@@ -877,6 +877,14 @@ class FEAssembly:
                         eigenvalues,eigenvectors=np.linalg.eig(dyieldfunctiondM)
 
                         Fp_temp=(np.exp(depcum_last*eigenvalues[0])*np.outer(eigenvectors[:,0],eigenvectors[:,0])+np.exp(depcum_last*eigenvalues[1])*np.outer(eigenvectors[:,1],eigenvectors[:,1])+np.exp(depcum_last*eigenvalues[2])*np.outer(eigenvectors[:,2],eigenvectors[:,2]))@Fp
+
+                        if np.linalg.det(Fp_temp) < 1e-12 or np.linalg.det(Fp_temp) is np.nan:
+                            # cur_time -= delta_time
+                            # delta_time /= 2                    
+                            # continue
+                            res_RM = 1e1000
+                            break
+
 
                         Fe=F@np.linalg.inv(Fp_temp)
 
@@ -2117,6 +2125,15 @@ class FEAssembly:
                         eigenvalues,eigenvectors=np.linalg.eig(dyieldfunctiondM)
 
                         Fp_temp=(np.exp(depcum_last*eigenvalues[0])*np.outer(eigenvectors[:,0],eigenvectors[:,0])+np.exp(depcum_last*eigenvalues[1])*np.outer(eigenvectors[:,1],eigenvectors[:,1])+np.exp(depcum_last*eigenvalues[2])*np.outer(eigenvectors[:,2],eigenvectors[:,2]))@Fp
+
+
+                        if np.linalg.det(Fp_temp) < 1e-12 or np.linalg.det(Fp_temp) is np.nan:
+                            # cur_time -= delta_time
+                            # delta_time /= 2                    
+                            # continue
+                            res_RM = 1e1000
+                            break
+
 
                         try:
                             Fe=F@np.linalg.inv(Fp_temp)

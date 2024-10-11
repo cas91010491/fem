@@ -68,9 +68,6 @@ for ii,node in enumerate(lead_face):
 base.X[21,2] += 0.5 
 base.X[39,2] += 0.5 
 
-# r = np.zeros(2*(len(blk.X)))
-# c = np.zeros(2*(len(blk.X)))
-# v = np.ones(2*(len(blk.X)))
 rs = np.zeros(2*(len(blk.X)))
 cs = np.zeros(2*(len(blk.X)))
 vs = np.ones((2*len(blk.X)))
@@ -83,12 +80,8 @@ ndofs = 3*(len(X_blk)+len(base.X))
 for i_p,pair in enumerate(same_pairs):
     node_1 = pair[0]
     node_2 = pair[1]
-    # r[[4*i_p,4*i_p+1,4*i_p+2,4*i_p+3]]=[3*node_1,3*node_1+2,3*node_2,3*node_2+2]
-    # c[[4*i_p,4*i_p+1,4*i_p+2,4*i_p+3]]=[2*i_p,2*i_p+1,2*i_p,2*i_p+1]
     rt[[2*i_p,2*i_p+1]]=[3*node_1,3*node_1+2]
     ct[[2*i_p,2*i_p+1]]=[2*i_p,2*i_p+1]
-    # rs[[2*i_p,2*i_p+1]]=[3*node_2,3*node_2+2]
-    # cs[[2*i_p,2*i_p+1]]=[3*node_1,3*node_1+2]
     rs[[4*i_p,4*i_p+1,4*i_p+2,4*i_p+3]]=[3*node_1,3*node_1+2,3*node_2,3*node_2+2]
     cs[[4*i_p,4*i_p+1,4*i_p+2,4*i_p+3]]=[3*node_1,3*node_1+2,3*node_1,3*node_1+2]
 
@@ -96,7 +89,6 @@ for i_p,pair in enumerate(same_pairs):
 Ns = sparse.csr_matrix((vs,(rs,cs)),shape=(ndofs,ndofs))
 Nt = sparse.csr_matrix((vt,(rt,ct)),shape=(ndofs,len(blk.X)))
 N = [Ns,Nt]
-
 
 ### BOUNDARY CONDITIONS ###  [body, nodes, type, directions, values, times(*)]
 cond_bd1 = [base, base.SelectAll(), "dirichlet", "xyz"  , [0.0, 0.0, 0.0] ]     # Base static
@@ -111,15 +103,14 @@ BCs = [cond_bd1, cond_bd2,cond_bd3,cond_bd4]
 slave   = [blk , slave_nodes]
 master = [base,ptt_highernodes]
 
-
-contact1 = Contact(slave, master, kn=5, C1Edges = True, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
+# contact1 = Contact(slave, master, kn=5, C1Edges = True, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
+# contact1 = Contact(slave, master, kn=1000, C1Edges = True, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
+contact1 = Contact(slave, master, kn=5000, C1Edges = True, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
 
 ### MODEL ###
 model = FEModel([blk, base], [contact1], BCs,transform_2d=N)           # [bodies, contacts, BCs, opts*]
 
-# base.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(base.surf.nodes)))
 base.surf.ComputeGrgPatches(np.zeros(ndofs),ptt_highernodes,exactNodesGiven=True)
-# contact1.masterSurf.ComputeGrgPatches(np.zeros(ndofs),[])
 # model.plotNow(as2D=True,OnlyMasterSurf=True)       # Uncomment to see and verify geometry
 
 #############
@@ -134,7 +125,7 @@ base.surf.ComputeGrgPatches(np.zeros(ndofs),ptt_highernodes,exactNodesGiven=True
 
 t0 = time()
 
-model.Solve(TimeSteps=100, recover=True, ForcedShift=False,max_iter=100)
+model.Solve(TimeSteps=100, recover=False, ForcedShift=False,max_iter=100)
 
 print("this took",time()-t0,"seconds to compute")
 

@@ -7,7 +7,8 @@ import tensorflow as tf
 from pathlib import Path
 from tensorflow.keras import layers
 from keras.callbacks import CSVLogger, ModelCheckpoint
-from keras.layers.activation import LeakyReLU
+# from keras.layers.activation import LeakyReLU
+from tensorflow.keras.layers import LeakyReLU
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from matplotlib.offsetbox import AnchoredText

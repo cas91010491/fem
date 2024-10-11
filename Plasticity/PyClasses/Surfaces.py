@@ -182,7 +182,7 @@ class Surface:
             surfObj.append(quadsurf)            
                 
 
-        # self.plotNodes(axis, u, special = specialNodes)
+        self.plotNodes(axis, u, special = specialNodes)
 
         tf = time.time()
         print("Plotting " +str(self.body.name) +": Done [ "+str(tf-t0)+" s ]")
