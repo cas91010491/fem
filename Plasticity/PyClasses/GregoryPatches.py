@@ -1338,11 +1338,11 @@ class GrgPatch:
             return kn/(2*cubicT)*gn**2*dgndu, gn, t
         
 
-    def fintC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, xs_check=None, ANNapprox = False,t0=None):       #Chain rule by hand
+    def fintC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, xs_check=None, ANNapprox = False,t0=None,recursive_seeding=1):       #Chain rule by hand
         """Frictionless contact force"""
         Ne = len(self.squad)
 
-        t = self.findProjection(xs,ANNapprox=ANNapprox,t0=t0)
+        t = self.findProjection(xs,ANNapprox=ANNapprox,t0=t0,recursive = recursive_seeding)
         xc,dxcdt = self.Grg(t,deriv=1)
         D1p, D2p = dxcdt.T
         D3p = np.cross(D1p,D2p)
@@ -3623,12 +3623,18 @@ class GrgPatch:
                 Xline = np.array([p1,p2,p3,p4])
                 axis.plot(Xline[:,0],Xline[:,1],Xline[:,2], color="black", lw = 0.2)
 
-    def plotIsolate(self, xs = None, ax= None, ForcesAt = None, xyz_lims = None):
+    def plotIsolate(self, xs = None, ax= None, ForcesAt = None, xyz_lims = None,ref = 10, show2d = False):
         
         if ax is None:
             import matplotlib.pyplot as plt
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')
+
+        if show2d:
+            ax.set_proj_type('ortho')
+            ax.view_init(elev=0, azim=-90, roll=0)
+            ax.set_yticks([])
+
 
         if xyz_lims is None:
             ctrlPts = np.array(self.flatCtrlPts())
@@ -3657,7 +3663,7 @@ class GrgPatch:
         ax.set_aspect('equal', 'box')
 
 
-        self.plot(ax, color =(0,0,1, 0.75))
+        self.plot(ax, color =(0,0,1, 0.75),ref=ref)
 
         if type(xs) == np.ndarray:
             Ne = len(self.squad)
@@ -3701,8 +3707,8 @@ class GrgPatch:
 
 
 
-
-        plt.show()
+        if ax is None:
+            plt.show()
 
 
     # Torch tool for Autograd

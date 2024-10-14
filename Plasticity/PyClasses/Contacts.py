@@ -74,7 +74,7 @@ class Contact:
         self.patch_changes = []
 
         patch_classifier_name = "final_patch_model_edges-shape-512-512-bs-64"
-        self.patch_classifier = PatchClassificationModel(name=patch_classifier_name)
+        # self.patch_classifier = PatchClassificationModel(name=patch_classifier_name)
 
 
 
@@ -234,6 +234,11 @@ class Contact:
                         if CheckActive:
                             if self.IsActive(ii,ipatch):
                                 self.actives[ii]=ipatch
+
+        for ii in range(self.nsn):
+            if self.actives[ii] is None:
+                self.proj[ii] = np.zeros((1,4))
+        
         printif(TimeDisp,"collisions checked in "+str(time.time()-t0)+ " s")
 
     def updateActive(self):
@@ -383,6 +388,42 @@ class Contact:
                 m += mC
                 force[sDoFs[idx]] += fintC[:3]      # only for the slave node DoFs
 
+
+        return m,force
+    
+    def compute_mf_unilateral(self, u, Model):
+        surf = self.masterSurf
+
+        m=0
+        force=np.zeros(Model.fint.shape)
+        sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
+        xs_all = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
+
+        opa = self.OPA
+        for idx in range(self.nsn):
+            # set_trace()
+            xs = xs_all[idx]
+            kn  = self.alpha_p[idx]*self.kn
+            is_node_active = False
+            for patch_id in self.candids[idx]:
+                recursive_seeding = 1
+                patch = surf.patches[patch_id]
+
+                mC,fintC,gn,t = patch.mf_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=False,t0=None,recursive_seeding=recursive_seeding)
+                is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
+
+                if is_patch_correct:
+                    if gn<0:
+                        m += mC
+                        force[sDoFs[idx]] += fintC[:3]      # only for the slave node DoFs
+                        self.actives[idx] = patch_id
+                        is_node_active = True
+                        break
+
+            if not is_node_active:
+                self.actives[idx] = None
+
+        # print("actives:",self.actives)
 
         return m,force
     
@@ -699,6 +740,57 @@ class Contact:
         # print("")
         if DispTime: print("Getting fintC: ",time.time()-ti," s")
 
+    def getfintC_unilateral(self, Model, DispTime = False, useANN = False,tracing = False):
+        surf = self.masterSurf
+
+        sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
+        xs_all = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(Model.u[sDoFs ])
+        self.t1t2cache = -1*np.ones((self.nsn,2))
+        eventList_iter = []
+
+
+        opa = self.OPA
+        for idx in range(self.nsn):
+            # set_trace()
+            xs = xs_all[idx]
+            kn  = self.alpha_p[idx]*self.kn
+            is_node_active = False
+            changed = False
+            for patch_id in self.candids[idx]:
+                recursive_seeding = 1
+                patch = surf.patches[patch_id]
+
+                fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=useANN,recursive_seeding=recursive_seeding)
+                is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
+
+                if is_patch_correct:
+                    changed = (patch_id!=self.actives[idx])
+                    node_id = self.slaveNodes[idx]
+                    if changed:
+                        eventList_iter.append(str(node_id)+": "+str(self.actives[idx])+"-->"+str(patch_id))
+
+                    if gn<0:
+                        Model.fint[sDoFs[idx]] += fintC[:3]      # only for the slave node DoFs
+                        self.actives[idx] = patch_id
+                        is_node_active = True
+                        self.t1t2cache[idx] = t
+
+                        break
+
+                    if changed:
+                        eventList_iter[-1]+=("out")     # ... if also changed patch ...
+                    else:
+                        eventList_iter.append(str(node_id)+": out")     # ... or if only went out
+
+
+            if not is_node_active:
+                self.actives[idx] = None
+
+        self.patch_changes=eventList_iter
+
+        print("actives:",self.actives)
+
+
     def getfintC_backup(self, Model, DispTime = False):
         if DispTime: ti = time.time()
         surf = self.masterSurf
@@ -786,6 +878,34 @@ class Contact:
 
         if DispTime: print("Getting KC: ",time.time()-ti," s")
 
+    def getKC_unilateral(self, Model, DispTime = False):
+        if DispTime: ti = time.time()
+        surf = self.masterSurf
+        sBody = self.slaveBody
+
+        sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
+        xs_temp = np.array(self.slaveBody.X)[self.slaveNodes] + np.array(Model.u_temp[sDoFs ])
+
+        for idx in range(self.nsn):
+            if self.actives[idx] is not None:
+                xs = xs_temp[idx]
+                patch_id = self.actives[idx]
+                patch = surf.patches[patch_id]
+                node_id = self.slaveNodes[idx]
+                dofSlave = sBody.DoFs[node_id]
+                dofPatch = surf.body.DoFs[patch.squad]
+                dofC = np.append(dofSlave,dofPatch)
+                rn = np.repeat(dofC,len(dofC))
+                cn = np.  tile(dofC,len(dofC))
+                kn = self.alpha_p[idx]*self.kn
+
+                KC = patch.KC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, t=self.t1t2cache[idx])
+                sKC = sparse.coo_matrix((KC.ravel(),(rn,cn)),shape=Model.K.shape)
+
+                Model.K += sKC
+
+        if DispTime: print("Getting KC: ",time.time()-ti," s")
+
     def checkStickSlip(self,impose=True,trace=False):
         """Updates 'Stick' atttribute for each slave node."""
         Redo = False
@@ -815,14 +935,16 @@ class Contact:
                 if abs(gn)>self.maxGN:
                     Redo = True
                     # self.alpha_p[idx] *= (2.0*abs(gn)/self.maxGN)
-                    self.alpha_p[idx] *= (1.25*abs(gn)/self.maxGN)
+                    self.alpha_p[idx] *= (1.1*abs(gn)/self.maxGN)
                     print("too much penetration in node ",node)
                 elif abs(gn)<self.minGN and self.alpha_p[idx]>1:
                     Redo = True
                     # self.alpha_p[idx] = max(((2/3)*abs(gn)/self.minGN)*self.alpha_p[idx],1)       # alpha_p
-                    self.alpha_p[idx] = max((0.85*abs(gn)/self.minGN)*self.alpha_p[idx],1)       # alpha_p
+                    self.alpha_p[idx] = max((0.9*abs(gn)/self.minGN)*self.alpha_p[idx],1)       # alpha_p
                     print("too little penetration in node ",node)
-            else: self.alpha_p[idx] = 1.0
+            else: 
+                self.alpha_p[idx] = 1.0
+                self.proj[idx,3] = 0.0
         return Redo
 
     def UpdateHooks(self, fixedhook=False):

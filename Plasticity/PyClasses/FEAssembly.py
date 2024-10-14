@@ -1755,15 +1755,12 @@ class FEAssembly:
                 # if abs(delta_time - 2/self.max_bisect_RM)<1e-10:
                 #     set_trace()
 
-
-
                 cur_time += delta_time
                 F = np.eye(len(dNdx.T)) + np.dot(dNdx.T,u_ref+(u-u_ref)*cur_time).T
                 Fe = F@np.linalg.inv(Fp)
-
                 detFe = np.linalg.det(Fe)
 
-                if detFe < 1e-12 or detFe is np.nan:
+                if detFe < 1e-12 or np.isnan(detFe):
                     cur_time -= delta_time
                     delta_time /= 2     
                     continue
@@ -2143,7 +2140,7 @@ class FEAssembly:
 
                         detFe = np.linalg.det(Fe)
 
-                        if detFe < 1e-12  or detFe is np.nan:
+                        if detFe < 1e-12  or np.isnan(detFe):
                             # cur_time -= delta_time
                             # delta_time /= 2                    
                             # continue
