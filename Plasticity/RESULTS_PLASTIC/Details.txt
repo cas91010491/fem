@@ -1,0 +1,3 @@
+My0 = 0.01
+Hardening_modulus = 0.05
+Hardening_exponent = 1.0

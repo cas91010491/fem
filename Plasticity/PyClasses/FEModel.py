@@ -1,10 +1,10 @@
 from PyClasses.BoundaryConditions import *
-from PyClasses.Utilities import float_to_fraction, printif, checkVarsSize, flatList,plot_coords,quadratic_fit_min_zeros
+from PyClasses.Utilities import float_to_fraction, printif,brents_method, checkVarsSize, flatList,plot_coords,quadratic_fit_min_zeros
 import PyClasses.FEAssembly
 from scipy import sparse
 from scipy.sparse.linalg import spsolve, cgs, bicg, gmres, lsqr
 from scipy.linalg import solve as slsolve
-from scipy.optimize import minimize
+from scipy.optimize import minimize, brentq
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.linalg import norm
@@ -23,7 +23,11 @@ class FEModel:
         self.contacts = contacts
         self.UOI = UpdateOnIteration
         self.transform_2d = transform_2d
-        
+
+        # main counter during the simulation
+        self.COUNTS_NAMES = ["incr_accptd", "incr_rjctd", "incr_mnmzd", "NR_iters", "mnmzn_iters", "mnmzn_fn_evals"]
+        self.COUNTS = np.zeros((6,),dtype = int)
+
         self.SED = [[] for _ in range(len(bodies))]     # stores nodal Strain-energy density for every successful increment
         X , DoFs, n0 = [], [], 0
         for bid, body in enumerate(bodies):
@@ -177,78 +181,6 @@ class FEModel:
         else:
             plt.savefig(self.output_dir+"plots/fig"+str(increment)+"-"+str(iteration)+".png",dpi = dpi)
         plt.close()
-
-
-
-    def plot4D(self,UU,X,C, ax=None, undef=False):
-
-        sed = np.array(self.SED)
-        smin,smax = [min(sed),max(sed)]
-        sed = (sed-smin)/(smax-smin)            # normalizing everything between 0 and 1
-
-        if ax is None:
-            import matplotlib.pyplot as plt
-            from matplotlib.widgets import Slider, Button
-
-            fig = plt.figure()
-            ax = fig.add_subplot(111,projection='3d')
-
-        init_time = 0
-
-
-
-
-        plotSphere(Circ,ax=ax)
-        u = UU[0]
-        plotTruss(X+u.reshape(-1,3),C,ax=ax,bar_types=btypes,show_nodes=True,showtypes=0)
-        
-        axtime = fig.add_axes([0.25, 0.1, 0.65, 0.03])
-
-        time_slider = Slider(
-            ax=axtime,
-            label='time',
-            valmin=0.0,
-            valmax=0.99,
-            valstep=0.01,
-            valinit=init_time,
-        )
-
-
-        # The function to be called anytime a slider's value changes
-        def update(val):
-            xl = ax.get_xlim()
-            yl = ax.get_ylim()
-            zl = ax.get_zlim()
-            az, el = ax.azim, ax.elev
-            ax.clear()
-            idx = round(100*time_slider.val)
-            plotSphere(Circ,ax=ax)
-            acts = np.asarray(ACTIVES[idx]).nonzero()[0]
-            actives = [slaves[i] for i in acts]
-            plotTruss(X+UU[idx].reshape(-1,3),C,ax=ax,bar_types=btypes,show_nodes=True,showtypes=0,actives=actives)
-            ax.set_xlim(xl)
-            ax.set_ylim(yl)
-            ax.set_zlim(zl)
-            ax.azim = az
-            ax.elev = el
-
-        # register the update function with each slider
-        time_slider.on_changed(update)
-
-        # Create a `matplotlib.widgets.Button` to reset the sliders to initial values.
-        resetax = fig.add_axes([0.8, 0.025, 0.1, 0.04])
-        button = Button(resetax, 'Reset', hovercolor='0.975')
-
-
-        def reset(event):
-            time_slider.reset()
-        button.on_clicked(reset)
-
-        plt.show()
-
-
-
-
 
     def savedata(self,time,*args, dofs = "all", name = None, Sum=False):
         for arg in args:
@@ -411,8 +343,10 @@ class FEModel:
             if temp: ctct.patch_changes = []                 # to keep track of the changes during iterations
             sDoFs  = ctct.slaveBody.DoFs[ctct.slaveNodes]
             ctct.xs = np.array(ctct.slaveBody.X )[ctct.slaveNodes ] + np.array(u[sDoFs ])      # u_temp
-            ctct.getfintC(self, DispTime=DispTime,useANN=False)      # uses xs
-            # ctct.getfintC_unilateral(self, DispTime=DispTime,useANN=False)      # uses xs
+            if self.IterUpdate:
+                ctct.getfintC_unilateral(self, DispTime=DispTime,useANN=False)      # uses xs
+            else:
+                ctct.getfintC(self, DispTime=DispTime,useANN=False)      # uses xs
 
 
     def get_K(self, DispTime = False):
@@ -424,8 +358,10 @@ class FEModel:
         printif(DispTime,"Getting K : ",time.time()-t0_K,"s")
 
         for contact in self.contacts:
-            contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
-            # contact.getKC_unilateral(self, DispTime=DispTime)     #uses model.u_temp
+            if self.IterUpdate:
+                contact.getKC_unilateral(self, DispTime=DispTime)     #uses model.u_temp
+            else:
+                contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
 
 
     def solve_NR(self,tol=1e-10,maxiter=10,plotIters=False):
@@ -448,6 +384,8 @@ class FEModel:
 
         # while RES>tol and RES<5*RES_prev and niter<maxiter and not np.isnan(RES):
         while RES>tol and niter<maxiter and not np.isnan(RES):
+            self.COUNTS[3] += 1
+
             RES_prev = RES
 
             # getting K and KC
@@ -538,6 +476,8 @@ class FEModel:
         # while RES>tol and RES<5*RES_prev and niter<maxiter and not np.isnan(RES):
         while RES>tol and  niter<maxiter and not np.isnan(RES):
             RES_prev = RES
+            self.COUNTS[3] += 1
+
 
             # getting K and KC
             self.get_K(DispTime=TimeDisp)  # <-- uses self.u_temp           (no dirichlet)
@@ -1128,6 +1068,7 @@ class FEModel:
         self.write_m_and_f(m_new,norm(f),0)
         K_new_inv = np.eye(nfr)
         f_new = np.zeros(nfr)
+        m0 = 0
 
         
         for ctct in self.contacts:
@@ -1136,8 +1077,11 @@ class FEModel:
         iter = 0
         alpha = alpha_init
         while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
+            self.COUNTS[4] += 1
+
 
             iter += 1
+            print("ITER:",iter)
             f_old = f_new.copy()
             f_new = f_2.copy()
             K_old_inv = K_new_inv.copy()
@@ -1163,321 +1107,14 @@ class FEModel:
 
 
             # Plotting lineseach...
-            if iter<-1:
+            if iter in [171,172]:
 
                 n_points = 50
-                ALPHAS = np.linspace(0.0, 10*alpha_init, n_points)
-                MMs = np.zeros(n_points)
-                HF = np.zeros(n_points)
-                FF = np.zeros(n_points)
-                ARM = np.zeros(n_points)
-                CURV = np.zeros(n_points)
-                
-                for ai,alphai in enumerate(ALPHAS):
-                    ui = u.copy()
-                    ui[free_ind] = u[free_ind] + alphai * h_new
-                    # print("BEFORE:\tDEP_cum:", norm(self.bodies[0].DELTA_EPcum),"\tFPtemp:",norm(self.bodies[0].FPtemp),"\talpha_i:",alphai)
-                    f_full , mi = FUNJAC(ui)
-                    # print("AFTER :\tDEP_cum:", norm(self.bodies[0].DELTA_EPcum),"\tFPtemp:",norm(self.bodies[0].FPtemp))
 
-                    fi = f_full[free_ind]
+                until = 33 if iter==171 else 4
 
-                    MMs[ai] = mi
-                    HF[ai] = h_new@fi
-                    FF[ai] = norm(fi)
-                    # ARM[ai] = m_new + c_par*alphai*np.dot(h_new, f_new)
-                    # CURV[ai] = np.dot(h_new, fi) >= c_par2 * np.dot(h_new, f_new)
-                    
-                import matplotlib.pyplot as plt
-                fig = plt.figure()
-                ax = fig.add_subplot(111)
-
-                fig2 = plt.figure()
-                ax2 = fig2.add_subplot(111)
-
-                ax2.plot(ALPHAS,MMs,color = "blue",label="m")
-                ax.plot(ALPHAS,HF,color = "green",label="h'f")
-                # ax.plot(ALPHAS,FF,color = "yellow",label="|f|")
-                # ax.plot(ALPHAS,ARM,color = "black",label="Armijo")
-                plt.legend()
-                plt.show()
-
-            a1 = 0
-            f1 = h_new@f_new
-
-            # compute f3 ensuring that it is a finite number
-            f3 = np.nan
-            a3 = 2*alpha_init
-            while not np.isfinite(norm(f3)):
-                a3 /= 2
-                ux = u.copy()
-                ux[free_ind] = u[free_ind] + a3*h_new
-                f , _ = FUNJAC(ux)
-                f_3 = f[free_ind]
-                f3 = h_new@f_3
-
-
-            # TODO: currently 3rd point leads to parabilic interpolation. Try to see if f1<f3<0, and the line formed
-            # cuts the OX axis not too far, use a linear interpolation to compute the 3rd point intead of the average alpha 
-
-
-
-            a2 = 0.5*(a1+a3)
-            ux = u.copy()
-            ux[free_ind] = u[free_ind] + a2*h_new
-            f , _ = FUNJAC(ux)
-            f_2 = f[free_ind]
-            f2 = h_new@f_2
-
-            # In case of concavity, push from the left until convex
-            # while not f1<f3:
-            while not f1<f2<f3 and max([abs(f1),abs(f2),abs(f3)])>1e-25:
-                parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
-
-                if parab["a"] <0:
-                    # print("\t...but parab.a <0")
-                    break
-                
-
-                if parab['zeros'] is None:      # this is the begining of 'f' is concave itself. We move to the right
-                    delta = a2-a1
-
-                    a1 = a2
-                    f1 = f2
-
-                    a2 = a3 
-                    f2 = f3
-
-                    a3 += 1.5*delta
-                    ux = u.copy()
-                    ux[free_ind] = u[free_ind] + a3*h_new
-                    f , _ = FUNJAC(ux)
-                    f_3 = f[free_ind]
-                    f3 = h_new@f_3
-
-                    # print("\tleft: parab.zeros is None, all moved to the right:",[a1,a2,a3],"\f3:",f3)
-
-                    continue
-
-                alpha_to_min  = parab['minimum'][0]
-                ux = u.copy()
-                ux[free_ind] = u[free_ind] + alpha_to_min*h_new
-                f , _ = FUNJAC(ux)
-                f_m = f[free_ind]
-                fm = h_new@f_m
-
-                print("\tFrom Left: \talphas:",[a1,a2,a3],"\tf",[f1,f2,f3],"\tam:",alpha_to_min, "\tf0:",fm)
-
-
-                if alpha_to_min>a3:
-
-                    a1 = a2
-                    f1 = f2
-
-                    a2 = a3
-                    f2 = f3
-
-                    a3 = alpha_to_min
-                    f3 = fm
-
-                elif alpha_to_min>a2:
-
-                    a1 = a2
-                    f1 = f2
-
-                    a2 = alpha_to_min
-                    f2 = fm
-
-                else:
-                    a1 = alpha_to_min
-                    f1 = fm
-
-
-
-
-            f0 = 100
-            f_0 = f_3
-
-            # print("\tbefore (right): \talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
-            # while f0>0 or not (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new)):
-            while f0>1e-12 or not (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new)):
-
-
-                # To avoid cases like: [0.0, 8.0e-4, 8.1e-4] [-600000, 1.0e-6,1.1e-6]. Solution: put a2 more in the middle 
-                slope_change = (f2-f1)/(f3-f2)
-                while slope_change>1000 and max([abs(f1),abs(f2),abs(f3)])>1e-15:
-                    a2=(a1+a2)/2
-                    ux = u.copy()
-                    ux[free_ind] = u[free_ind] + a2*h_new
-                    f , _ = FUNJAC(ux)
-                    f_2 = f[free_ind]
-                    f2 = h_new@f_2
-                    print("Too much slope change!!\ta2:",a2,"\tf2:",f2)
-
-                    slope_change = (f3-f2)/(f2-f1)
-
-
-                try:
-                    parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
-
-                    if parab['zeros'] is None:      # this is the begining of 'f' is concave itself. We move to the right
-                        delta = a2-a1
-
-                        a1 = a2
-                        f1 = f2
-
-                        a2 = a3
-                        f2 = f3
-
-                        a3 += delta
-                        ux = u.copy()
-                        ux[free_ind] = u[free_ind] + a3*h_new
-                        f , _ = FUNJAC(ux)
-                        f_3 = f[free_ind]
-                        f3 = h_new@f_3
-
-                        continue
-                    
-                    if parab["a"]>0:
-                        alpha_to_zero = max(parab['zeros'])
-                    else:
-                        alpha_to_zero = min(parab['zeros'])
-
-                except:
-                    alpha_to_zero = (f1*a3-f3*a1)/(f1-f3)
-
-                ux = u.copy()
-                ux[free_ind] = u[free_ind] + alpha_to_zero*h_new
-                f , m0 = FUNJAC(ux)
-                f_0 = f[free_ind]
-                f0 = h_new@f_0
-
-                print("\tFrom Right: \talphas:",[a1,a2,a3],"\tf",[f1,f2,f3],"\ta0:",alpha_to_zero, "\tf0:",f0)
-
-
-                if alpha_to_zero>a3:    # In this case f1,f2,f3 are all negative. since f0=0 and f is increasing in the interval
-
-                    a1 = a2
-                    f1 = f2
-
-                    a2 = a3
-                    f2 = f3
-
-                    a3 = alpha_to_zero
-                    f3 = f0
-
-                elif alpha_to_zero>a2:      # In this case f1,f2<0,  f3>0
-
-                    # if f2<0:
-                    a1 = a2
-                    f1 = f2
-
-                    a2 = alpha_to_zero
-                    f2 = f0
-
-                elif alpha_to_zero>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
-                    # if f0<0 and abs(a2-alpha_to_zero)/abs(a1-alpha_to_zero)<100:
-                    if f0<0:
-                        a1 = alpha_to_zero
-                        f1 = f0
-                    else:
-                        a3 = a2
-                        f3 = f2
-                        
-                        a2 = alpha_to_zero
-                        f2 = f0
-
-                else:
-                    # It shouldn't even reach here because f1<0 and f increases
-                    a3 = a2
-                    f3 = f2
-                    
-                    a2 = a1
-                    f2 = f1
-
-                    a1 = alpha_to_zero
-                    f1 = f0
-
-                
-            alpha = alpha_to_zero
-            f_2 = f_0
-            m_2 = f0
-
-            print("\tFinally: \talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
-
-
-            # m_3 = norm(f_3)
-            self.write_m_and_f(m_2,norm(f_2),iter)
-                       
-            delta_u = ux[free_ind] - u[free_ind]
-            u = ux
-
-            if alpha>580:
-                set_trace()                
-
-            print("alpha:",alpha,"\t|f2|:",norm(f_2))
-
-        return u, m0, iter , norm(f_2)
-
-    def BFGS_plastic_diego2(self,FUNJAC, u0, tol = 1e-10, tol2 = 1e-15, free_ind = None):
-        # alpha_init = 0.01
-        alpha_init = 1
-        # c_par2 = 0.9
-        c_par2 = 0.95
-
-        if free_ind is None:
-            free_ind = self.free
-
-        
-        nfr = len(free_ind)
-
-        f , m_new = FUNJAC(u0)
-
-        u = u0.copy()
-        f_2 = f[free_ind]
-        m_new = norm(f_2)
-        self.write_m_and_f(m_new,norm(f),0)
-        K_new_inv = np.eye(nfr)
-        f_new = np.zeros(nfr)
-
-        
-        for ctct in self.contacts:
-            ctct.patch_changes = []
-
-        iter = 0
-        alpha = alpha_init
-        while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
-
-            iter += 1
-            f_old = f_new.copy()
-            f_new = f_2.copy()
-            K_old_inv = K_new_inv.copy()
-            delta_f = f_new - f_old
-
-            if iter>1:
-                if not np.isfinite(norm(h_new)):
-                    set_trace()
-
-
-            if iter == 1:
-                h_new = -np.dot(K_old_inv, f_new)
-            else:
-                K_new_inv = K_old_inv + ((np.inner(delta_u, delta_f) + np.inner(delta_f, np.dot(K_old_inv, delta_f)))*(np.outer(delta_u,delta_u)))/ (np.dot(delta_u, delta_f) ** 2)- (np.outer(np.dot(K_old_inv, delta_f),delta_u) + np.inner(np.outer(delta_u, delta_f),K_old_inv)) / np.dot(delta_u, delta_f)
-                h_new = -np.dot(K_new_inv, f_new)
-
-           
-            if not np.isfinite(norm(h_new)):
-                set_trace()
-
-            m_new = abs(h_new@f_new)
-            # m_new = norm(f_new)
-
-
-            # Plotting lineseach...
-            if iter<-1:
-
-                n_points = 50
-                ALPHAS = np.linspace(0.0, 10*alpha_init, n_points)
+                # ALPHAS = np.linspace(0.0, 10*alpha_init, n_points)
+                ALPHAS = np.linspace(0.0, until, n_points)
                 MMs = np.zeros(n_points)
                 HF = np.zeros(n_points)
                 FF = np.zeros(n_points)
@@ -1546,9 +1183,26 @@ class FEModel:
                 parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
 
                 if parab["a"] <0:
-                    # print("\t...but parab.a <0")
-                    break
-                
+                    # print("\tLeft...but parab.a <0\t\tbreak Left")
+                    # break
+                    delta = a2-a1
+
+                    a1 = a2
+                    f1 = f2
+
+                    a2 = a3
+                    f2 = f3
+
+                    a3 += delta
+                    ux = u.copy()
+                    ux[free_ind] = u[free_ind] + a3*h_new
+                    f , _ = FUNJAC(ux)
+                    f_3 = f[free_ind]
+                    f3 = h_new@f_3
+
+                    print("\tleft: parab.zeros is None, all moved to the right:",[a1,a2,a3],"\tf3:",f3)
+                    continue
+
                 if parab['zeros'] is None:      # this is the begining of 'f' is concave itself. We move to the right
                     delta = a2-a1
 
@@ -1565,7 +1219,7 @@ class FEModel:
                     f_3 = f[free_ind]
                     f3 = h_new@f_3
 
-                    # print("\tleft: parab.zeros is None, all moved to the right:",[a1,a2,a3],"\f3:",f3)
+                    print("\tleft: parab.zeros is None, all moved to the right:",[a1,a2,a3],"\tf3:",f3)
                     continue
 
                 alpha_to_min  = parab['minimum'][0]
@@ -1642,6 +1296,7 @@ class FEModel:
                         f_3 = f[free_ind]
                         f3 = h_new@f_3
 
+                        print("\tright: parab.zeros is None, all moved to the right:",[a1,a2,a3],"\tf3:",f3)
                         continue
                     
                     if parab["a"]>0:
@@ -1684,8 +1339,6 @@ class FEModel:
 
                         a2 = alpha_to_zero
                         f2 = f0
-
-
 
 
                 elif alpha_to_zero>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
@@ -1739,7 +1392,523 @@ class FEModel:
 
 
 
-            print("alpha:",alpha,"\t|f2|:",norm(f_2))
+            print("\talpha:",alpha,"\t|f2|:",norm(f_2))
+
+        return u, m0, iter , norm(f_2)
+
+    def BFGS_plastic_BrentGPT(self,FUNJAC, u0, tol = 1e-10, tol2 = 1e-15, free_ind = None):
+        # alpha_init = 0.01
+        alpha_init = 1
+        # c_par2 = 0.9
+        c_par2 = 0.95
+
+        if free_ind is None:
+            free_ind = self.free
+
+        def func(alpha,FUNJAC,u,free_ind,h_new):
+            ux = u.copy()
+            ux[free_ind] = u[free_ind] + alpha*h_new
+            f , _ = FUNJAC(ux)
+            f_3 = f[free_ind]
+            return h_new@f_3, f_3, ux
+
+
+
+        
+        nfr = len(free_ind)
+
+        f , m_new = FUNJAC(u0)
+
+        u = u0.copy()
+        f_2 = f[free_ind]
+        m_new = norm(f_2)
+        self.write_m_and_f(m_new,norm(f),0)
+        K_new_inv = np.eye(nfr)
+        f_new = np.zeros(nfr)
+        m0 = 0
+
+        
+        for ctct in self.contacts:
+            ctct.patch_changes = []
+
+        iter = 0
+        alpha = alpha_init
+        while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
+            self.COUNTS[4] += 1
+
+
+            iter += 1
+            print("ITER:",iter)
+            f_old = f_new.copy()
+            f_new = f_2.copy()
+            K_old_inv = K_new_inv.copy()
+            delta_f = f_new - f_old
+
+            if iter>1:
+                if not np.isfinite(norm(h_new)):
+                    set_trace()
+
+
+            if iter == 1:
+                h_new = -np.dot(K_old_inv, f_new)
+            else:
+                K_new_inv = K_old_inv + ((np.inner(delta_u, delta_f) + np.inner(delta_f, np.dot(K_old_inv, delta_f)))*(np.outer(delta_u,delta_u)))/ (np.dot(delta_u, delta_f) ** 2)- (np.outer(np.dot(K_old_inv, delta_f),delta_u) + np.inner(np.outer(delta_u, delta_f),K_old_inv)) / np.dot(delta_u, delta_f)
+                h_new = -np.dot(K_new_inv, f_new)
+
+           
+            if not np.isfinite(norm(h_new)):
+                set_trace()
+
+            m_new = abs(h_new@f_new)
+            # m_new = norm(f_new)
+
+            a1 = 0
+            f1 = h_new@f_new
+            f_1 = f_new
+
+            a2 = alpha_init
+            f2, f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+            # a3 = 2*alpha_init
+            # f0 = func(a2,FUNJAC,u,free_ind,h_new)
+
+
+            # Making sure f2 is positive
+            while f1*f2>0:
+                print("\tsame sign")
+                delta = a2-a1
+                a1 = a2
+                f1 = f2
+                f_1 = f_2
+
+                a2 += 2*delta
+                f2, f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+                while np.isnan(f2):
+                    print("\tgot nan")
+                    a2 -= delta
+                    f2, f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+            # set_trace()
+
+            ###########
+            # Brent's #
+            ###########
+            if abs(f1) < abs(f2):
+                a1, a2 = a2, a1
+                f1, f2 = f2, f1
+                f_1, f_2 = f_2, f_1
+
+            c = a1
+            fc, f_c = f1, f_1
+            d = e = a2 - a1
+
+            # for iteration in range(max_iter):
+            while f2>1e-12 or not (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new)):
+                if f2 == 0 or abs(a2 - a1) < tol2:
+                    break
+                    # return a2, f2  # Root found
+                
+                if f1 != fc and f2 != fc:
+                    # Inverse quadratic interpolation
+                    print("# Inverse quadratic interpolation")
+                    s = (a1 * f2 * fc) / ((f1 - f2) * (f1 - fc)) + \
+                        (a2 * f1 * fc) / ((f2 - f1) * (f2 - fc)) + \
+                        (c * f1 * f2) / ((fc - f1) * (fc - f2))
+                else:
+                    # Secant method
+                    print("# Secant method")
+                    s = a2 - f2 * (a2 - a1) / (f2 - f1)
+                
+                # Conditions for bisection method
+                cond1 = (s < (3 * a1 + a2) / 4 or s > a2)
+                cond2 = (e < tol or abs(s - a2) >= abs(e) / 2)
+                cond3 = (abs(s - a2) >= abs(d) / 2)
+                cond4 = (abs(a2 - a1) < tol2)
+                cond5 = (abs(f2) >= abs(f1))
+
+                if cond1 or cond2 or cond3 or cond4 or cond5:
+                    # Perform bisection if conditions are met
+                    print("conditions met: doing bisection")
+                    s = (a1 + a2) / 2
+                    e = d = a2 - a1
+                
+                else:
+                    d = e
+                    e = a2 - s
+
+                fs, f_s, ux = func(s,FUNJAC,u,free_ind,h_new)
+                print("\talphas:",[a1,a2,s],"\tf",[f1,f2,fs])
+                
+                a1, f1, f_1 = a2, f2, f_2
+                if f1 * fs < 0:
+                    a2, f2, f_2 = s, fs, f_s
+                else:
+                    c, fc, f_c = s, fs, f_s
+                
+                if abs(f1) < abs(f2):
+                    a1, a2 = a2, a1
+                    f1, f2 = f2, f1
+                    f_1, f_2 = f_2, f_1
+            
+
+
+
+
+            # m_3 = norm(f_3)
+            self.write_m_and_f(0.0,norm(f_2),iter)
+                       
+            delta_u = ux[free_ind] - u[free_ind]
+            u = ux
+
+            # if alpha<1:
+            #     set_trace()    
+
+
+
+            print("\talpha:",alpha,"\t|f2|:",norm(f_2))
+
+        return u, m0, iter , norm(f_2)
+
+    def BFGS_plastic_Brent(self,FUNJAC, u0, tol = 1e-10, tol2 = 1e-13, free_ind = None):
+        # alpha_init = 0.01
+        alpha_init = 1
+        c_par2 = 0.9
+
+        if free_ind is None:
+            free_ind = self.free
+
+        from joblib import Memory
+        cache_dir = './cache_directory'
+        memory = Memory(cache_dir, verbose=0)
+
+
+
+        memory.cache
+        def func(alpha,FUNJAC,u,free_ind,h_new,inBrent=False):
+            ux = u.copy()
+            ux[free_ind] = u[free_ind] + alpha*h_new
+            f , _ = FUNJAC(ux)
+            f_3 = f[free_ind]
+            f3 = h_new@f_3
+            # print("\talpha:",alpha,"\tf:",f3)
+            if inBrent:
+                if abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new)):
+                    return 0.0,f_3, ux
+
+            return f3, f_3, ux
+
+
+
+        
+        nfr = len(free_ind)
+
+        f , m_new = FUNJAC(u0)
+
+        u = u0.copy()
+        f_2 = f[free_ind]
+        m_new = norm(f_2)
+        self.write_m_and_f(m_new,norm(f),0)
+        K_new_inv = np.eye(nfr)
+        f_new = np.zeros(nfr)
+        m0 = 0
+
+        
+        for ctct in self.contacts:
+            ctct.patch_changes = []
+
+        iter = 0
+        alpha = alpha_init
+        while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
+            self.COUNTS[4] += 1
+
+
+            iter += 1
+            print("ITER:",iter)
+            f_old = f_new.copy()
+            f_new = f_2.copy()
+            K_old_inv = K_new_inv.copy()
+            delta_f = f_new - f_old
+
+            if iter>1:
+                if not np.isfinite(norm(h_new)):
+                    set_trace()
+
+
+            if iter == 1:
+                h_new = -np.dot(K_old_inv, f_new)
+            else:
+                K_new_inv = K_old_inv + ((np.inner(delta_u, delta_f) + np.inner(delta_f, np.dot(K_old_inv, delta_f)))*(np.outer(delta_u,delta_u)))/ (np.dot(delta_u, delta_f) ** 2)- (np.outer(np.dot(K_old_inv, delta_f),delta_u) + np.inner(np.outer(delta_u, delta_f),K_old_inv)) / np.dot(delta_u, delta_f)
+                h_new = -np.dot(K_new_inv, f_new)
+
+           
+            if not np.isfinite(norm(h_new)):
+                set_trace()
+
+            m_new = abs(h_new@f_new)
+            # m_new = norm(f_new)
+
+
+
+
+            # Plotting lineseach...
+            if iter == -1:
+
+                n_points = 100
+
+                # ALPHAS = np.linspace(0.0, 10*alpha_init, n_points)
+                ALPHAS = np.linspace(0.0, 300, n_points)
+                MMs = np.zeros(n_points)
+                HF = np.zeros(n_points)
+                FF = np.zeros(n_points)
+                ARM = np.zeros(n_points)
+                CURV = np.zeros(n_points)
+                
+                for ai,alphai in enumerate(ALPHAS):
+                    ui = u.copy()
+                    ui[free_ind] = u[free_ind] + alphai * h_new
+                    # print("BEFORE:\tDEP_cum:", norm(self.bodies[0].DELTA_EPcum),"\tFPtemp:",norm(self.bodies[0].FPtemp),"\talpha_i:",alphai)
+                    f_full , mi = FUNJAC(ui)
+                    # print("AFTER :\tDEP_cum:", norm(self.bodies[0].DELTA_EPcum),"\tFPtemp:",norm(self.bodies[0].FPtemp))
+
+                    fi = f_full[free_ind]
+
+                    MMs[ai] = mi
+                    HF[ai] = h_new@fi
+                    FF[ai] = norm(fi)
+                    # ARM[ai] = m_new + c_par*alphai*np.dot(h_new, f_new)
+                    # CURV[ai] = np.dot(h_new, fi) >= c_par2 * np.dot(h_new, f_new)
+                    
+                import matplotlib.pyplot as plt
+                fig = plt.figure()
+                ax = fig.add_subplot(111)
+
+                fig2 = plt.figure()
+                ax2 = fig2.add_subplot(111)
+
+                ax2.plot(ALPHAS,MMs,color = "blue",label="m")
+                ax.plot(ALPHAS,HF,color = "green",label="h'f")
+                # ax.plot(ALPHAS,FF,color = "yellow",label="|f|")
+                # ax.plot(ALPHAS,ARM,color = "black",label="Armijo")
+                plt.legend()
+                plt.show()
+
+
+
+
+            a1 = 0
+            f1 = h_new@f_new
+
+            a2 = 2*alpha_init
+            f2 = np.nan
+            while np.isnan(f2):
+                a2 /= 2
+                f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+            ready_for_brent = f2>0
+            min_found = abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))
+
+
+            print("\talphas:",[a1,a2],"\tf",[f1,f2])
+
+            if not ready_for_brent and not min_found:
+
+                # Compute (a valid) a3
+                delta = 2*(a2-a1)
+                f3 = np.nan
+                while np.isnan(f3):                
+                    delta /= 2
+                    a3 = a2 + delta                
+                    f3,f_3,ux = func(a3,FUNJAC,u,free_ind,h_new)
+
+                print("\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
+
+                ready_for_brent = f3>0
+                if ready_for_brent:
+                    a1,f2,f_1 = a2,f2,f_2   
+                    a2,f2,f_2 = a3,f3,f_3       # from here it will go directly to brent's
+                min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
+
+                while not ready_for_brent and not min_found:
+                    parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
+                    if parab["zeros"] is not None:
+                        if parab["a"]>0:
+                            a0 = max(parab["zeros"])
+                        else:
+                            a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
+                        is_alpha_pos = a0>0
+
+                    # Make sure the parabola crosses X in ascending manner and that cross is at alpha>0.
+                    while parab["zeros"] is None or not is_alpha_pos:
+                        print("\tparabola not ready. Moving to right...")
+                        # Let's move to the right
+                        delta = 1.5*2*(a2-a1) # step 50% bigger each time and initially double cause will do at least one bisection
+                        a1 = a2
+                        f1 = f2
+
+                        a2 = a3
+                        f2 = f3
+
+                        # Compute (a valid) a3
+                        f3 = np.nan
+                        while np.isnan(f3):                
+                            delta /= 2
+                            a3 = a2 + delta                
+                            f3,f_3,ux = func(a3,FUNJAC,u,free_ind,h_new)
+
+                        ready_for_brent = f3>0
+                        # min_found = f3<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
+                        min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
+                        if ready_for_brent or min_found:
+                            a1,f2,f_1 = a2,f2,f_2   
+                            a2,f2,f_2 = a3,f3,f_3
+                            break
+
+                        print("\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
+                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
+
+                        if parab["zeros"] is not None:
+                            if parab["a"]>0:
+                                a0 = max(parab["zeros"])
+                            else:
+                                a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
+                            is_alpha_pos = a0>0
+
+                    if ready_for_brent or min_found:
+                        # this would mean they were found in the previous while loop
+                        break
+
+                    delta = 2*(a0-a3)
+                    f0 = np.nan
+                    while np.isnan(f0):
+                        delta /= 2
+                        a0 = a3 + delta
+                        f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
+                    
+                    ready_for_brent = f0>0
+                    min_found = abs(f0)<tol2 and (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new))
+                    print("\talphas:",[a1,a2,a3,a0],"\tf",[f1,f2,f3,f0])
+
+                    if min_found or ready_for_brent:
+                        a1,f2,f_1 = a3,f3,f_3
+                        a2,f2,f_2 = a0,f0,f_0
+                        break
+                    
+                    a1,f1,f_1 = a2,f2,f_2
+                    a2,f2,f_2 = a3,f3,f_3
+                    a3,f3,f_3 = a0,f0,f_0
+
+            
+            # set_trace()
+
+            ###########
+            # Brent's #
+            ###########
+            secant = False
+            if not min_found:
+                # print("\t## Performing BRENT ##\t[a,b]: [",a1,a2,"],\t(",f1,f2,")")
+                # a2 = brentq(lambda alpha:func(alpha,FUNJAC,u,free_ind,h_new,inBrent = True)[0],a1,a2,disp=True)
+                # f2, f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+                print("\t## Performing quadratic bisection search ##")
+                a3,f3,f_3 = a2,f2,f_2
+                
+                a2 = (a1+a3)/2
+                f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+                f0,f_0 = f1,f_1 # to enter the loop
+                
+                while not (abs(f0)<tol2 and (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new))):
+                    try:
+                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
+                    except:
+                        secant = True
+                        break
+                    
+                    if parab["zeros"] is None:
+                        secant = True
+                        break
+
+                    elif parab["a"]>0:
+                        a0 = max(parab["zeros"])
+                    else:
+                        a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
+                    f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
+                    print("\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
+
+                    if a0>a3:    # In this case f1,f2,f3 are all negative. since f0~0 and f is increasing in the interval
+                        a1,f1,f_1 = a2,f2,f_2
+                        a2,f2,f_2 = a3,f3,f_3
+                        a3,f3,f_3 = a0,f0,f_0
+
+                    elif a0>a2:      # In this case f1,f2<0,  f3>0
+                        if (a3-a0)/(a2-a1)>20:
+                            a3,f3,f_3 = a0,f0,f_0
+                            
+                        else:
+                            a1,f1,f_1 = a2,f2,f_2
+                            a2,f2,f_2 = a0,f0,f_0
+
+                    elif a0>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
+                        if (a3-a2)/(a0-a1)>20 or f0>0:
+                            a3,f3,f_3 = a2,f2,f_2
+                            a2,f2,f_2 = a0,f0,f_0
+                        else:
+                            a1,f1,f_1 = a0,f0,f_0
+
+                    else:
+                        # It shouldn't even reach here because f1<0 and f increases
+                        # set_trace()
+                        a3 = a2
+                        f3 = f2
+                        
+                        a2 = a1
+                        f2 = f1
+
+                        a1 = a0
+                        f1 = f0
+
+                if secant:
+                    print("\t## parabola failed. Finishing off with Secant method ##")
+                    print("Initially, we have:")
+                    print("\t\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
+
+                    icr_sec = 0
+
+                    while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))):
+                        if f2>0:
+                            a3,f3,f_3 = a2,f2,f_2.copy()
+                        else:
+                            a1,f1,f_1 = a2,f2,f_2.copy()
+
+                        a2 = (a1*f3 - a3*f1)/(f3-f1)
+                        f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+                        print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
+
+                        icr_sec +=1 
+                        if icr_sec>10: 
+                            print("\tmachine precision reached")
+                            break
+
+
+                else:
+                    a2,f2,f_2 = a0,f0,f_0
+
+
+
+
+            # m_3 = norm(f_3)
+            self.write_m_and_f(0.0,norm(f_2),iter)
+                       
+            delta_u = ux[free_ind] - u[free_ind]
+            u = ux
+
+            # if alpha<1:
+            #     set_trace()    
+
+
+
+            print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
 
         return u, m0, iter , norm(f_2)
 
@@ -1848,14 +2017,12 @@ class FEModel:
         return u, m_new, iter
 
 
-
     def write_m_and_f(self,m,f,iter,iter2a=0,iter2=0,case=0):
         for ic, ctct in enumerate(self.contacts):
             pchfile = self.output_dir+"ctct"+str(ic)+"iters_details.csv"
             with open(pchfile, 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow([self.t if iter==0 else None,[iter,iter2a,iter2,case],[m,f]]+ctct.patch_changes)
-
 
 
     def Energy(self,u):
@@ -1880,6 +2047,8 @@ class FEModel:
         return force
 
     def Energy_and_Force(self,u,show=False):
+        self.COUNTS[5] += 1
+
         if self.transform_2d is not None:
             Ns,Nt = self.transform_2d
             u = (Ns@Nt@u)
@@ -1930,7 +2099,6 @@ class FEModel:
         #     contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
 
 
-
     def solve_BFGS(self,tol=1e-10,maxiter=10,plotIters=False):
         u0=np.array(self.u)
         # MIN = minimize(self.Energy,u0,method='BFGS',jac=self.Force,options={'disp':False})
@@ -1952,10 +2120,8 @@ class FEModel:
             u0=np.array(self.u)
             fr = None
     
-        # MIN = minimize(self.Energy,u0,method='BFGS',jac=self.Force,options={'disp':False})
-        # self.u = MIN.x
-        # self.u, m_new, iter = self.BFGS_plastic(self.Energy_and_Force,u0)
-        self.u, m_new, iter,res = self.BFGS_plastic_diego2(self.Energy_and_Force,u0,free_ind = fr)
+        # self.u, m_new, iter,res = self.BFGS_plastic_Brent(self.Energy_and_Force,u0,free_ind = fr)
+        self.u, m_new, iter,res = self.BFGS_plastic_diego(self.Energy_and_Force,u0,free_ind = fr)
 
         if self.transform_2d is not None:
             self.u = (Ns@Nt@self.u)
@@ -1964,14 +2130,10 @@ class FEModel:
         return True,res
 
 
-
-
     def solve_TR_plastic(self,tol=1e-10,maxiter=10,plotIters=False):
         u0=np.array(self.u)
         self.u, m_new, iter = self.TR_plastic(self.Energy_and_Force,self.Hessian,u0)
         return True
-
-
 
 
     def residual(self, printRes = False):
@@ -1980,8 +2142,9 @@ class FEModel:
         return RES
 
 
-    def Solve(self, t0 = 0, tf = 1, TimeSteps = 1, max_iter=10 , recover = False, ForcedShift = False):
+    def Solve(self, t0 = 0, tf = 1, TimeSteps = 1, max_iter=10 , recover = False, ForcedShift = False, IterUpdate = False):
         self.ntstps = TimeSteps
+        self.IterUpdate = IterUpdate
         
         dt_base = (tf-t0)/TimeSteps; tolerance = 1e-10; ndof = len(self.X)
         t = t0 ; ti = 0
@@ -1998,13 +2161,11 @@ class FEModel:
         
         self.setReferences()
         skipBCs = False
-        tmp = 0
 
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den] = pickle.load(open("OUTPUT_202410141316pseudo2d/"+"RecoveryData.dat","rb"))
-            # self.REF,t, dt, ti,[num,den] = pickle.load(open("OUTPUT_202410081833pseudo2d/"+"RecoveryData.dat","rb"))
+            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410181909pseudo2d/"+"RecoveryData.dat","rb"))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)
@@ -2020,10 +2181,6 @@ class FEModel:
         DoMinimization = False
 
         redo_count = 0
-        residuals_incr = []
-        objectives_found = []
-        u_found_incr = []
-
         while t+dt < tf+1e-4:
             if ForcedShift:
                 rem = t%dt_base     # remaining time from previous time increment
@@ -2062,10 +2219,10 @@ class FEModel:
             if DoMinimization:
                 converged, res = self.solve_BFGS_plastic(tol=tolerance)
                 # converged = self.solve_TR_plastic(tol=tolerance)
+                self.COUNTS[2] += 1
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
             else:
                 converged, res = self.solve_NR(tol=tolerance,maxiter=max_iter)
-            # converged, res = self.solve_NR(tol=tolerance,maxiter=max_iter)
             actives_after_solving = list(self.contacts[0].actives)
 
             print("ACTIVE NODES:")
@@ -2090,11 +2247,10 @@ class FEModel:
                     # if int(round(dt_base/dt)) >= MaxBisect:
                     if den >= MaxBisect:
                         print("MAXIMUM BISECTION LEVEL (%s) REACHED:"%MaxBisect)
-                        # set_trace()
+                        # break
                         DoMinimization=True
                         csvwriter.writerow(['','','MINIMIZATION'])
                     else:
-                        # dt = dt/2
 
                         num = 2*num
                         den = 2*den
@@ -2103,19 +2259,16 @@ class FEModel:
                         dt = dt_base/den
 
                         print("BISECTION LEVEL: %s:"%int(round(dt_base/dt)))
-                        # if int(round(dt_base/dt))==64:set_trace()
                         print("dt/dt_base=",dt/dt_base)
                         csvwriter.writerow(['','','Cutback'])
-                tmp += 1
 
+                self.COUNTS[1] += 1
 
             else:
 
                 #############################
                 #### CONVERGED INCREMENT ####
                 #############################
-                # self.savefig(redo_count,azimut=[-90, -90],elevation=[0,0],distance=[0,0],times=[t0,t,tf],fintC=False,Hooks=True)
-
                 Redo = False
                 for ic, ctct in enumerate(self.contacts):
                     ctct.actives_prev.append(list(ctct.actives))
@@ -2140,16 +2293,6 @@ class FEModel:
                         if ctct.actives in ctct.actives_prev:
                             print("CYCLE DETECTED!!! --> Do Minimization")
                             DoMinimization = True
-                    # else:
-                    #     ctct.actives_prev.append(list(ctct.actives))
-
-                # # CYCLE DETECTION. TODO: Detect based on active set, not in residual. So that it doesn't computed again something repeated
-                # if res in residuals_incr:
-                #     ctct.SolveCycle()
-                # else:
-                #     residuals_incr.append(res)
-                #     u_found_incr.append(self.u.copy())
-
 
 
                 self.printContactStates(veredict=True)
@@ -2172,10 +2315,10 @@ class FEModel:
                     t-=dt
                     num -= 1
                     # skipBCs=True
-                    tmp += 1
                     # u_ref_redo = self.u.copy()
                     self.getReferences()
                     # self.u = u_ref_redo.copy()
+                    self.COUNTS[1] += 1
 
                     continue
 
@@ -2192,20 +2335,14 @@ class FEModel:
                 DoMinimization = False
 
                 redo_count = 0
-                residuals_incr = []
-                objectives_found = []
-                u_found_incr = []
-
-                for ib, body in enumerate(self.bodies):
-                    sed_incr = body.get_nodal_SED(self.u)
-                    self.SED[ib].append(sed_incr)
 
 
                 print("##################")
                 self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
-                # self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
 
-                self.setReferences()      
+                self.setReferences()   
+
+                self.COUNTS[0] += 1   
 
                 sBody = self.contacts[0].slaveBody
                 sNodes_diri = []
@@ -2213,9 +2350,20 @@ class FEModel:
                     if sBody.DoFs[node][0] in self.diri:
                         sNodes_diri.append(node)
                 self.saveNodalData(sBody.id, t, "fint", nodes = sNodes_diri, Sum=True)
-                # self.savedata(t,'u','bisect','Redos_due_to_kn_adjustment')
-                self.savedata(t,'u','bisect')
+                self.savedata(t,'u','bisect','Redos_due_to_kn_adjustment')
 
+
+
+
+                with open(self.output_dir+"SED.csv", 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                    csvwriter = csv.writer(csvfile)
+                    csvwriter.writerow(self.bodies[0].get_nodal_SED(self.u).ravel().tolist())
+
+                
+                if self.bodies[0].plastic_param[0]<1e20:        # If it is actually plastic
+                    with open(self.output_dir+"EPcum.csv", 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                        csvwriter = csv.writer(csvfile)
+                        csvwriter.writerow(self.bodies[0].EPcum.ravel().tolist())
 
 
 
@@ -2224,8 +2372,6 @@ class FEModel:
                 self.Redos_due_to_kn_adjustment = 0
 
                 if dt != dt_base:
-                    # ratio = t/dt_base - int((t-t0)/dt_base)
-                    # dt = dt_base/(float_to_fraction(ratio)[1])
                     fin = False
                     while fin==False:
                         if num%2==0:
@@ -2239,9 +2385,22 @@ class FEModel:
                     dt = dt_base/den
 
                 # saving:
-                pickle.dump([self.REF,t, dt, ti,[num,den]],open(self.output_dir+"RecoveryData.dat","wb"))
+                pickle.dump([self.REF,t, dt, ti,[num,den],self.COUNTS],open(self.output_dir+"RecoveryData.dat","wb"))
 
         else:
-            print(self.u)
-            print("Increments Redone : ",tmp)
+            print("\n\n############################")
+            print("### SIMULATION COMPLETED ###")
+            print("############################\n")
+
+        for val,count in zip(self.COUNTS,self.COUNTS_NAMES):
+            print(count+":\t",val)
+
+
+        with open(self.output_dir+"COUNTERS.csv", 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(self.COUNTS_NAMES)
+            csvwriter.writerow(self.COUNTS.tolist())
+
+
+
 

@@ -8,7 +8,6 @@ import time,csv
 
 
 from pdb import set_trace
-from thesis_sourcecode.src.model_training.surface_points_model_settings import SurfacePointsModelForOnePatch
 
 class GrgPatch:
     def __init__(self,surf,iquad, masterNodes = None):
@@ -22,9 +21,10 @@ class GrgPatch:
         self.X = self.surf.X[self.squad]
         self.eps = 1e-11             # treatment for undefined cases
 
-        # This part is added only for the ANN experiment:
-        name = f"final_surface_points_model_patch_{self.iquad}-shape-512-512-bs-64"
-        self.ANN_projection_model = SurfacePointsModelForOnePatch(name=name)
+        # # This part is added only for the ANN experiment:
+        # from thesis_sourcecode.src.model_training.surface_points_model_settings import SurfacePointsModelForOnePatch
+        # name = f"final_surface_points_model_patch_{self.iquad}-shape-512-512-bs-64"
+        # self.ANN_projection_model = SurfacePointsModelForOnePatch(name=name)
 
 
     def getLocals(self):

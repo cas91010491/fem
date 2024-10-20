@@ -1,11 +1,15 @@
 import sys
+# sys.modules['keras'] = None  # Prevent Keras from loading if it's not needed
+sys.modules['tensorflow'] = None  # Prevent TensorFlow if it's causing conflicts
 import os
 import pickle
+cwd = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(cwd+"/..")      #this will actually refer to the good FEAssembly.py file
+model = pickle.load(open(cwd + "/Model.dat", "rb"))
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
-cwd = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(cwd+"/..")      #this will actually refer to the good FEAssembly.py file
 from pdb import set_trace
 from PyClasses import FEModel
 from PyClasses.Utilities import plot_coords
@@ -145,9 +149,14 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False):
 
 
 # Load the FEModel object
-model = pickle.load(open(cwd + "/Model.dat", "rb"))
+# model = pickle.load(open(cwd + "/Model.dat", "rb"))
 
-model = pickle.load(open(cwd+"/Model.dat","rb"))
+# model = pickle.load(open(cwd + "/Model.dat", "rb"))
+
+
+with open(cwd + "/Model.dat", "rb") as file:
+    model = pickle.load(file)
+
 ptt = model.bodies[1]
 ndofs = 3*(len(model.bodies[0].X)+len(ptt.X))
 ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))

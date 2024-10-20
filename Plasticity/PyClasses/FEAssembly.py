@@ -351,11 +351,13 @@ class FEAssembly:
         return m
     
 
-
     def m_el_extra(self, hexa, u):
-        m = np.zeros(len(self.DoFs[hexa]))  # Initialize array to store nodal SED values
         X = self.X[hexa]
         u = u[self.DoFs[hexa]]
+
+        SED = np.zeros((8,))
+        NN = np.zeros((8,8))
+
 
         d1 = self.Youngsmodulus * self.Poissonsratio / (2 * (1 + self.Poissonsratio) * (1 - 2 * self.Poissonsratio))
         c10 = self.Youngsmodulus / (4 * (1 + self.Poissonsratio))
@@ -369,7 +371,7 @@ class FEAssembly:
                                                 [1, 1, 1],
                                                 [-1, 1, 1]])
 
-        for (g1, g2, g3) in gauss_points:
+        for g_i,(g1, g2, g3) in enumerate(gauss_points):
             dNd_xi = 1 / 8 * np.array([[-(1 - g2) * (1 - g3), -(1 - g1) * (1 - g3), -(1 - g1) * (1 - g2)],
                                     [(1 - g2) * (1 - g3), -(1 + g1) * (1 - g3), -(1 + g1) * (1 - g2)],
                                     [(1 + g2) * (1 - g3), (1 + g1) * (1 - g3), -(1 + g1) * (1 + g2)],
@@ -381,16 +383,15 @@ class FEAssembly:
 
             J = np.dot(dNd_xi.T, X)
             invJ = np.linalg.inv(J)
-            detJ = np.linalg.det(J)
 
             dNdx = np.dot(dNd_xi, invJ.T)
             F = np.eye(len(dNdx.T)) + np.dot(dNdx.T, u).T
             detF = np.linalg.det(F)
 
-            SED = c10 * (np.trace(F.T @ F) - 3 - 2 * np.log(detF)) + d1 * (np.log(detF))**2
+            SED[g_i] = c10 * (np.trace(F.T @ F) - 3 - 2 * np.log(detF)) + d1 * (np.log(detF))**2
 
             # Extrapolate the SED values to the nodes
-            N = 1 / 8 * np.array([(1 - g1) * (1 - g2) * (1 - g3),
+            NN[g_i] = 1 / 8 * np.array([(1 - g1) * (1 - g2) * (1 - g3),
                                 (1 + g1) * (1 - g2) * (1 - g3),
                                 (1 + g1) * (1 + g2) * (1 - g3),
                                 (1 - g1) * (1 + g2) * (1 - g3),
@@ -399,22 +400,62 @@ class FEAssembly:
                                 (1 + g1) * (1 + g2) * (1 + g3),
                                 (1 - g1) * (1 + g2) * (1 + g3)])
 
-            m += SED * detJ * N
+        return SED@np.linalg.inv(NN)
 
-        return m
+
+    def epcum_el_extra(self, hexa, epcum_gauss):
+        # Gauss points (standard positions for a 2x2x2 hexahedral element)
+        gauss_points = 1 / np.sqrt(3) * np.array([[-1, -1, -1],
+                                                [1, -1, -1],
+                                                [1, 1, -1],
+                                                [-1, 1, -1],
+                                                [-1, -1, 1],
+                                                [1, -1, 1],
+                                                [1, 1, 1],
+                                                [-1, 1, 1]])
+
+        # Here we store the 8 shape functions evaluated each in the 8 gauss points
+        NN = np.zeros((8,8))
+
+        # Loop over Gauss points and extrapolate EPCUM to element nodes
+        for gp, (g1, g2, g3) in enumerate(gauss_points):
+            # Shape functions evaluated at this Gauss point
+            NN[gp] = 1 / 8 * np.array([(1 - g1) * (1 - g2) * (1 - g3),
+                                (1 + g1) * (1 - g2) * (1 - g3),
+                                (1 + g1) * (1 + g2) * (1 - g3),
+                                (1 - g1) * (1 + g2) * (1 - g3),
+                                (1 - g1) * (1 - g2) * (1 + g3),
+                                (1 + g1) * (1 - g2) * (1 + g3),
+                                (1 + g1) * (1 + g2) * (1 + g3),
+                                (1 - g1) * (1 + g2) * (1 + g3)])
+
+        return epcum_gauss@np.linalg.inv(NN)
 
 
     def get_nodal_SED(self,u):
+
         if self.isRigid: return None
-        sed_tot = np.zeros((len(self.X),2))
+        sed_tot = np.zeros((len(self.X),2)) # the second number counts in how many hexas a given node has appeared. Based on that we un-average it, add the new energy and then average it back
 
         for hexa in self.hexas:
-            sed_tot[hexa,0] *= sed_tot[hexa,1]
-            sed_tot[hexa,1] += 1
-            sed_tot[hexa,0] += self.m_el_extra(hexa, u)
-            sed_tot[hexa,0] /= sed_tot[hexa,1]
+            sed_tot[hexa,0] *= sed_tot[hexa,1]              # Getting the sum of energies of hexas for those nodes (un-averageing)
+            sed_tot[hexa,1] += 1                            # count new hexa for those nodes
+            sed_tot[hexa,0] += self.m_el_extra(hexa, u)     # add the hexa energy to the total node energy
+            sed_tot[hexa,0] /= sed_tot[hexa,1]              # average it back
 
         return sed_tot[:,0]
+
+    def get_nodal_EPCUM(self, epcum_gauss_array):
+        # epcum_gauss_array is an array of shape (125, 8) with EPCUM at each Gauss point for each element
+        epcum_tot = np.zeros((len(self.X), 2))  # Second dimension counts how many hexas share the node
+
+        for el, hexa in enumerate(self.hexas):
+            epcum_tot[hexa, 0] *= epcum_tot[hexa, 1]              # Un-average previous values
+            epcum_tot[hexa, 1] += 1                               # Count how many hexas contribute to this node
+            epcum_tot[hexa, 0] += self.epcum_el_extra(hexa, epcum_gauss_array[el])  # Extrapolate and add EPCUM from this element
+            epcum_tot[hexa, 0] /= epcum_tot[hexa, 1]              # Average the new values
+
+        return epcum_tot[:, 0]
 
     def fint_el_classic(self,hexa,u):
         fint_el_tens = np.zeros((8,3),dtype=float)

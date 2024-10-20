@@ -1,0 +1,9 @@
+Newton maxiter: 100
+Maxbisection:	1e20
+
+Base rigid
+
+Deformable block: 
+Youngsmodulus	= 0.05
+Poisson		= 0.3
+

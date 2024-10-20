@@ -1,0 +1,268 @@
+Newton maxiter: 15
+Maxbisection:	1e10
+
+Base rigid
+
+Deformable block: 
+Youngsmodulus	= 0.05
+Poisson		= 0.3
+
+
+
+
+    def BFGS_plastic_diego(self,FUNJAC, u0, tol = 1e-10, tol2 = 1e-15, free_ind = None):
+        alpha_init = 1
+        c_par2 = 0.95
+
+        if free_ind is None:
+            free_ind = self.free
+
+        
+        nfr = len(free_ind)
+
+        f , m_new = FUNJAC(u0)
+
+        u = u0.copy()
+        f_2 = f[free_ind]
+        m_new = norm(f_2)
+        self.write_m_and_f(m_new,norm(f),0)
+        K_new_inv = np.eye(nfr)
+        f_new = np.zeros(nfr)
+        m0 = 0
+
+        
+        for ctct in self.contacts:
+            ctct.patch_changes = []
+
+        iter = 0
+        alpha = alpha_init
+        while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
+            self.COUNTS[4] += 1
+
+
+            iter += 1
+            f_old = f_new.copy()
+            f_new = f_2.copy()
+            K_old_inv = K_new_inv.copy()
+            delta_f = f_new - f_old
+
+            if iter>1:
+                if not np.isfinite(norm(h_new)):
+                    set_trace()
+
+
+            if iter == 1:
+                h_new = -np.dot(K_old_inv, f_new)
+            else:
+                K_new_inv = K_old_inv + ((np.inner(delta_u, delta_f) + np.inner(delta_f, np.dot(K_old_inv, delta_f)))*(np.outer(delta_u,delta_u)))/ (np.dot(delta_u, delta_f) ** 2)- (np.outer(np.dot(K_old_inv, delta_f),delta_u) + np.inner(np.outer(delta_u, delta_f),K_old_inv)) / np.dot(delta_u, delta_f)
+                h_new = -np.dot(K_new_inv, f_new)
+
+           
+            if not np.isfinite(norm(h_new)):
+                set_trace()
+
+            m_new = abs(h_new@f_new)
+
+            a1 = 0
+            f1 = h_new@f_new
+
+            # compute f3 ensuring that it is a finite number
+            f3 = np.nan
+            a3 = 2*alpha_init
+            while not np.isfinite(norm(f3)):
+                a3 /= 2
+                ux = u.copy()
+                ux[free_ind] = u[free_ind] + a3*h_new
+                f , _ = FUNJAC(ux)
+                f_3 = f[free_ind]
+                f3 = h_new@f_3
+
+
+            a2 = 0.5*(a1+a3)
+            ux = u.copy()
+            ux[free_ind] = u[free_ind] + a2*h_new
+            f , _ = FUNJAC(ux)
+            f_2 = f[free_ind]
+            f2 = h_new@f_2
+
+            # In case of concavity (in 'm'), push from the left until convex
+            while not f1<f2<f3 and max([abs(f1),abs(f2),abs(f3)])>1e-25:
+                parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
+
+                if parab["a"] <0:
+                    # print("\t...but parab.a <0")
+                    break
+                
+                if parab['zeros'] is None:      # this is the begining of 'f' is concave itself. We move to the right
+                    delta = a2-a1
+
+                    a1 = a2
+                    f1 = f2
+
+                    a2 = a3 
+                    f2 = f3
+
+                    a3 += 1.5*delta
+                    ux = u.copy()
+                    ux[free_ind] = u[free_ind] + a3*h_new
+                    f , _ = FUNJAC(ux)
+                    f_3 = f[free_ind]
+                    f3 = h_new@f_3
+
+                    continue
+
+                alpha_to_min  = parab['minimum'][0]
+                ux = u.copy()
+                ux[free_ind] = u[free_ind] + alpha_to_min*h_new
+                f , _ = FUNJAC(ux)
+                f_m = f[free_ind]
+                fm = h_new@f_m
+
+                print("\tFrom Left: \talphas:",[a1,a2,a3],"\tf",[f1,f2,f3],"\tam:",alpha_to_min, "\tf0:",fm)
+
+                if alpha_to_min>a3:
+
+                    a1 = a2
+                    f1 = f2
+
+                    a2 = a3
+                    f2 = f3
+
+                    a3 = alpha_to_min
+                    f3 = fm
+
+                elif alpha_to_min>a2:
+
+                    a1 = a2
+                    f1 = f2
+
+                    a2 = alpha_to_min
+                    f2 = fm
+
+                else:
+                    a1 = alpha_to_min
+                    f1 = fm
+
+
+            f0 = 100
+            f_0 = f_3
+
+            while f0>1e-12 or not (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new)):
+
+
+                # To avoid cases like: [0.0, 8.0e-4, 8.1e-4] [-600000, 1.0e-6,1.1e-6]. Solution: put a2 more in the middle 
+                slope_change = (f2-f1)/(f3-f2)
+                while slope_change>1000 and max([abs(f1),abs(f2),abs(f3)])>1e-15:
+                    a2=(a1+a2)/2
+                    ux = u.copy()
+                    ux[free_ind] = u[free_ind] + a2*h_new
+                    f , _ = FUNJAC(ux)
+                    f_2 = f[free_ind]
+                    f2 = h_new@f_2
+                    print("Too much slope change!!\ta2:",a2,"\tf2:",f2)
+
+                    slope_change = (f3-f2)/(f2-f1)
+
+                try:
+                    parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
+
+                    if parab['zeros'] is None:      # this is the begining of 'f' is concave itself. We move to the right
+                        delta = a2-a1
+
+                        a1 = a2
+                        f1 = f2
+
+                        a2 = a3
+                        f2 = f3
+
+                        a3 += delta
+                        ux = u.copy()
+                        ux[free_ind] = u[free_ind] + a3*h_new
+                        f , _ = FUNJAC(ux)
+                        f_3 = f[free_ind]
+                        f3 = h_new@f_3
+
+                        continue
+                    
+                    if parab["a"]>0:
+                        alpha_to_zero = max(parab['zeros'])
+                    else:
+                        alpha_to_zero = min(parab['zeros'])
+
+                except:
+                    alpha_to_zero = (f1*a3-f3*a1)/(f1-f3)
+
+                ux = u.copy()
+                ux[free_ind] = u[free_ind] + alpha_to_zero*h_new
+                f , m0 = FUNJAC(ux)
+                f_0 = f[free_ind]
+                f0 = h_new@f_0
+
+                print("\tFrom Right: \talphas:",[a1,a2,a3],"\tf",[f1,f2,f3],"\ta0:",alpha_to_zero, "\tf0:",f0)
+
+
+                if alpha_to_zero>a3:    # In this case f1,f2,f3 are all negative. since f0=0 and f is increasing in the interval
+
+                    a1 = a2
+                    f1 = f2
+
+                    a2 = a3
+                    f2 = f3
+
+                    a3 = alpha_to_zero
+                    f3 = f0
+
+                elif alpha_to_zero>a2:      # In this case f1,f2<0,  f3>0
+
+                    if (a3-alpha_to_zero)/(alpha_to_zero-a2)>20:
+                        a3 = alpha_to_zero
+                        f3 = f0
+                        
+                    else:
+                        a1 = a2
+                        f1 = f2
+
+                        a2 = alpha_to_zero
+                        f2 = f0
+
+
+                elif alpha_to_zero>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
+
+                    if (a2-alpha_to_zero)/(alpha_to_zero-a1)>20 or f0>0:
+                        a3 = a2
+                        f3 = f2
+                        
+                        a2 = alpha_to_zero
+                        f2 = f0
+                    else:
+                        a1 = alpha_to_zero
+                        f1 = f0
+
+                else:
+                    # It shouldn't even reach here because f1<0 and f increases
+                    a3 = a2
+                    f3 = f2
+                    
+                    a2 = a1
+                    f2 = f1
+
+                    a1 = alpha_to_zero
+                    f1 = f0
+
+                
+            alpha = alpha_to_zero
+            f_2 = f_0
+            m_2 = f0
+
+            print("\tFinally: \talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
+
+
+            self.write_m_and_f(m_2,norm(f_2),iter)
+                       
+            delta_u = ux[free_ind] - u[free_ind]
+            u = ux
+
+
+            print("alpha:",alpha,"\t|f2|:",norm(f_2))
+
+        return u, m0, iter , norm(f_2)

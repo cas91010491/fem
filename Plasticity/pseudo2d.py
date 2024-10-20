@@ -18,7 +18,8 @@ from time import time
 os.chdir(sys.path[0])
 
 # BLOCK
-mesh_blk   = meshio.read("../Meshes/Block_pseudo2d.msh")
+# mesh_blk   = meshio.read("../Meshes/Block_pseudo2d.msh")
+mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_finer.msh")
 X_blk     = mesh_blk.points
 hexas_blk = mesh_blk.cells_dict['hexahedron']
 blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
@@ -38,8 +39,10 @@ pickle.dump([base],open("Base2dAssembly.dat","wb"))
 base.isRigid = True     # faster solving when True
 base_top = base.SelectFlatSide("+z")
 # Bump in the middle
-base.X[21,2] += 0.5
-base.X[39,2] += 0.5
+# base.X[21,2] += 0.5
+# base.X[39,2] += 0.5
+base.X[21,2] += 0.45
+base.X[39,2] += 0.45
 
 ndofs = 3*(len(X_blk)+len(base.X))
 
@@ -52,6 +55,12 @@ ndofs = 3*(len(X_blk)+len(base.X))
 blk_bottom  = blk.SelectFlatSide("-z")
 blk_top     = blk.SelectFlatSide("+z")
 lead_face = blk.SelectFlatSide("-y")
+front_face = blk.SelectFlatSide("+y")
+
+
+blk.X[lead_face,1] = -0.05
+blk.X[front_face,1] = 0.05
+
 
 slave_nodes = list(set(blk_bottom).intersection(set(lead_face)))
 blk_top     = list(set(blk_top   ).intersection(set(lead_face)))
@@ -88,22 +97,26 @@ N = [Ns,Nt]
 
 ### BOUNDARY CONDITIONS ###  [body, nodes, type, directions, values, times(*)]
 cond_bd1 = [base, base.SelectAll(), "dirichlet", "xyz", [0.0, 0.0, 0.0]              ]      # Base: static and rigid
-cond_bd2 = [blk , blk_top         , "dirichlet",  "xz", [0.0, 0.0,-0.25], [0.0, 0.2] ]      # Block: Indentation
-cond_bd3 = [blk , blk_top         , "dirichlet",  "xz", [6.0, 0.0, 0.0], [0.2, 1.0]  ]      # Block: Displacement
-cond_bd4 = [blk , blk.SelectAll() , "dirichlet",   "y", [0.0, 0.0,0.0]               ]      # Block: Symmetry
+# cond_bd2 = [blk , blk_top         , "dirichlet",  "xz", [0.0, 0.0,-0.25], [0.0, 0.2] ]      # Block: Indentation
+# cond_bd3 = [blk , blk_top         , "dirichlet",  "xz", [6.0, 0.0, 0.0], [0.2, 1.0]  ]      # Block: Displacement
+cond_bd2 = [blk , blk_top         , "dirichlet",  "xz", [0.0, 0.0,-0.25], [0.0, 0.1] ]      # Block: Indentation
+cond_bd3 = [blk , blk_top         , "dirichlet",  "xz", [6.0, 0.0, 0.0 ], [0.1, 0.9] ]      # Block: Displacement
+cond_bd4 = [blk , blk_top         , "dirichlet",  "xz", [0.0, 0.0, 0.25], [0.9, 1.0 ] ]      # Block: Indentation
 
-BCs = [cond_bd1, cond_bd2,cond_bd3,cond_bd4]
+cond_bd5 = [blk , blk.SelectAll() , "dirichlet",   "y", [0.0, 0.0,0.0]               ]      # Block: Symmetry
+
+BCs = [cond_bd1, cond_bd2,cond_bd3,cond_bd4, cond_bd5]
 
 
 ### CONTACTS ###            # [body, nodes]
 # # For cases where sides enter into contact, uncomment this:
-# slave_x_minus = list(set(blk.SelectFlatSide("-x")).intersection(set(lead_face)))
-# slave_x_plus  = list(set(blk.SelectFlatSide("+x")).intersection(set(lead_face)))
-# slave_nodes = list(set(slave_nodes+slave_x_plus+slave_x_minus))
+slave_x_plus  = list(set(blk.SelectFlatSide("+x")).intersection(set(lead_face)))
+slave_x_plus  = list(set(blk.SelectLowerThan("z",3.0)).intersection(set(slave_x_plus)))
+slave_nodes = list(set(slave_nodes+slave_x_plus))
 slave  = [blk , slave_nodes    ]
 master = [base, base_top]
 
-contact1 = Contact(slave, master, kn=1e4, C1Edges = True, maxGN = 1e-5)       # (slave, master) inputs can be surfaces as well
+contact1 = Contact(slave, master, kn=1e3, C1Edges = True, maxGN = 1e-5)       # (slave, master) inputs can be surfaces as well
 
 
 ### MODEL ###
@@ -125,7 +138,8 @@ base.surf.ComputeGrgPatches(np.zeros(ndofs),base_top,exactNodesGiven=True)
 
 t0 = time()
 
-model.Solve(TimeSteps=100, recover=False, ForcedShift=False,max_iter=15)
+# model.Solve(TimeSteps=100, recover=True,max_iter=15, IterUpdate = False)
+model.Solve(TimeSteps=100, recover=False,max_iter=15, IterUpdate = False)
 
 print("this took",time()-t0,"seconds to compute")
 

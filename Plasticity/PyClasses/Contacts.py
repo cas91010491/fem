@@ -8,9 +8,9 @@ import concurrent.futures
 
 from pdb import set_trace
 
-from thesis_sourcecode.src.model_training.patch_model_settings import PatchClassificationModel
-from thesis_sourcecode.src.model_training.surface_points_model_settings import SurfacePointsModelForOnePatch
-from thesis_sourcecode.src.model_training.signed_distance_model_settings import SignedDistanceModel
+# from thesis_sourcecode.src.model_training.patch_model_settings import PatchClassificationModel
+# from thesis_sourcecode.src.model_training.surface_points_model_settings import SurfacePointsModelForOnePatch
+# from thesis_sourcecode.src.model_training.signed_distance_model_settings import SignedDistanceModel
 
 
 class Contact:

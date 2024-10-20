@@ -1,0 +1,15 @@
+Newton maxiter: 100
+Maxbisection:	1e20
+
+Base rigid
+
+Deformable block: 
+Youngsmodulus	= 0.05
+Poisson		= 0.3
+
+
+For adaptive case:
+kn0 = 1.0
+stiffening coeff: 	1.1
+unstiff coeff:		0.9
+
