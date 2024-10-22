@@ -18,8 +18,9 @@ from time import time
 os.chdir(sys.path[0])
 
 # BLOCK
-# mesh_blk   = meshio.read("../Meshes/Block_pseudo2d.msh")
-mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_finer.msh")
+# mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_5.msh")
+mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_10.msh")
+# mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_15.msh")
 X_blk     = mesh_blk.points
 hexas_blk = mesh_blk.cells_dict['hexahedron']
 blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
@@ -39,10 +40,18 @@ pickle.dump([base],open("Base2dAssembly.dat","wb"))
 base.isRigid = True     # faster solving when True
 base_top = base.SelectFlatSide("+z")
 # Bump in the middle
-# base.X[21,2] += 0.5
-# base.X[39,2] += 0.5
-base.X[21,2] += 0.45
-base.X[39,2] += 0.45
+base.X[21,2] += 0.5
+base.X[39,2] += 0.5
+
+# base.X[21,2] += 0.25
+# base.X[39,2] += 0.25
+# base.X[22,2] -= 0.25
+# base.X[40,2] -= 0.25
+
+
+
+# base.X[21,2] += 0.45
+# base.X[39,2] += 0.45
 
 ndofs = 3*(len(X_blk)+len(base.X))
 
@@ -58,8 +67,8 @@ lead_face = blk.SelectFlatSide("-y")
 front_face = blk.SelectFlatSide("+y")
 
 
-blk.X[lead_face,1] = -0.05
-blk.X[front_face,1] = 0.05
+# blk.X[lead_face,1] = -0.05
+# blk.X[front_face,1] = 0.05
 
 
 slave_nodes = list(set(blk_bottom).intersection(set(lead_face)))
@@ -109,8 +118,8 @@ BCs = [cond_bd1, cond_bd2,cond_bd3,cond_bd4, cond_bd5]
 
 
 ### CONTACTS ###            # [body, nodes]
-# # For cases where sides enter into contact, uncomment this:
-slave_x_plus  = list(set(blk.SelectFlatSide("+x")).intersection(set(lead_face)))
+# For cases where sides enter into contact, uncomment this:
+slave_x_plus  = list(set(blk.SelectFlatSide("+x")+blk.SelectFlatSide("-x")).intersection(set(lead_face)))
 slave_x_plus  = list(set(blk.SelectLowerThan("z",3.0)).intersection(set(slave_x_plus)))
 slave_nodes = list(set(slave_nodes+slave_x_plus))
 slave  = [blk , slave_nodes    ]

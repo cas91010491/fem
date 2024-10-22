@@ -162,13 +162,14 @@ class Surface:
 
         for ipatch, patch in enumerate(self.patches):
             if patch!=None:
+                wire = True
                 if specialPatches!= None and ipatch in specialPatches[1]:
                 # if specialPatches=="all":
-                    patch.plot(axis, color = specialPatches[0], ref=ref)
+                    patch.plot(axis, color = specialPatches[0], ref=ref,wire = wire)
                 elif almostSpecialPatches!= None and ipatch in almostSpecialPatches[1]:
-                    patch.plot(axis, color = almostSpecialPatches[0], ref=ref)
+                    patch.plot(axis, color = almostSpecialPatches[0], ref=ref,wire = wire)
                 else:
-                    quadsurf = patch.plot(axis, color = (.5,.5,.5,0.3), ref=ref)           # Inactive part of master
+                    quadsurf = patch.plot(axis, color = (.5,.5,.5,0.3), ref=ref,wire=wire)           # Inactive part of master
             elif not onlyMaster:
                 # color = (.5,.5,.5,0.6) if sed is None else sed[self.body.hexas[ipatch]]
                 quad = self.quads[ipatch]
@@ -220,11 +221,12 @@ class Surface:
             face_colors = cmap(color)
             face_colors[:,:,3] = 1.0           
             quadsurf = axis.plot_surface(x, y, z, facecolors=face_colors,
-                                          rstride=1, cstride=1, linewidth=0, 
-                                          antialiased=False,zorder=1000,)
+                                          rstride=1, cstride=1, linewidth=1, 
+                                          antialiased=False,zorder=1000000,edgecolor='black')
         else:
-            quadsurf = axis.plot_surface(x, y, z, color=color)
+            quadsurf = axis.plot_surface(x, y, z, color=color,edgecolor='k',lw=0.2)
         return quadsurf
+    
 
 
     def ColorInterpolation(self,colors4,ti,tj,ref):
@@ -274,7 +276,8 @@ class Surface:
             for color in list(special.keys()):
                 if special!=None and node in special[color]:
                     x = np.array(u[self.body.DoFs[node]])+ np.array(self.X[node])
-                    axis.scatter(x[0],x[1],x[2], color=color, s = 0.25)    #redundancy between color and special (nothing too serious)
+                    # axis.scatter(x[0],x[1],x[2], color=color, s = 0.25)    #redundancy between color and special (nothing too serious)
+                    axis.scatter(x[0],x[1],x[2], color=color, s = 1.5,zorder=10e100)    #redundancy between color and special (nothing too serious)
 
 
     def quadSize(self,iquad,u):

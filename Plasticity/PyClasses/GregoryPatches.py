@@ -3580,7 +3580,7 @@ class GrgPatch:
         if surf:
             plotObj = axis.plot_surface(x, y, z, color=color,edgecolors=None)
         if wire:
-            axis.plot_wireframe(x, y, z, color="black")
+            axis.plot_wireframe(x, y, z, color="black",lw=0.4)
 
         if label:
             # xm,ym,zm =(np.mean(x[np.ix_([0,-1])][:,np.ix_([0,-1])]),
