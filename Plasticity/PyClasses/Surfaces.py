@@ -165,9 +165,9 @@ class Surface:
                 wire = True
                 if specialPatches!= None and ipatch in specialPatches[1]:
                 # if specialPatches=="all":
-                    patch.plot(axis, color = specialPatches[0], ref=ref,wire = wire)
+                    quadsurf = patch.plot(axis, color = specialPatches[0], ref=ref,wire = wire)
                 elif almostSpecialPatches!= None and ipatch in almostSpecialPatches[1]:
-                    patch.plot(axis, color = almostSpecialPatches[0], ref=ref,wire = wire)
+                    quadsurf = patch.plot(axis, color = almostSpecialPatches[0], ref=ref,wire = wire)
                 else:
                     quadsurf = patch.plot(axis, color = (.5,.5,.5,0.3), ref=ref,wire=wire)           # Inactive part of master
             elif not onlyMaster:
@@ -222,7 +222,7 @@ class Surface:
             face_colors[:,:,3] = 1.0           
             quadsurf = axis.plot_surface(x, y, z, facecolors=face_colors,
                                           rstride=1, cstride=1, linewidth=1, 
-                                          antialiased=False,zorder=1000000,edgecolor='black')
+                                          antialiased=False,zorder=1000000,edgecolor='k')
         else:
             quadsurf = axis.plot_surface(x, y, z, color=color,edgecolor='k',lw=0.2)
         return quadsurf

@@ -17,7 +17,7 @@ from numba import njit      # This makes Berntein, dBernstein,... much much fast
 #             dx = 0
 #             while x[0] + dx
 
-def quadratic_fit_min_zeros(points):
+def quadratic_fit_min_zeros_noErrors(points):
     """
     Given three points, this function returns the minimum (vertex)
     and zeros (roots) of the quadratic equation that fits these points.
@@ -58,6 +58,65 @@ def quadratic_fit_min_zeros(points):
         "b":b,
         "c":c,
     }
+
+import numpy as np
+
+def quadratic_fit_min_zeros(points):
+    """
+    Given three points, this function returns the minimum (vertex)
+    and zeros (roots) of the quadratic equation that fits these points.
+    
+    Raises ValueError if invalid values (e.g., division by zero or
+    negative discriminants) are encountered.
+    
+    :param points: A list of three tuples, each representing a point (x, y)
+    :return: A dictionary with the minimum point and zeros (roots)
+    """
+    # Create matrices for the system of equations
+    X = np.array([
+        [points[0][0]**2, points[0][0], 1],
+        [points[1][0]**2, points[1][0], 1],
+        [points[2][0]**2, points[2][0], 1]
+    ])
+
+    Y = np.array([points[0][1], points[1][1], points[2][1]])
+
+    # Solve for coefficients [a, b, c]
+    try:
+        a, b, c = np.linalg.solve(X, Y)
+    except np.linalg.LinAlgError as e:
+        raise ValueError("The points do not define a valid quadratic equation.") from e
+
+    # Check for division by zero before calculating the vertex
+    if a == 0:
+        raise ValueError("Coefficient 'a' is zero, this is not a valid quadratic function.")
+
+    # Find the minimum (vertex of the parabola)
+    x_min = -b / (2 * a)
+    y_min = a * x_min**2 + b * x_min + c
+    min_point = (x_min, y_min)
+
+    # Find the zeros (roots) using the quadratic formula
+    discriminant = b**2 - 4 * a * c
+    if discriminant < 0:
+        raise ValueError("The discriminant is negative, no real roots exist.")
+
+    # Check for division by zero when calculating the roots
+    try:
+        x_zero1 = (-b + np.sqrt(discriminant)) / (2 * a)
+        x_zero2 = (-b - np.sqrt(discriminant)) / (2 * a)
+        zeros = (x_zero1, x_zero2)
+    except ZeroDivisionError as e:
+        raise ValueError("Division by zero encountered while calculating the roots.") from e
+
+    return {
+        "minimum": min_point,
+        "zeros": zeros,
+        "a": a,
+        "b": b,
+        "c": c,
+    }
+
 
 def relDiff(A,B, disp=False, tol=1e-10, reciproc=True):
     "Computes the relative difference between matrices"

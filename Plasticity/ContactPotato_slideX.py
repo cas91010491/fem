@@ -17,8 +17,10 @@ from time import time
 os.chdir(sys.path[0])
 
 # BLOCK
-mesh_blk   = meshio.read("../Meshes/Cubes/cube5x5x5side4.msh")
-# mesh_blk   = meshio.read("../Meshes/Cubes/cube3x3x3side4.msh")
+# mesh_blk   = meshio.read("../Meshes/Cubes/cube5x5x5.msh")
+mesh_blk   = meshio.read("../Meshes/Cubes/cube10x10x10.msh")
+# mesh_blk   = meshio.read("../Meshes/Cubes/cube15x15x15.msh")
+
 X_blk     = mesh_blk.points
 hexas_blk = mesh_blk.cells_dict['hexahedron']
 blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
@@ -53,7 +55,7 @@ ptt_highernodes = ptt.SelectHigherThan("z", val = 0.5, Strict = True,OnSurface =
 
 ### BOUNDARY CONDITIONS ###  [body, nodes, type, directions, values, times(*)]
 cond_bd1 = [ptt, ptt.SelectAll(), "dirichlet", "xyz"  , [0.0, 0.0, 0.0] ]
-cond_bd2 = [blk, blk_top   , "dirichlet", "xyz"  , [8.0, 0.0,0.0] ]
+cond_bd2 = [blk, blk_top   , "dirichlet", "xyz"  , [12.0, 0.0,0.0] ]
 
 
 BCs = [cond_bd1, cond_bd2]
@@ -83,7 +85,7 @@ ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
 
 t0 = time()
 
-model.Solve(TimeSteps=100, recover=True, ForcedShift=False,max_iter=100)
+model.Solve(TimeSteps=100, recover=True, ForcedShift=False,max_iter=20)
 
 print("this took",time()-t0,"seconds to compute")
 

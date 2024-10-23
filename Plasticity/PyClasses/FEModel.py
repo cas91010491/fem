@@ -132,7 +132,7 @@ class FEModel:
         ax.set_zlim3d(-2, 2)
         plt.show(block = block)
 
-    def savefig(self, increment, iteration = None,  elevation=[ 30 , 30], azimut=[-135 , -135], distance = [10, 10], times = None, dpi = 200, fintC = False, Hooks= False, u = None,simm_time=None):
+    def savefig(self, increment, iteration = None,  elevation=[ 30 , 30], azimut=[-45 , -45], distance = [10, 10], times = None, dpi = 200, fintC = False, Hooks= False, u = None,simm_time=None):
         #PLOT OPTIONS
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -150,11 +150,14 @@ class FEModel:
         ax.set_xlim3d((cx-hg, cx+hg))
         ax.set_ylim3d((cy-hg, cy+hg))
         # ax.set_zlim3d((cz-0.8*hg, cz+0.8*hg))
-        ax.set_zlim3d((0.0, 5.0))
+        ax.set_zlim3d((0, 5))
+
+        # # 3d Example:
+        # ax.set_xlim3d((-2, 14))
+        # ax.set_ylim3d((-4, 4))
+        # ax.set_zlim3d((-2, 6))
+
         ax.set_aspect("equal")
-        # ax.xaxis._axinfo["grid"].update({"linewidth":0.1, "color" : "gray",'linestyle':":"})
-        # ax.yaxis._axinfo["grid"].update({"linewidth":0.1, "color" : "gray",'linestyle':":"})
-        # ax.zaxis._axinfo["grid"].update({"linewidth":0.1, "color" : "gray",'linestyle':":"})
         ax.xaxis._axinfo["grid"].update({"linewidth":0.1, "color" : "gray"})
         ax.yaxis._axinfo["grid"].update({"linewidth":0.1, "color" : "gray"})
         ax.zaxis._axinfo["grid"].update({"linewidth":0.1, "color" : "gray"})
@@ -1068,9 +1071,7 @@ class FEModel:
         return u, m_new, iter
 
     def BFGS_plastic_diego(self,FUNJAC, u0, tol = 1e-10, tol2 = 1e-13, free_ind = None,ti = None,simm_time = None):
-        Ns,Nt = self.transform_2d
-
-
+        
         # alpha_init = 0.01
         alpha_init = 1
         c_par2 = 0.9
@@ -1190,8 +1191,12 @@ class FEModel:
 
 
 
+            ###################
+            ### LINE SEARCH ###
+            ###################
             a1 = 0
             f1 = h_new@f_new
+            f_1 = f_new
 
             tol2 = abs(f1)/100
 
@@ -1201,13 +1206,13 @@ class FEModel:
                 a2 /= 2
                 f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
 
-            ready_for_brent = f2>0
+            ready_to_bisect = f2>0
             min_found = abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))
 
 
             print("\talphas:",[a1,a2],"\tf",[f1,f2])
 
-            if not ready_for_brent and not min_found:
+            if not ready_to_bisect and not min_found:
 
                 # Compute (a valid) a3
                 delta = 2*(a2-a1)
@@ -1219,20 +1224,24 @@ class FEModel:
 
                 print("\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
 
-                ready_for_brent = f3>0
-                if ready_for_brent:
+                ready_to_bisect = f3>0
+                if ready_to_bisect:
                     a1,f2,f_1 = a2,f2,f_2   
-                    a2,f2,f_2 = a3,f3,f_3       # from here it will go directly to brent's
+                    a2,f2,f_2 = a3,f3,f_3       # from here it will go directly to bisection
                 min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
 
-                while not ready_for_brent and not min_found:
-                    parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
-                    if parab["zeros"] is not None:
+                while not ready_to_bisect and not min_found:
+
+                    try:
+                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])  # if singular or no-zeros, goes to 'except'
                         if parab["a"]>0:
                             a0 = max(parab["zeros"])
                         else:
                             a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
                         is_alpha_pos = a0>0
+                    except:
+                        parab = {'zeros':None}
+                        is_alpha_pos = False # This will force to search to the right (in while loop below)
 
                     # Make sure the parabola crosses X in ascending manner and that cross is at alpha>0.
                     while parab["zeros"] is None or not is_alpha_pos:
@@ -1252,25 +1261,27 @@ class FEModel:
                             a3 = a2 + delta                
                             f3,f_3,ux = func(a3,FUNJAC,u,free_ind,h_new)
 
-                        ready_for_brent = f3>0
+                        ready_to_bisect = f3>0
                         # min_found = f3<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
                         min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
-                        if ready_for_brent or min_found:
+                        if ready_to_bisect or min_found:
                             a1,f2,f_1 = a2,f2,f_2   
                             a2,f2,f_2 = a3,f3,f_3
                             break
 
                         print("\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
-                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
-
-                        if parab["zeros"] is not None:
+                        try:
+                            parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])  # if singular or no-zeros, goes to 'except'
                             if parab["a"]>0:
                                 a0 = max(parab["zeros"])
                             else:
                                 a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
                             is_alpha_pos = a0>0
+                        except:
+                            parab = {'zeros':None}
+                            is_alpha_pos = False # This will force to search to the right (in while loop below)
 
-                    if ready_for_brent or min_found:
+                    if ready_to_bisect or min_found:
                         # this would mean they were found in the previous while loop
                         break
 
@@ -1281,11 +1292,11 @@ class FEModel:
                         a0 = a3 + delta
                         f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
                     
-                    ready_for_brent = f0>0
+                    ready_to_bisect = f0>0
                     min_found = abs(f0)<tol2 and (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new))
                     print("\talphas:",[a1,a2,a3,a0],"\tf",[f1,f2,f3,f0])
 
-                    if min_found or ready_for_brent:
+                    if min_found or ready_to_bisect:
                         a1,f2,f_1 = a3,f3,f_3
                         a2,f2,f_2 = a0,f0,f_0
                         break
@@ -1295,16 +1306,12 @@ class FEModel:
                     a3,f3,f_3 = a0,f0,f_0
 
             
-            # set_trace()
 
-            ###########
-            # Brent's #
-            ###########
+            #############
+            # Bisection #
+            #############
             secant = False
             if not min_found:
-                # print("\t## Performing BRENT ##\t[a,b]: [",a1,a2,"],\t(",f1,f2,")")
-                # a2 = brentq(lambda alpha:func(alpha,FUNJAC,u,free_ind,h_new,inBrent = True)[0],a1,a2,disp=True)
-                # f2, f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
 
                 print("\t## Performing quadratic bisection search ##")
                 a3,f3,f_3 = a2,f2,f_2
@@ -1313,10 +1320,18 @@ class FEModel:
                 f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
 
                 f0,f_0 = f1,f_1 # to enter the loop
-                
+
+                qbs_iter = 0
                 while not (abs(f0)<tol2 and (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new))):
+                    qbs_iter += 1
+
+                    if qbs_iter>20 and f2>0:
+                        secant = True
+                        break
+
+
                     try:
-                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])
+                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])  # if singular or no-zeros, goes to 'except'
                         if parab["a"]>0:
                             a0 = max(parab["zeros"])
                         else:
@@ -1366,9 +1381,8 @@ class FEModel:
                     print("\tInitially, we have:")
                     print("\t\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
 
-                    icr_sec = 0
-
-                    while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))):
+                    sec_iter = 0
+                    while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))) and f2 not in [f1,f3]:
                         if f2>0:
                             a3,f3,f_3 = a2,f2,f_2.copy()
                         else:
@@ -1378,8 +1392,8 @@ class FEModel:
                         f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
                         print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
 
-                        icr_sec +=1 
-                        if icr_sec>10: 
+                        sec_iter +=1 
+                        if sec_iter>20: 
                             print("\tmachine precision reached")
                             break
 
@@ -1397,8 +1411,14 @@ class FEModel:
             u = ux
 
             # if alpha<1:
-            #     set_trace()    
+            #     set_trace()  
+
+            # for 2D case
+            Ns,Nt = self.transform_2d
             self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+  
+            # # 3D case
+            # self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
 
 
             print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
@@ -1656,7 +1676,7 @@ class FEModel:
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410211602pseudo2d/"+"RecoveryData.dat","rb"))
+            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410221751ContactPotato_slideX/"+"RecoveryData.dat","rb"))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)
@@ -1866,7 +1886,11 @@ class FEModel:
 
 
                 print("##################")
+                # for 2D case
                 self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+                
+                # # 3D case
+                # self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
 
                 self.setReferences()   
 

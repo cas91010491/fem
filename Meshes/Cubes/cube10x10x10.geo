@@ -4,7 +4,7 @@ SetFactory("OpenCASCADE");
 Box(1) = {-2.0, -2.0, -2.0, 4, 4, 4};
 //+
 
-n = 15;
+n = 10;
 
 
 

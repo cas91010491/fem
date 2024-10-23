@@ -19,8 +19,8 @@ os.chdir(sys.path[0])
 
 # BLOCK
 # mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_5.msh")
-mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_10.msh")
-# mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_15.msh")
+# mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_10.msh")
+mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_15.msh")
 X_blk     = mesh_blk.points
 hexas_blk = mesh_blk.cells_dict['hexahedron']
 blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)

@@ -405,8 +405,8 @@ class Contact:
             xs = xs_all[idx]
             kn  = self.alpha_p[idx]*self.kn
             is_node_active = False
-            # for patch_id in self.candids[idx]:
 
+            # for patch_id in self.candids[idx]:
             for patch_id, patch in enumerate(surf.patches):
                 if patch is None: continue
 
