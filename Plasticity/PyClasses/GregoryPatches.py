@@ -3577,10 +3577,14 @@ class GrgPatch:
                 elif Edges and j==ref:
                     e2[i] = point
 
+        plotObj = []
+
         if surf:
-            plotObj = axis.plot_surface(x, y, z, color=color,edgecolors=None)
+            surfObj = axis.plot_surface(x, y, z, color=color,edgecolors=None)
+            plotObj.append(surfObj)
         if wire:
-            axis.plot_wireframe(x, y, z, color="black",lw=0.4)
+            wireObj = axis.plot_wireframe(x, y, z, color="black",lw=0.4)
+            plotObj.append(wireObj)
 
         if label:
             # xm,ym,zm =(np.mean(x[np.ix_([0,-1])][:,np.ix_([0,-1])]),

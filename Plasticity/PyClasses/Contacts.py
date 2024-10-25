@@ -406,13 +406,13 @@ class Contact:
             kn  = self.alpha_p[idx]*self.kn
             is_node_active = False
 
-            # for patch_id in self.candids[idx]:
-            for patch_id, patch in enumerate(surf.patches):
-                if patch is None: continue
+            # for patch_id, patch in enumerate(surf.patches):
+                # if patch is None: continue
+
+            for patch_id in self.candids[idx]:
+                patch = surf.patches[patch_id]
 
                 recursive_seeding = 1
-                # patch = surf.patches[patch_id]
-
                 mC,fintC,gn,t = patch.mf_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=False,t0=None,recursive_seeding=recursive_seeding)
                 is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
 

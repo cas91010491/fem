@@ -173,22 +173,22 @@ class Surface:
             elif not onlyMaster:
                 # color = (.5,.5,.5,0.6) if sed is None else sed[self.body.hexas[ipatch]]
                 quad = self.quads[ipatch]
-                color = (.5,.5,.5,1.0) if sed is None else sed[quad]
+                # color = (.5,.5,.5,1.0) if sed is None else sed[quad]
+                color = (.5,.5,.5,0.0) if sed is None else sed[quad]
 
-                quadsurf = self.plotQuad(axis, u, ipatch, color=color,ref=ref)   #Slave Body
+                quadsurf = self.plotQuad(axis, u, ipatch, color=color,ref=ref,wire=(sed is None))   #Slave Body
 
             else:
                 quadsurf = []
 
             surfObj.append(quadsurf)            
-                
 
         self.plotNodes(axis, u, special = specialNodes)
 
         tf = time.time()
         print("Plotting " +str(self.body.name) +": Done [ "+str(tf-t0)+" s ]")
         
-        return surfObj            
+        return flatList(surfObj)
 
 
     def plotQuad(self, axis, u, iquad, color = (.5,.5,.5,1.0), surf=True,wire=False,ref=10):     #full of redundancy. FIX!!
@@ -215,6 +215,8 @@ class Surface:
                 color = C
             except:
                 pass
+
+        edgecolor = 'k' if wire else None
                 
         if type(color) in [list, np.ndarray]:
             cmap = cm.get_cmap('jet')
@@ -222,9 +224,9 @@ class Surface:
             face_colors[:,:,3] = 1.0           
             quadsurf = axis.plot_surface(x, y, z, facecolors=face_colors,
                                           rstride=1, cstride=1, linewidth=1, 
-                                          antialiased=False,zorder=1000000,edgecolor='k')
+                                          antialiased=False,zorder=1000000,edgecolor=edgecolor)
         else:
-            quadsurf = axis.plot_surface(x, y, z, color=color,edgecolor='k',lw=0.2)
+            quadsurf = axis.plot_surface(x, y, z, color=color,edgecolor=edgecolor,lw=0.5)
         return quadsurf
     
 

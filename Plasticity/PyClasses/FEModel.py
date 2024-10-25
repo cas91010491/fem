@@ -1198,7 +1198,7 @@ class FEModel:
             f1 = h_new@f_new
             f_1 = f_new
 
-            tol2 = abs(f1)/100
+            tol2 = min(abs(f1)/100 , 1e-12)
 
             a2 = 2*alpha_init
             f2 = np.nan
@@ -1350,7 +1350,11 @@ class FEModel:
                         a3,f3,f_3 = a0,f0,f_0
 
                     elif a0>a2:      # In this case f1,f2<0,  f3>0
-                        if (a3-a0)/(a2-a1)>20:
+
+                        d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
+                        d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
+
+                        if f0>0 and d03/d01>1:
                             a3,f3,f_3 = a0,f0,f_0
                             
                         else:
@@ -1358,11 +1362,21 @@ class FEModel:
                             a2,f2,f_2 = a0,f0,f_0
 
                     elif a0>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
-                        if (a3-a2)/(a0-a1)>20 or f0>0:
+                        # if (a3-a2)/(a0-a1)>20 or f0>0:
+                        #     a3,f3,f_3 = a2,f2,f_2
+                        #     a2,f2,f_2 = a0,f0,f_0
+                        # else:
+                        #     a1,f1,f_1 = a0,f0,f_0
+
+                        d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
+                        d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
+
+                        if f0<0 and d01/d03>1:
+                            a1,f1,f_1 = a0,f0,f_0
+                            
+                        else:
                             a3,f3,f_3 = a2,f2,f_2
                             a2,f2,f_2 = a0,f0,f_0
-                        else:
-                            a1,f1,f_1 = a0,f0,f_0
 
                     else:
                         # It shouldn't even reach here because f1<0 and f increases
@@ -1413,9 +1427,407 @@ class FEModel:
             # if alpha<1:
             #     set_trace()  
 
-            # for 2D case
-            Ns,Nt = self.transform_2d
-            self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+            # # for 2D case
+            # Ns,Nt = self.transform_2d
+            # self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+  
+            # # 3D case
+            # self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+
+
+            print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
+
+        return u, m0, iter , norm(f_2)
+
+    def LBFGS_plastic_diego(self,FUNJAC, u0, tol = 1e-10,nli=10,tol2 = 1e-13, free_ind = None,ti = None,simm_time = None):
+        
+        # alpha_init = 0.01
+        alpha_init = 1
+        c_par2 = 0.9
+
+        if free_ind is None:
+            free_ind = self.free
+
+        from joblib import Memory
+        cache_dir = './cache_directory'
+        memory = Memory(cache_dir, verbose=0)
+
+
+        memory.cache
+        def func(alpha,FUNJAC,u,free_ind,h_new,inBrent=False):
+            ux = u.copy()
+            ux[free_ind] = u[free_ind] + alpha*h_new
+            f , _ = FUNJAC(ux)
+            f_3 = f[free_ind]
+            f3 = h_new@f_3
+            # print("\talpha:",alpha,"\tf:",f3)
+            if inBrent:
+                if abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new)):
+                    return 0.0,f_3, ux
+
+            return f3, f_3, ux
+
+
+
+        
+        nfr = len(free_ind)
+
+        f , m_new = FUNJAC(u0)
+
+        u = u0.copy()
+        f_2 = f[free_ind]
+        m_new = norm(f_2)
+        self.write_m_and_f(m_new,norm(f),0)
+        # K_0_inv = np.eye(nfr)
+        f_new = np.zeros(nfr)
+        m0 = 0
+        DF = np.zeros((nfr,nli))
+        DU = np.zeros((nfr,nli))
+        rho = np.zeros((nli,1))
+
+        
+        for ctct in self.contacts:
+            ctct.patch_changes = []
+
+        iter = 0
+        while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
+            self.COUNTS[4] += 1
+
+
+            iter += 1
+            print("ITER:",iter)
+            f_old = f_new.copy()
+            f_new = f_2.copy()
+            delta_f = f_new - f_old
+
+            if iter == 1:
+                h_new = -f_new
+            else:
+                gamma = np.zeros((nli,1))
+                h_new = f_new
+                for j in range(max(0,nli-iter+1),nli).reverse():
+                    rho_j = rho[j]
+                    delta_u = DU[:,j]
+                    delta_f = DF[:,j]
+                    gamma_j = rho_j*delta_u.T@h_new
+                    h_new -= gamma_j*delta_f
+                    gamma[j] = gamma_j
+
+
+                for j in range(max(0,nli-iter+1),nli):
+                    rho_j = rho[j]
+                    delta_u = DU[:,j]
+                    delta_f = DF[:,j]
+                    gamma_j = gamma[j]
+                    eta = rho*delta_f@h_new
+                    h_new += (gamma_j - eta)*delta_u
+
+                h_new = -h_new
+
+
+           
+            if not np.isfinite(norm(h_new)):
+                set_trace()
+
+            m_new = abs(h_new@f_new)
+            # m_new = norm(f_new)
+
+
+
+
+            # Plotting lineseach...
+            if iter == -1:
+
+                n_points = 100
+
+                # ALPHAS = np.linspace(0.0, 10*alpha_init, n_points)
+                ALPHAS = np.linspace(0.0, 300, n_points)
+                MMs = np.zeros(n_points)
+                HF = np.zeros(n_points)
+                FF = np.zeros(n_points)
+                ARM = np.zeros(n_points)
+                CURV = np.zeros(n_points)
+                
+                for ai,alphai in enumerate(ALPHAS):
+                    ui = u.copy()
+                    ui[free_ind] = u[free_ind] + alphai * h_new
+                    # print("BEFORE:\tDEP_cum:", norm(self.bodies[0].DELTA_EPcum),"\tFPtemp:",norm(self.bodies[0].FPtemp),"\talpha_i:",alphai)
+                    f_full , mi = FUNJAC(ui)
+                    # print("AFTER :\tDEP_cum:", norm(self.bodies[0].DELTA_EPcum),"\tFPtemp:",norm(self.bodies[0].FPtemp))
+
+                    fi = f_full[free_ind]
+
+                    MMs[ai] = mi
+                    HF[ai] = h_new@fi
+                    FF[ai] = norm(fi)
+                    # ARM[ai] = m_new + c_par*alphai*np.dot(h_new, f_new)
+                    # CURV[ai] = np.dot(h_new, fi) >= c_par2 * np.dot(h_new, f_new)
+                    
+                import matplotlib.pyplot as plt
+                fig = plt.figure()
+                ax = fig.add_subplot(111)
+
+                fig2 = plt.figure()
+                ax2 = fig2.add_subplot(111)
+
+                ax2.plot(ALPHAS,MMs,color = "blue",label="m")
+                ax.plot(ALPHAS,HF,color = "green",label="h'f")
+                # ax.plot(ALPHAS,FF,color = "yellow",label="|f|")
+                # ax.plot(ALPHAS,ARM,color = "black",label="Armijo")
+                plt.legend()
+                plt.show()
+
+
+
+
+            ###################
+            ### LINE SEARCH ###
+            ###################
+            a1 = 0
+            f1 = h_new@f_new
+            f_1 = f_new
+
+            tol2 = min(abs(f1)/100 , 1e-12)
+
+            a2 = 2*alpha_init
+            f2 = np.nan
+            while np.isnan(f2):
+                a2 /= 2
+                f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+            ready_to_bisect = f2>0
+            min_found = abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))
+
+
+            print("\talphas:",[a1,a2],"\tf",[f1,f2])
+
+            if not ready_to_bisect and not min_found:
+
+                # Compute (a valid) a3
+                delta = 2*(a2-a1)
+                f3 = np.nan
+                while np.isnan(f3):                
+                    delta /= 2
+                    a3 = a2 + delta                
+                    f3,f_3,ux = func(a3,FUNJAC,u,free_ind,h_new)
+
+                print("\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
+
+                ready_to_bisect = f3>0
+                if ready_to_bisect:
+                    a1,f2,f_1 = a2,f2,f_2   
+                    a2,f2,f_2 = a3,f3,f_3       # from here it will go directly to bisection
+                min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
+
+                while not ready_to_bisect and not min_found:
+
+                    try:
+                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])  # if singular or no-zeros, goes to 'except'
+                        if parab["a"]>0:
+                            a0 = max(parab["zeros"])
+                        else:
+                            a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
+                        is_alpha_pos = a0>0
+                    except:
+                        parab = {'zeros':None}
+                        is_alpha_pos = False # This will force to search to the right (in while loop below)
+
+                    # Make sure the parabola crosses X in ascending manner and that cross is at alpha>0.
+                    while parab["zeros"] is None or not is_alpha_pos:
+                        print("\tparabola not ready. Moving to right...")
+                        # Let's move to the right
+                        delta = 1.5*2*(a2-a1) # step 50% bigger each time and initially double cause will do at least one bisection
+                        a1 = a2
+                        f1 = f2
+
+                        a2 = a3
+                        f2 = f3
+
+                        # Compute (a valid) a3
+                        f3 = np.nan
+                        while np.isnan(f3):                
+                            delta /= 2
+                            a3 = a2 + delta                
+                            f3,f_3,ux = func(a3,FUNJAC,u,free_ind,h_new)
+
+                        ready_to_bisect = f3>0
+                        # min_found = f3<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
+                        min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
+                        if ready_to_bisect or min_found:
+                            a1,f2,f_1 = a2,f2,f_2   
+                            a2,f2,f_2 = a3,f3,f_3
+                            break
+
+                        print("\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
+                        try:
+                            parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])  # if singular or no-zeros, goes to 'except'
+                            if parab["a"]>0:
+                                a0 = max(parab["zeros"])
+                            else:
+                                a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
+                            is_alpha_pos = a0>0
+                        except:
+                            parab = {'zeros':None}
+                            is_alpha_pos = False # This will force to search to the right (in while loop below)
+
+                    if ready_to_bisect or min_found:
+                        # this would mean they were found in the previous while loop
+                        break
+
+                    delta = 2*(a0-a3)
+                    f0 = np.nan
+                    while np.isnan(f0):
+                        delta /= 2
+                        a0 = a3 + delta
+                        f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
+                    
+                    ready_to_bisect = f0>0
+                    min_found = abs(f0)<tol2 and (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new))
+                    print("\talphas:",[a1,a2,a3,a0],"\tf",[f1,f2,f3,f0])
+
+                    if min_found or ready_to_bisect:
+                        a1,f2,f_1 = a3,f3,f_3
+                        a2,f2,f_2 = a0,f0,f_0
+                        break
+                    
+                    a1,f1,f_1 = a2,f2,f_2
+                    a2,f2,f_2 = a3,f3,f_3
+                    a3,f3,f_3 = a0,f0,f_0
+
+            
+
+            #############
+            # Bisection #
+            #############
+            secant = False
+            if not min_found:
+
+                print("\t## Performing quadratic bisection search ##")
+                a3,f3,f_3 = a2,f2,f_2
+                
+                a2 = (a1+a3)/2
+                f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+
+                f0,f_0 = f1,f_1 # to enter the loop
+
+                qbs_iter = 0
+                while not (abs(f0)<tol2 and (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new))):
+                    qbs_iter += 1
+
+                    if qbs_iter>20 and f2>0:
+                        secant = True
+                        break
+
+
+                    try:
+                        parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])  # if singular or no-zeros, goes to 'except'
+                        if parab["a"]>0:
+                            a0 = max(parab["zeros"])
+                        else:
+                            a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
+
+                    except:
+                        secant = True
+                        break
+                    
+                    f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
+                    print("\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
+
+                    if a0>a3:    # In this case f1,f2,f3 are all negative. since f0~0 and f is increasing in the interval
+                        a1,f1,f_1 = a2,f2,f_2
+                        a2,f2,f_2 = a3,f3,f_3
+                        a3,f3,f_3 = a0,f0,f_0
+
+                    elif a0>a2:      # In this case f1,f2<0,  f3>0
+
+                        d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
+                        d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
+
+                        if f0>0 and d03/d01>1:
+                            a3,f3,f_3 = a0,f0,f_0
+                            
+                        else:
+                            a1,f1,f_1 = a2,f2,f_2
+                            a2,f2,f_2 = a0,f0,f_0
+
+                    elif a0>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
+                        # if (a3-a2)/(a0-a1)>20 or f0>0:
+                        #     a3,f3,f_3 = a2,f2,f_2
+                        #     a2,f2,f_2 = a0,f0,f_0
+                        # else:
+                        #     a1,f1,f_1 = a0,f0,f_0
+
+                        d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
+                        d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
+
+                        if f0<0 and d01/d03>1:
+                            a1,f1,f_1 = a0,f0,f_0
+                            
+                        else:
+                            a3,f3,f_3 = a2,f2,f_2
+                            a2,f2,f_2 = a0,f0,f_0
+
+                    else:
+                        # It shouldn't even reach here because f1<0 and f increases
+                        # set_trace()
+                        a3 = a2
+                        f3 = f2
+                        
+                        a2 = a1
+                        f2 = f1
+
+                        a1 = a0
+                        f1 = f0
+
+                if secant:
+                    print("\t## parabola failed. Finishing off with Secant method ##")
+                    print("\tInitially, we have:")
+                    print("\t\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
+
+                    sec_iter = 0
+                    while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))) and f2 not in [f1,f3]:
+                        if f2>0:
+                            a3,f3,f_3 = a2,f2,f_2.copy()
+                        else:
+                            a1,f1,f_1 = a2,f2,f_2.copy()
+
+                        a2 = (a1*f3 - a3*f1)/(f3-f1)
+                        f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+                        print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
+
+                        sec_iter +=1 
+                        if sec_iter>20: 
+                            print("\tmachine precision reached")
+                            break
+
+
+                else:
+                    a2,f2,f_2 = a0,f0,f_0
+
+
+
+
+            # m_3 = norm(f_3)
+            self.write_m_and_f(0.0,norm(f_2),iter)
+                       
+            delta_u = ux[free_ind] - u[free_ind]
+            u = ux
+
+            DU[:,:nli-1] = DU[:,1:nli] 
+            DU[:,-1] = delta_u
+            DF[:,:nli-1] = DF[:,1:nli] 
+            DF[:,-1] = f_2-f_new
+            rho[:nli-1] = rho[1:nli] 
+            rho[-1] = 1/((f_2-f_new)@delta_u)
+                        
+
+
+            # if alpha<1:
+            #     set_trace()  
+
+            # # for 2D case
+            # Ns,Nt = self.transform_2d
+            # self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
   
             # # 3D case
             # self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
@@ -1774,6 +2186,9 @@ class FEModel:
                         print("dt/dt_base=",dt/dt_base)
                         csvwriter.writerow(['','','Cutback'])
 
+                for ctct in self.contacts:
+                    ctct.actives_prev = []
+
                 self.COUNTS[1] += 1
 
             else:
@@ -1784,22 +2199,24 @@ class FEModel:
                 Redo = False
                 cycle_found = False
                 for ic, ctct in enumerate(self.contacts):
-                    ctct.actives_prev.append(list(ctct.actives))
+                    # ctct.actives_prev.append(list(ctct.actives))    # At this point, 'actives' is the observed state
+                    actives_prev = list(ctct.actives)    # At this point, 'actives' is the observed state
                     ctct.getCandidates(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
                     # ctct.getCandidatesANN(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
 
-                    acts_bool = [True if el is not None else False for el in ctct.actives]
+                    # acts_bool = [True if el is not None else False for el in ctct.actives]
 
 
-                    if ctct.actives_prev[-1]!=ctct.actives: 
+                    # if ctct.actives_prev[-1]!=ctct.actives: 
+                    if actives_prev!=ctct.actives: 
                         print("Actives have changed! Will Redo increment...")
                         Redo = True
 
                         pchfile = self.output_dir+"ctct"+str(ic)+"iters_details.csv"
                         with open(pchfile, 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
                             csvwriter = csv.writer(csvfile)
-                            entered = list(set(ctct.actives).difference(set(ctct.actives_prev[-1])))
-                            exited  = list(set(ctct.actives_prev[-1]).difference(set(ctct.actives)))
+                            entered = list(set(ctct.actives).difference(set(actives_prev)))
+                            exited  = list(set(actives_prev).difference(set(ctct.actives)))
 
                             csvwriter.writerow(['','','RedoAct','IN']+entered+['OUT']+exited)
 
@@ -1835,14 +2252,18 @@ class FEModel:
 
                             self.COUNTS[1] += 1
                             cycle_found = True
+                            for ctct in self.contacts:
+                                ctct.actives_prev = []
+
                             break
+                    
 
                 if cycle_found:
                     continue
 
-
-
-
+                ctct.actives_prev.append(list(ctct.actives))    # At this point, 'actives' is the observed state
+               
+                
                 self.printContactStates(veredict=True)
                 
                 # if not Redo:
@@ -1886,11 +2307,11 @@ class FEModel:
 
 
                 print("##################")
-                # for 2D case
-                self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+                # # for 2D case
+                # self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
                 
-                # # 3D case
-                # self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+                # 3D case
+                self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
 
                 self.setReferences()   
 
