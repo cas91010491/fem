@@ -148,7 +148,7 @@ base.surf.ComputeGrgPatches(np.zeros(ndofs),base_top,exactNodesGiven=True)
 t0 = time()
 
 # model.Solve(TimeSteps=100, recover=True,max_iter=15, IterUpdate = False)
-model.Solve(TimeSteps=100, recover=False,max_iter=15, IterUpdate = False)
+model.Solve(TimeSteps=100, recover=True,max_iter=15, IterUpdate = False)
 
 print("this took",time()-t0,"seconds to compute")
 

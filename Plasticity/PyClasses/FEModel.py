@@ -1086,18 +1086,26 @@ class FEModel:
 
 
         memory.cache
-        def func(alpha,FUNJAC,u,free_ind,h_new,inBrent=False):
+        def func(alpha,FUNJAC,u,free_ind,h_new,checkSecant=False):
             ux = u.copy()
             ux[free_ind] = u[free_ind] + alpha*h_new
+            if checkSecant:
+                fb,fc,ft,_,_ = FUNJAC(ux,split=True)
+                fb = fb[free_ind]
+                fc = fc[free_ind]
+                ft = ft[free_ind]
+                fb = h_new@fb
+                fc = h_new@fc
+                ft = h_new@ft
+
+                return fb,fc,ft
+
             f , _ = FUNJAC(ux)
             f_3 = f[free_ind]
             f3 = h_new@f_3
-            # print("\talpha:",alpha,"\tf:",f3)
-            if inBrent:
-                if abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new)):
-                    return 0.0,f_3, ux
 
             return f3, f_3, ux
+            
 
 
 
@@ -1307,13 +1315,14 @@ class FEModel:
 
             
 
-            #############
-            # Bisection #
-            #############
+            ####################
+            # Quadratic Search #
+            ####################
             secant = False
+            bisection = False
             if not min_found:
 
-                print("\t## Performing quadratic bisection search ##")
+                print("\t## Performing quadratic secant search ##")
                 a3,f3,f_3 = a2,f2,f_2
                 
                 a2 = (a1+a3)/2
@@ -1354,7 +1363,8 @@ class FEModel:
                         d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
                         d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
 
-                        if f0>0 and d03/d01>1:
+                        if (f0>0 or abs(f3/f0)>4) and d03/d01>1:
+                            # in this case f0 is better to be kept than f3
                             a3,f3,f_3 = a0,f0,f_0
                             
                         else:
@@ -1362,16 +1372,12 @@ class FEModel:
                             a2,f2,f_2 = a0,f0,f_0
 
                     elif a0>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
-                        # if (a3-a2)/(a0-a1)>20 or f0>0:
-                        #     a3,f3,f_3 = a2,f2,f_2
-                        #     a2,f2,f_2 = a0,f0,f_0
-                        # else:
-                        #     a1,f1,f_1 = a0,f0,f_0
 
                         d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
                         d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
 
-                        if f0<0 and d01/d03>1:
+                        if (f0<0 or abs(f1/f0)>4) and d01/d03>1:
+                            # in this case f0 is better to be kept than f1
                             a1,f1,f_1 = a0,f0,f_0
                             
                         else:
@@ -1381,16 +1387,17 @@ class FEModel:
                     else:
                         # It shouldn't even reach here because f1<0 and f increases
                         # set_trace()
-                        a3 = a2
-                        f3 = f2
-                        
-                        a2 = a1
-                        f2 = f1
+                        a3,f3,f_3 = a2,f2,f_2
+                        a2,f2,f_2 = a1,f1,f_1
+                        a1,f1,f_1 = a0,f0,f_0
 
-                        a1 = a0
-                        f1 = f0
 
                 if secant:
+
+                    ###################
+                    # Secant (linear) #
+                    ###################
+
                     print("\t## parabola failed. Finishing off with Secant method ##")
                     print("\tInitially, we have:")
                     print("\t\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
@@ -1407,29 +1414,50 @@ class FEModel:
                         print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
 
                         sec_iter +=1 
-                        if sec_iter>20: 
+                        if sec_iter>10:
                             print("\tmachine precision reached")
+                            bisection = True
                             break
-
-
                 else:
                     a2,f2,f_2 = a0,f0,f_0
 
 
 
+                if bisection:
+                    #############
+                    # Bisection #
+                    #############
 
-            # m_3 = norm(f_3)
+                    print("\t## secant failed. Finishing off with bisection method ##")
+                    print("\tInitially, we have:")
+                    print("\t\talphas:",[a1,a3],"\tf",[f1,f3])
+
+                    a2,f2,f_2 = a1,f1,f_1.copy()    # just to enter the loop
+                    bisect_iter = 0
+                    while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))):
+                        if f2>0:
+                            a3,f3,f_3 = a2,f2,f_2.copy()
+                        else:
+                            a1,f1,f_1 = a2,f2,f_2.copy()
+
+                        a2 = (a1+a3)/2
+                        f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
+                        print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
+
+                        bisect_iter +=1 
+                        if bisect_iter>20:
+                            print("\tmachine precision reached")
+                            break
+
+
             self.write_m_and_f(0.0,norm(f_2),iter)
                        
             delta_u = ux[free_ind] - u[free_ind]
             u = ux
 
-            # if alpha<1:
-            #     set_trace()  
-
-            # # for 2D case
-            # Ns,Nt = self.transform_2d
-            # self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+            # for 2D case
+            Ns,Nt = self.transform_2d
+            self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
   
             # # 3D case
             # self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
@@ -1505,11 +1533,11 @@ class FEModel:
             else:
                 gamma = np.zeros((nli,1))
                 h_new = f_new
-                for j in range(max(0,nli-iter+1),nli).reverse():
+                for j in reversed(range(max(0,nli-iter+1),nli)):
                     rho_j = rho[j]
                     delta_u = DU[:,j]
                     delta_f = DF[:,j]
-                    gamma_j = rho_j*delta_u.T@h_new
+                    gamma_j = rho_j*delta_u@h_new
                     h_new -= gamma_j*delta_f
                     gamma[j] = gamma_j
 
@@ -1519,7 +1547,7 @@ class FEModel:
                     delta_u = DU[:,j]
                     delta_f = DF[:,j]
                     gamma_j = gamma[j]
-                    eta = rho*delta_f@h_new
+                    eta = rho_j*delta_f@h_new
                     h_new += (gamma_j - eta)*delta_u
 
                 h_new = -h_new
@@ -1743,7 +1771,8 @@ class FEModel:
                         d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
                         d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
 
-                        if f0>0 and d03/d01>1:
+                        if (f0>0 or abs(f3/f0)>4) and d03/d01>1:
+                            # in this case f0 is better to be kept than f3
                             a3,f3,f_3 = a0,f0,f_0
                             
                         else:
@@ -1751,16 +1780,12 @@ class FEModel:
                             a2,f2,f_2 = a0,f0,f_0
 
                     elif a0>a1:      # Here f2,f3>0 but f0 could be positive and in that case it should NOT replace f1
-                        # if (a3-a2)/(a0-a1)>20 or f0>0:
-                        #     a3,f3,f_3 = a2,f2,f_2
-                        #     a2,f2,f_2 = a0,f0,f_0
-                        # else:
-                        #     a1,f1,f_1 = a0,f0,f_0
 
                         d01 = np.sqrt((a0-a1)**2+(f0-f1)**2)
                         d03 = np.sqrt((a0-a3)**2+(f0-f3)**2)
 
-                        if f0<0 and d01/d03>1:
+                        if (f0<0 or abs(f1/f0)>4) and d01/d03>1:
+                            # in this case f0 is better to be kept than f1
                             a1,f1,f_1 = a0,f0,f_0
                             
                         else:
@@ -1825,9 +1850,9 @@ class FEModel:
             # if alpha<1:
             #     set_trace()  
 
-            # # for 2D case
-            # Ns,Nt = self.transform_2d
-            # self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+            # for 2D case
+            Ns,Nt = self.transform_2d
+            self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
   
             # # 3D case
             # self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
@@ -1971,7 +1996,7 @@ class FEModel:
         force[self.diri]=0.0
         return force
 
-    def Energy_and_Force(self,u,show=False):
+    def Energy_and_Force(self,u,split=False,show=False):
         self.COUNTS[5] += 1
 
         if self.transform_2d is not None:
@@ -1979,28 +2004,36 @@ class FEModel:
             u = (Ns@Nt@u)
 
         En,EnC = 0.0, 0.0
-        force = np.zeros_like(self.fint)
+        force_body = np.zeros_like(self.fint)
+        force_contact = np.zeros_like(self.fint)
 
         for body in self.bodies: 
 
             force_bi, Ebi = body.compute_mf_plastic(u,self)
             En += Ebi
-            force+=force_bi
+            force_body+=force_bi
 
             # En+=body.compute_m(u)
         for ctct in self.contacts:
             # mCi,fCi = ctct.compute_mf(u,self)     # Bilateral constraint
             mCi,fCi = ctct.compute_mf_unilateral(u,self)
             EnC+=mCi
-            force+=fCi
+            force_contact+=fCi
+
+
+        force = force_body + force_contact
 
         if show:
             print("Eb:",En,"\tEc:",EnC)
 
         if self.transform_2d is not None:
+            if split:
+                return Nt.T@Ns.T@force_body,Nt.T@Ns.T@force_contact,Nt.T@Ns.T@force, En,EnC
+
             return Nt.T@Ns.T@force, En+EnC
 
-
+        if split:
+            return force_body,force_contact,force, En,EnC
         return force, En+EnC
 
     def Hessian(self,u):
@@ -2088,7 +2121,7 @@ class FEModel:
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410221751ContactPotato_slideX/"+"RecoveryData.dat","rb"))
+            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410251817pseudo2d/"+"RecoveryData.dat","rb"))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)
@@ -2262,8 +2295,8 @@ class FEModel:
                     continue
 
                 ctct.actives_prev.append(list(ctct.actives))    # At this point, 'actives' is the observed state
-               
-                
+
+
                 self.printContactStates(veredict=True)
                 
                 # if not Redo:
@@ -2307,11 +2340,11 @@ class FEModel:
 
 
                 print("##################")
-                # # for 2D case
-                # self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+                # for 2D case
+                self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
                 
-                # 3D case
-                self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+                # # 3D case
+                # self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
 
                 self.setReferences()   
 

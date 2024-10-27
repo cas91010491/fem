@@ -29,9 +29,9 @@ class FEAssembly:
         self.Cb =  self.Youngsmodulus*self.Poissonsratio/((1+self.Poissonsratio)*(1-2*self.Poissonsratio))
         self.isRigid = False
         # self.plastic_param = [My0,Hardening_modulus,Hardening_exponent]
-        # self.plastic_param = [0.01,0.05,1.0]        # "Plastic"
-        self.plastic_param = [1e50,0.05,1.0]        # "Elastic"
-        self.max_bisect_RM = 2**17
+        self.plastic_param = [0.01,0.05,1.0]        # "Plastic"
+        # self.plastic_param = [1e50,0.05,1.0]        # "Elastic"
+        self.max_bisect_RM = 2**20
 
         self.FPconv = np.zeros((len(self.hexas),8,3,3))
         self.FPtemp = np.zeros((len(self.hexas),8,3,3))
