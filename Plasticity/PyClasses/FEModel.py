@@ -1415,7 +1415,6 @@ class FEModel:
 
                         sec_iter +=1 
                         if sec_iter>10:
-                            print("\tmachine precision reached")
                             bisection = True
                             break
                 else:
@@ -1445,8 +1444,8 @@ class FEModel:
                         print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
 
                         bisect_iter +=1 
-                        if bisect_iter>20:
-                            print("\tmachine precision reached")
+                        if bisect_iter>40:
+                            print("\tmaxiter! returning current value")
                             break
 
 

@@ -23,7 +23,13 @@ os.chdir(sys.path[0])
 mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_15.msh")
 X_blk     = mesh_blk.points
 hexas_blk = mesh_blk.cells_dict['hexahedron']
-blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
+
+
+blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False,plastic_param=[0.01,0.05,1.0])
+# blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
+
+
+
 blk.Youngsmodulus = 0.05
 blk.Translate([-3,0.0,2.6])
 blk.Resize(1.01)    # To avoid matching meshes with base

@@ -15,7 +15,7 @@ from PyClasses import eigen_backend
 
 
 class FEAssembly:
-    def __init__(self,X,hexahedrons , name = "unnamed", recOuters = False):
+    def __init__(self,X,hexahedrons , name = "unnamed", recOuters = False, plastic_param = [1e50,0.05,1.0]):
         self.X = X
         self.hexas = hexahedrons.tolist() if type(hexahedrons)!= list else hexahedrons
         self.deleteReduntants()
@@ -29,7 +29,8 @@ class FEAssembly:
         self.Cb =  self.Youngsmodulus*self.Poissonsratio/((1+self.Poissonsratio)*(1-2*self.Poissonsratio))
         self.isRigid = False
         # self.plastic_param = [My0,Hardening_modulus,Hardening_exponent]
-        self.plastic_param = [0.01,0.05,1.0]        # "Plastic"
+        self.plastic_param = plastic_param
+        # self.plastic_param = [0.01,0.05,1.0]        # "Plastic"
         # self.plastic_param = [1e50,0.05,1.0]        # "Elastic"
         self.max_bisect_RM = 2**20
 
