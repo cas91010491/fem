@@ -17,7 +17,7 @@ import time, pickle, sys, os, csv
 from pdb import set_trace
 
 class FEModel:
-    def __init__(self,bodies, contacts, BoundaryConditions, UpdateOnIteration = True,transform_2d=None):
+    def __init__(self,bodies, contacts, BoundaryConditions, UpdateOnIteration = True,transform_2d=None,subname=""):
         self.Mainname = os.path.splitext(os.path.basename(sys.argv[0]))[0]
         self.bodies = bodies
         self.contacts = contacts
@@ -60,7 +60,8 @@ class FEModel:
 
 
         current_time=time.strftime("%Y%m%d%H%M", time.localtime())
-        dir =  "OUTPUT_"+current_time+self.Mainname+"/"
+
+        dir =  "OUTPUT_"+current_time+self.Mainname+subname+"/"
         if not os.path.exists(dir):
             os.mkdir(dir)
         self.output_dir = dir
@@ -705,11 +706,11 @@ class FEModel:
         ###################
         ### LINE SEARCH ###
         ###################
-        from joblib import Memory
-        cache_dir = './cache_directory'
-        memory = Memory(cache_dir, verbose=0)
+        # from joblib import Memory
+        # cache_dir = './cache_directory'
+        # memory = Memory(cache_dir, verbose=0)
         
-        @memory.cache
+        # @memory.cache
         def func(alpha,FUNJAC,u,free_ind,h_new,checkSecant=False):
             ux = u.copy()
             ux[free_ind] = u[free_ind] + alpha*h_new
@@ -1219,7 +1220,8 @@ class FEModel:
         return RES
 
 
-    def Solve(self, t0 = 0, tf = 1, TimeSteps = 1, max_iter=10 , recover = False, ForcedShift = False, IterUpdate = False):
+    def Solve(self, t0 = 0, tf = 1, TimeSteps = 1, max_iter=10 , recover = False, ForcedShift = False,
+               IterUpdate = False,minimethod = "BFGS"):
         self.ntstps = TimeSteps
         self.IterUpdate = IterUpdate
         
@@ -1296,7 +1298,7 @@ class FEModel:
             actives_before_solving = list(self.contacts[0].actives)
 
             if DoMinimization:
-                converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t)
+                converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod)
                 # converged = self.solve_TR_plastic(tol=tolerance)
                 self.COUNTS[2] += 1
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
