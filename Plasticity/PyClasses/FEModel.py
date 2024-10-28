@@ -583,6 +583,8 @@ class FEModel:
         while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
             self.COUNTS[4] += 1
 
+            if iter>260:
+                set_trace()
 
             iter += 1
             print("ITER:",iter)

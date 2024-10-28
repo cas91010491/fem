@@ -7,3 +7,4 @@ fem-env/
 *.json
 cache_directory/
 *.so
+*.pyc
