@@ -21,7 +21,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Process a data for the 2d contact model.')
 parser.add_argument('--min_method', type=str, required=True, help='minimization method: BFGS, LBFGSNN')
 parser.add_argument('--mesh', type=int, required=True, help='choose mesh 5, 10 or 15')
-parser.add_argument('--plastic', type=bool, required=True, help='boolean for plastic')
+parser.add_argument('--plastic', type=int, required=True, help='boolean for plastic')
 
 args = parser.parse_args()
 
