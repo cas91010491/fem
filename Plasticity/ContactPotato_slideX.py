@@ -110,7 +110,7 @@ ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
 
 t0 = time()
 
-model.Solve(TimeSteps=100, recover=False, ForcedShift=False,max_iter=20,minimethod=minimization_method)
+model.Solve(TimeSteps=100, recover=False, ForcedShift=False,max_iter=20,minimethod=minimization_method,plot=1)
 
 print("this took",time()-t0,"seconds to compute")
 

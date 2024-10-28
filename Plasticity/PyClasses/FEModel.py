@@ -561,7 +561,7 @@ class FEModel:
 
         return RES<tol, RES
 
-    def  BFGS(self,FUNJAC, u0, tol = 1e-10, free_ind = None,ti = None,simm_time = None):
+    def  BFGS(self,FUNJAC, u0, tol = 1e-10, free_ind = None,ti = None,simm_time = None, plot = False):
         
         if free_ind is None:
             free_ind = self.free
@@ -610,18 +610,20 @@ class FEModel:
             delta_u = ux[free_ind] - u[free_ind]
             u = ux
 
-            # for 2D case
-            Ns,Nt = self.transform_2d
-            self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
-  
-            # # 3D case
-            # self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
-
+            if plot:
+                if self.transform_2d is None:
+                    # 3D case
+                    self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+                else:
+                    # for 2D case
+                    Ns,Nt = self.transform_2d
+                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+    
             print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
 
         return u, m0, iter , norm(f_2)
 
-    def LBFGS(self,FUNJAC, u0, tol = 1e-10,nli=10, free_ind = None,ti = None,simm_time = None):
+    def LBFGS(self,FUNJAC, u0, tol = 1e-10,nli=10, free_ind = None,ti = None,simm_time = None, plot=False):
         nfr = len(free_ind)
 
         f , m_new = FUNJAC(u0)
@@ -692,12 +694,14 @@ class FEModel:
             rho[-1] = 1/((f_2-f_new)@delta_u)
                         
 
-            # for 2D case
-            Ns,Nt = self.transform_2d
-            self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
-  
-            # # 3D case
-            # self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+            if plot:
+                if self.transform_2d is None:
+                    # 3D case
+                    self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+                else:
+                    # for 2D case
+                    Ns,Nt = self.transform_2d
+                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
 
 
             print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
@@ -1182,7 +1186,7 @@ class FEModel:
         #     contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
 
 
-    def minimize(self,tol=1e-10,maxiter=10,plotIters=False,ti=None,simm_time=None,method = "BFGS"):
+    def minimize(self,tol=1e-10,maxiter=10,plotIters=False,ti=None,simm_time=None,method = "BFGS", plot = False):
 
         if self.transform_2d is not None:
             Ns,Nt = self.transform_2d
@@ -1197,10 +1201,10 @@ class FEModel:
             fr = None
 
         if method == "BFGS":
-            self.u, m_new, iter,res = self.BFGS(self.Energy_and_Force,u0,free_ind = fr,ti=ti,simm_time=simm_time)
+            self.u, m_new, iter,res = self.BFGS(self.Energy_and_Force,u0,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot)
         elif "LBFGS" in method:
             nli = int(method.replace("LBFGS",""))
-            self.u, m_new, iter,res = self.LBFGS(self.Energy_and_Force,u0,nli=nli,free_ind = fr,ti=ti,simm_time=simm_time)
+            self.u, m_new, iter,res = self.LBFGS(self.Energy_and_Force,u0,nli=nli,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot)
 
 
         if self.transform_2d is not None:
@@ -1223,7 +1227,7 @@ class FEModel:
 
 
     def Solve(self, t0 = 0, tf = 1, TimeSteps = 1, max_iter=10 , recover = False, ForcedShift = False,
-               IterUpdate = False,minimethod = "BFGS"):
+               IterUpdate = False,minimethod = "BFGS",plot=1):
         self.ntstps = TimeSteps
         self.IterUpdate = IterUpdate
         
@@ -1300,8 +1304,7 @@ class FEModel:
             actives_before_solving = list(self.contacts[0].actives)
 
             if DoMinimization:
-                converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod)
-                # converged = self.solve_TR_plastic(tol=tolerance)
+                converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=plot-1)
                 self.COUNTS[2] += 1
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
             else:
@@ -1465,11 +1468,15 @@ class FEModel:
 
 
                 print("##################")
-                # for 2D case
-                self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
-                
-                # # 3D case
-                # self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+
+                if plot:
+                    if self.transform_2d is None:
+                        # 3D case
+                        self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+                    else:
+                        # for 2D case
+                        self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+
 
                 self.setReferences()   
 
