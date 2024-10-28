@@ -656,7 +656,7 @@ class FEModel:
                 h_new = -f_new
             else:
                 gamma = np.zeros((nli,1))
-                h_new = f_new
+                h_new = f_new.copy()
                 for j in reversed(range(max(0,nli-iter+1),nli)):
                     rho_j = rho[j]
                     delta_u = DU[:,j]
@@ -679,20 +679,19 @@ class FEModel:
             if not np.isfinite(norm(h_new)):
                 set_trace()
 
-            a2,f2,f_2,ux = self.linesearch(FUNJAC, u, h_new, f_new, free_ind, alpha_init=1, c_par2=0.9)
+            a2,f2,f_2,ux = self.linesearch(FUNJAC, u, h_new, f_new, free_ind)
 
             self.write_m_and_f(0.0,norm(f_2),iter)
                        
             delta_u = ux[free_ind] - u[free_ind]
-            u = ux
+            u = ux.copy()
 
-            DU[:,:nli-1] = DU[:,1:nli] 
-            DU[:,-1] = delta_u
-            DF[:,:nli-1] = DF[:,1:nli] 
+            DU[:,:nli-1] = DU[:,1:nli].copy()
+            DU[:,-1] = delta_u.copy()
+            DF[:,:nli-1] = DF[:,1:nli].copy()
             DF[:,-1] = f_2-f_new
-            rho[:nli-1] = rho[1:nli] 
+            rho[:nli-1] = rho[1:nli].copy()
             rho[-1] = 1/((f_2-f_new)@delta_u)
-                        
 
             if plot:
                 if self.transform_2d is None:
@@ -1250,7 +1249,7 @@ class FEModel:
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410251817pseudo2d/"+"RecoveryData.dat","rb"))
+            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410281508pseudo2d_plastic_LBFGS1000_5/"+"RecoveryData.dat","rb"))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)
