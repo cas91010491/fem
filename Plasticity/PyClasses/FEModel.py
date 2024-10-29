@@ -738,10 +738,8 @@ class FEModel:
             # self.FFs.append(f3)
             return f3, f_3, ux
 
-
         # self.ALs = []   # Stores the values found during linesearch
         # self.FFs = []   # Stores the values found during linesearch
-
 
         a1 = 0
         f1 = h_new@f_new
@@ -852,7 +850,6 @@ class FEModel:
                 a2,f2,f_2 = a3,f3,f_3
                 a3,f3,f_3 = a0,f0,f_0
 
-        
 
         ####################
         # Quadratic Search #
@@ -876,7 +873,6 @@ class FEModel:
                 if qbs_iter>20 and f2>0:
                     secant = True
                     break
-
 
                 try:
                     parab = quadratic_fit_min_zeros([[a1,f1],[a2,f2],[a3,f3]])  # if singular or no-zeros, goes to 'except'
@@ -938,7 +934,7 @@ class FEModel:
 
                 print("\t## parabola failed. Finishing off with Secant method ##")
                 print("\tInitially, we have:")
-                print("\t\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
+                print("\t\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
 
                 sec_iter = 0
                 while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))) and f2 not in [f1,f3]:
@@ -957,8 +953,6 @@ class FEModel:
                         break
             else:
                 a2,f2,f_2 = a0,f0,f_0
-
-
 
             if bisection:
                 #############

@@ -235,6 +235,7 @@ class Contact:
                             if self.IsActive(ii,ipatch):
                                 self.actives[ii]=ipatch
 
+
         for ii in range(self.nsn):
             if self.actives[ii] is None:
                 self.proj[ii] = np.zeros((1,4))
@@ -396,21 +397,24 @@ class Contact:
 
         m=0
         force=np.zeros(Model.fint.shape)
-        sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
-        xs_all = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
+        # sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
+        # xs_all = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
+
+        self.getCandidates(u)   # this updates self.xs
+
 
         opa = self.OPA
         for idx in range(self.nsn):
             # set_trace()
-            xs = xs_all[idx]
+            xs = self.xs[idx]
             kn  = self.alpha_p[idx]*self.kn
             is_node_active = False
 
-            for patch_id, patch in enumerate(surf.patches):
-                if patch is None: continue
+            # for patch_id, patch in enumerate(surf.patches):
+            #     if patch is None: continue
 
-            # for patch_id in self.candids[idx]:
-            #     patch = surf.patches[patch_id]
+            for patch_id in self.candids[idx]:
+                patch = surf.patches[patch_id]
 
                 recursive_seeding = 1
                 mC,fintC,gn,t = patch.mf_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=False,t0=None,recursive_seeding=recursive_seeding)
