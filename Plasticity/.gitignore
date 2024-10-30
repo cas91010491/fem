@@ -1,0 +1,10 @@
+*.png
+*.gif
+OUTPUT_2024*/
+*/csv_files_edges/
+venv/
+fem-env/
+*.json
+cache_directory/
+*.so
+*.pyc
