@@ -621,6 +621,10 @@ class FEModel:
         return u, m0, iter , norm(f_2)
 
     def LBFGS(self,FUNJAC, u0, tol = 1e-10,nli=10, free_ind = None,ti = None,simm_time = None, plot=False):
+
+        if free_ind is None:
+            free_ind = self.free
+
         nfr = len(free_ind)
 
         f , m_new = FUNJAC(u0)
@@ -1240,7 +1244,7 @@ class FEModel:
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410281508pseudo2d_plastic_LBFGS1000_5/"+"RecoveryData.dat","rb"))
+            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410290908ContactPotato_slideX_elastic_BFGS_10/"+"RecoveryData.dat","rb"))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)

@@ -397,7 +397,7 @@ class Contact:
 
         m=0
         force=np.zeros(Model.fint.shape)
-        # sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
+        sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
         # xs_all = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
 
         self.getCandidates(u)   # this updates self.xs
