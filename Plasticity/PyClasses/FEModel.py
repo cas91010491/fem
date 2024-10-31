@@ -1244,7 +1244,7 @@ class FEModel:
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open("OUTPUT_202410290908ContactPotato_slideX_elastic_BFGS_10/"+"RecoveryData.dat","rb"))
+            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open(recover))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)

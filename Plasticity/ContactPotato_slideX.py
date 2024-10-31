@@ -105,12 +105,15 @@ ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
 # import cProfile
 # import pstats
 # import io
-# pr = cProfile.Profile()
-# pr.enable()
+# pr.enable(# pr = cProfile.Profile())
 
 t0 = time()
 
-model.Solve(TimeSteps=100, recover=True, ForcedShift=False,max_iter=20,minimethod=minimization_method,plot=1)
+
+recov = "OUTPUT_202410290908ContactPotato_slideX_elastic_BFGS_10/"+"RecoveryData.dat","rb"
+model.Solve(TimeSteps=100,max_iter=20, recover=False ,minimethod=minimization_method,plot=1)
+
+
 
 print("this took",time()-t0,"seconds to compute")
 

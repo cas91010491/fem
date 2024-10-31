@@ -9,3 +9,4 @@ cache_directory/
 *.so
 *.pyc
 RecoveryOuters.dat
+csv_files
