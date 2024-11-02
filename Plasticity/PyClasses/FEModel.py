@@ -610,7 +610,7 @@ class FEModel:
             if plot:
                 if self.transform_2d is None:
                     # 3D case
-                    self.savefig(ti,iter,distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
+                    self.savefig(ti,iter,distance=[10,10],u = ux,simm_time=simm_time)
                 else:
                     # for 2D case
                     Ns,Nt = self.transform_2d
@@ -756,6 +756,7 @@ class FEModel:
 
         ready_to_bisect = f2>0
         min_found = abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))
+        # min_found = abs(f2)<tol2 and abs((np.dot(h_new, f_2)) < abs(c_par2 * np.dot(h_new, f_new)))
 
         print("\talphas:",[a1,a2],"\tf",[f1,f2])
 
@@ -985,26 +986,18 @@ class FEModel:
 
         return a2,f2,f_2,ux
 
-    def TR_plastic(self,FUNJAC,HESS, u0, tol = 1e-10):
+    def TR(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False):
+        if free_ind is None:
+            free_ind = self.free
 
-        free_ind = self.free
+        nfr = len(free_ind)
 
-        TR_rad = 0.001
-        TR_rad_min = 0
-        TR_rad_max = 1
-
-        FPtemp_accepted =  list([body.FPtemp.copy() if not body.isRigid else None for body in self.bodies])
-        delta_EPcum_accepted =  list([(body.DELTA_EPcum).copy() if not body.isRigid else None for body in self.bodies])
+        TR_rad = 0.01*nfr
+        TR_rad_min = 0*nfr
+        TR_rad_max = 1*nfr
 
         ff , m_new = FUNJAC(u0)
         f_new = ff[free_ind]
-
-        for i_b,body in enumerate(self.bodies):
-            if not body.isRigid:
-                body.FPtemp = FPtemp_accepted[i_b].copy()
-                body.DELTA_EPcum = delta_EPcum_accepted[i_b].copy()
-
-        
 
         rho = 1
         iter = 0
@@ -1012,82 +1005,91 @@ class FEModel:
 
         h_full = np.zeros_like(u0)
 
-        u = u0
-        # set_trace()
-        # while rho>0 and norm(f_new)>tol:
-        # while rho!=0 and norm(f_new)>tol:
-        while norm(f_new)>tol:
+        u = u0.copy()
 
+        while norm(f_new)>tol:
             iter += 1
+            print("Iter:",iter)
+
             if update_signal==1:
                 K = HESS(u)
                 K = K[np.ix_(free_ind,free_ind)]
 
-            h = (-(f_new.T@f_new)/float(f_new.T@K@f_new)) * f_new      # minimizer in the steepest decent direction
+            r_new = -f_new.copy()
+            p = r_new.copy()
+            h = np.zeros(nfr)
+            signal = 1
 
-
-            if norm(h)>TR_rad:
-                h = h/norm(h)*TR_rad
-            else:
-                if update_signal==1:
-                    newt =np.linalg.solve(K,-f_new).ravel()
-                if norm(newt)<TR_rad:
-                    h = newt
+            while signal==1:
+                r_old = r_new.copy()
+                alpha = float(r_old@r_old/(p.T@K@p))
+                # if p.T@K@p < 0:
+                #     set_trace()
+                #     signal = 3
+                # elif norm(h+alpha*p)<TR_rad:
+                if norm(h+alpha*p)<TR_rad:
+                    h += alpha*p
+                    r_new = r_old - np.array(alpha*K@p).reshape(-1)
+                    beta = (r_new@r_new)/(r_old@r_old)
+                    p = r_new+beta*p
+                    if norm(r_new)<tol2:
+                        signal = 0
                 else:
-                    cauchy = h.copy()
-                    a = cauchy.T@(cauchy - 2*newt)+ newt.T@newt
-                    b = 2*cauchy.T@(newt-cauchy)
-                    c = cauchy.T@cauchy - TR_rad**2
+                    a = p@p
+                    b = 2*p@h
+                    c = h@h - TR_rad**2
+                    alpha = 1e-2
+                    eq = a*alpha**2 + b*alpha + c
+                    while abs(eq)>1e-10:
+                        stiff = 2*a*alpha + b
+                        d_alpha = -eq/stiff
+                        alpha += d_alpha
+                        eq = a*alpha**2 + b*alpha + c
+                    h += alpha*p
+                    signal = 2
 
-                    tau = 0
-                    eq = c
-
-                    while abs(eq)>1e-12:
-                        stiff = 2*a*tau + b
-                        tau -= eq/stiff
-
-                        eq = a*tau**2 + b*tau + c
-
-                    h = cauchy + tau*(newt-cauchy)
-
-            
-            h_full[free_ind] = h
+            h_full[free_ind] = h.copy()
             ff , m_h = FUNJAC(u + h_full)
             f_h = ff[free_ind]
         
-            rho = -(m_new-m_h)/(0.5*h.T@K@h + f_new.T@h)
-            # rho = abs(-(m_new-m_h)/(0.5*h.T@K@h + f_new.T@h))
+            rho = 0.5*(f_new+f_h)@h/(0.5*h.T@K@h + f_new.T@h)
+            # rho = -(m_new-m_h)/(0.5*h.T@K@h + f_new.T@h)
 
             if rho<0.25:
                 TR_rad = max(0.25*TR_rad,TR_rad_min)
             else:
                 
-                if (rho>0.75) and (norm(h)<TR_rad+1e-5) and (norm(h)>TR_rad-1e-5):
+                if (rho>0.75) and (norm(h)<TR_rad*1.01) and (norm(h)>TR_rad*0.99):
                     TR_rad = min(2*TR_rad,TR_rad_max)
-            
 
             update_signal = 0
 
-            # if rho>0.25 or  (TR_rad == TR_rad_min and m_h<m_new):
-            if m_h<m_new:
+            if rho>0.25:
+                # print(h.reshape(1,-1))
                 u += h_full
                 m_new = m_h
-                f_new = f_h
+                f_new = f_h.copy()
                 update_signal = 1
 
-                FPtemp_accepted =  list([body.FPtemp.copy() if not body.isRigid else None for body in self.bodies])
-                delta_EPcum_accepted =  list([(body.DELTA_EPcum).copy() if not body.isRigid else None for body in self.bodies])
 
-            else:
-                # TODO: reset prpojections and plastics
-                for i_b,body in enumerate(self.bodies):
-                    if not body.isRigid:
-                        body.FPtemp = FPtemp_accepted[i_b].copy()
-                        body.DELTA_EPcum = delta_EPcum_accepted[i_b].copy()
+            if plot and iter%10==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
+                if self.transform_2d is None:
+                    # 3D case
+                    self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
+                else:
+                    # for 2D case
+                    Ns,Nt = self.transform_2d
+                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
 
-            print("h:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tdm:",m_h-m_new)
 
-        return u, m_new, iter
+
+            # print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdm:",m_h-m_new)
+            print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdmda:",f_new@h)
+            for ctct in self.contacts:
+                print("actives:",ctct.actives)
+
+
+        return u, m_new, iter,norm(f_new)
 
 
     def write_m_and_f(self,m,f,iter,iter2a=0,iter2=0,case=0):
@@ -1160,6 +1162,11 @@ class FEModel:
         return force, En+EnC
 
     def Hessian(self,u):
+
+        if self.transform_2d is not None:
+            Ns,Nt = self.transform_2d
+            u = (Ns@Nt@u)
+
         # K = sparse.coo_matrix((self.ndof,self.ndof),dtype=float)
         K = np.zeros((self.ndof,self.ndof),dtype=float)
 
@@ -1169,6 +1176,14 @@ class FEModel:
         for ctct in self.contacts:
             K += ctct.compute_k(u)     #uses model.u_temp
         # print('En',En,"\tEnC",EnC,'\t\tEn_tot',En+EnC)
+
+        if self.transform_2d is not None:
+
+            return Nt.T@Ns.T@K@Ns@Nt
+
+
+
+
         return K
 
         # t0_K = time.time()
@@ -1199,6 +1214,8 @@ class FEModel:
         elif "LBFGS" in method:
             nli = int(method.replace("LBFGS",""))
             self.u, m_new, iter,res = self.LBFGS(self.Energy_and_Force,u0,nli=nli,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot)
+        elif method == "TR":
+            self.u, m_new, iter,res = self.TR(self.Energy_and_Force,self.Hessian, u0, free_ind = fr,ti=ti,simm_time=simm_time,plot=plot)
 
 
         if self.transform_2d is not None:
@@ -1244,7 +1261,7 @@ class FEModel:
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open(recover))
+            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open(recover,"rb"))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)
@@ -1302,6 +1319,7 @@ class FEModel:
                 self.COUNTS[2] += 1
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
             else:
+                # converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=plot-1)
                 converged, res = self.solve_NR(tol=tolerance,maxiter=max_iter)
             actives_after_solving = list(self.contacts[0].actives)
 
@@ -1356,14 +1374,19 @@ class FEModel:
                 for ic, ctct in enumerate(self.contacts):
                     # ctct.actives_prev.append(list(ctct.actives))    # At this point, 'actives' is the observed state
                     actives_prev = list(ctct.actives)    # At this point, 'actives' is the observed state
+                    acts_bool_prev = [True if el is not None else False for el in actives_prev]
                     ctct.getCandidates(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
                     # ctct.getCandidatesANN(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
+                    print("After checking :",list(self.contacts[0].actives))
 
-                    # acts_bool = [True if el is not None else False for el in ctct.actives]
+
+
+                    acts_bool = [True if el is not None else False for el in ctct.actives]
 
 
                     # if ctct.actives_prev[-1]!=ctct.actives: 
-                    if actives_prev!=ctct.actives: 
+                    # if actives_prev!=ctct.actives: 
+                    if acts_bool_prev!=acts_bool: 
                         print("Actives have changed! Will Redo increment...")
                         Redo = True
 
