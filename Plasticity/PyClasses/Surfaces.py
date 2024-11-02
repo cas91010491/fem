@@ -173,8 +173,8 @@ class Surface:
             elif not onlyMaster:
                 # color = (.5,.5,.5,0.6) if sed is None else sed[self.body.hexas[ipatch]]
                 quad = self.quads[ipatch]
-                # color = (.5,.5,.5,1.0) if sed is None else sed[quad]
-                color = (.5,.5,.5,0.0) if sed is None else sed[quad]
+                color = (.5,.5,.5,1.0) if sed is None else sed[quad]
+                # color = (.5,.5,.5,0.0) if sed is None else sed[quad]
 
                 quadsurf = self.plotQuad(axis, u, ipatch, color=color,ref=ref,wire=(sed is None))   #Slave Body
 
