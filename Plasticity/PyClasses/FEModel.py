@@ -561,14 +561,14 @@ class FEModel:
 
         return RES<tol, RES
 
-    def  BFGS(self,FUNJAC, u0, tol = 1e-10, free_ind = None,ti = None,simm_time = None, plot = False):
+    def  BFGS(self,FUNJAC, u0, tol = 1e-10, free_ind = None,ti = None,simm_time = None, plot = False,unilateral=True):
         
         if free_ind is None:
             free_ind = self.free
         
         nfr = len(free_ind)
 
-        f , m_new = FUNJAC(u0)
+        f , m_new = FUNJAC(u0,unilateral=unilateral)
         u = u0.copy()
         f_2 = f[free_ind]
         K_new_inv = np.eye(nfr)
@@ -600,7 +600,7 @@ class FEModel:
             if not np.isfinite(norm(h_new)):
                 set_trace()
 
-            a2,f2,f_2,ux = self.linesearch(FUNJAC, u, h_new, f_new, free_ind, alpha_init=1, c_par2=0.9)
+            a2,f2,f_2,ux = self.linesearch(FUNJAC, u, h_new, f_new, free_ind, alpha_init=1, c_par2=0.9,unilateral=unilateral)
 
             self.write_m_and_f(0.0,norm(f_2),iter)
                        
@@ -618,16 +618,26 @@ class FEModel:
     
             print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
 
+
+            # # a little experiment: Impose active set but update it every now an then
+            # for ctct in self.contacts:
+            #     print("actives     :",ctct.actives)
+            #     if iter%10==0:
+            #         ctct.getCandidates(Ns@Nt@ux, CheckActive = True, TimeDisp=False)
+            #         print("actives_now :",ctct.actives)
+
+        
+
         return u, m0, iter , norm(f_2)
 
-    def LBFGS(self,FUNJAC, u0, tol = 1e-10,nli=10, free_ind = None,ti = None,simm_time = None, plot=False):
+    def LBFGS(self,FUNJAC, u0, tol = 1e-10,nli=10, free_ind = None,ti = None,simm_time = None, plot=False,unilateral=True):
 
         if free_ind is None:
             free_ind = self.free
 
         nfr = len(free_ind)
 
-        f , m_new = FUNJAC(u0)
+        f , m_new = FUNJAC(u0,unilateral=unilateral)
 
         u = u0.copy()
         f_2 = f[free_ind]
@@ -680,7 +690,7 @@ class FEModel:
             if not np.isfinite(norm(h_new)):
                 set_trace()
 
-            a2,f2,f_2,ux = self.linesearch(FUNJAC, u, h_new, f_new, free_ind)
+            a2,f2,f_2,ux = self.linesearch(FUNJAC, u, h_new, f_new, free_ind,unilateral=unilateral)
 
             self.write_m_and_f(0.0,norm(f_2),iter)
                        
@@ -708,7 +718,7 @@ class FEModel:
 
         return u, m0, iter , norm(f_2)
 
-    def linesearch(self, FUNJAC, u, h_new, f_new, free_ind, alpha_init=1, c_par2=0.9):
+    def linesearch(self, FUNJAC, u, h_new, f_new, free_ind, alpha_init=1, c_par2=0.9, unilateral=True):
         ###################
         ### LINE SEARCH ###
         ###################
@@ -721,7 +731,7 @@ class FEModel:
             ux = u.copy()
             ux[free_ind] = u[free_ind] + alpha*h_new
             if checkSecant:
-                fb,fc,ft,_,_ = FUNJAC(ux,split=True)
+                fb,fc,ft,_,_ = FUNJAC(ux,split=True,unilateral=unilateral)
                 fb = fb[free_ind]
                 fc = fc[free_ind]
                 ft = ft[free_ind]
@@ -986,7 +996,7 @@ class FEModel:
 
         return a2,f2,f_2,ux
 
-    def TR(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False):
+    def TR(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False, unilateral=True):
         if free_ind is None:
             free_ind = self.free
 
@@ -996,7 +1006,7 @@ class FEModel:
         TR_rad_min = 0*nfr
         TR_rad_max = 1*nfr
 
-        ff , m_new = FUNJAC(u0)
+        ff , m_new = FUNJAC(u0,unilateral=unilateral)
         f_new = ff[free_ind]
 
         rho = 1
@@ -1049,7 +1059,7 @@ class FEModel:
                     signal = 2
 
             h_full[free_ind] = h.copy()
-            ff , m_h = FUNJAC(u + h_full)
+            ff , m_h = FUNJAC(u + h_full,unilateral=unilateral)
             f_h = ff[free_ind]
         
             rho = 0.5*(f_new+f_h)@h/(0.5*h.T@K@h + f_new.T@h)
@@ -1121,7 +1131,7 @@ class FEModel:
         force[self.diri]=0.0
         return force
 
-    def Energy_and_Force(self,u,split=False,show=False):
+    def Energy_and_Force(self,u,split=False,show=False,unilateral=True):
         self.COUNTS[5] += 1
 
         if self.transform_2d is not None:
@@ -1140,8 +1150,10 @@ class FEModel:
 
             # En+=body.compute_m(u)
         for ctct in self.contacts:
-            # mCi,fCi = ctct.compute_mf(u,self)     # Bilateral constraint
-            mCi,fCi = ctct.compute_mf_unilateral(u,self)
+            if unilateral:
+                mCi,fCi = ctct.compute_mf_unilateral(u,self)
+            else:
+                mCi,fCi = ctct.compute_mf(u,self)     # Bilateral constraint (active set)
             EnC+=mCi
             force_contact+=fCi
 
@@ -1209,13 +1221,15 @@ class FEModel:
             u0=np.array(self.u)
             fr = None
 
-        if method == "BFGS":
-            self.u, m_new, iter,res = self.BFGS(self.Energy_and_Force,u0,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot)
-        elif "LBFGS" in method:
+        unilateral = not 'ActSet' in method
+
+        if "LBFGS" in method:
             nli = int(method.replace("LBFGS",""))
-            self.u, m_new, iter,res = self.LBFGS(self.Energy_and_Force,u0,nli=nli,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot)
-        elif method == "TR":
-            self.u, m_new, iter,res = self.TR(self.Energy_and_Force,self.Hessian, u0, free_ind = fr,ti=ti,simm_time=simm_time,plot=plot)
+            self.u, m_new, iter,res = self.LBFGS(self.Energy_and_Force,u0,nli=nli,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral)
+        elif "BFGS" in method:
+            self.u, m_new, iter,res = self.BFGS(self.Energy_and_Force,u0,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral)
+        elif "TR" in method:
+            self.u, m_new, iter,res = self.TR(self.Energy_and_Force,self.Hessian, u0, free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral)
 
 
         if self.transform_2d is not None:
