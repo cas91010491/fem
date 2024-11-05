@@ -9,17 +9,42 @@ from pdb import set_trace
 from math import pi
 
 
+from time import time
+import argparse
+
+
+# Argument parsing
+parser = argparse.ArgumentParser(description='Process a data for the 2d contact model.')
+parser.add_argument('--min_method', type=str, required=True, help='minimization method: BFGS, LBFGSNN')
+parser.add_argument('--mesh', type=int, required=True, help='choose mesh 5, 10 or 15')
+parser.add_argument('--plastic', type=int, required=True, help='boolean for plastic')
+
+args = parser.parse_args()
+
+# Calculate subspace bounds
+minimization_method = args.min_method
+mesh = args.mesh
+plastic = args.plastic
+
+# minimization_method = "BFGS"
+# mesh = 15
+# plastic = 1
+
+
 ####################
 ### GETTING DATA ###
 ####################
 os.chdir(sys.path[0])
 
 # BLOCK
-mesh_blk   = meshio.read("../Meshes/Cubes/cube5x5x5side4.msh")
-# mesh_blk   = meshio.read("../Meshes/Cubes/cube3x3x3side4.msh")
+mesh_blk   = meshio.read("../Meshes/Cubes/cube"+str(mesh)+"x"+str(mesh)+"x"+str(mesh)+".msh")
+
 X_blk     = mesh_blk.points
 hexas_blk = mesh_blk.cells_dict['hexahedron']
-blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
+if plastic:
+    blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False,plastic_param=[0.01,0.05,1.0])
+else:
+    blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
 blk.Youngsmodulus = 0.05
 blk.Translate([6.0,0.0,-4.3])
 
@@ -40,7 +65,6 @@ blk.Translate([6.0,0.0,-4.3])
 ptt.isRigid = True     # faster solving when True
 
 
-
 ######################
 ### BUILDING MODEL ###
 ######################
@@ -53,8 +77,8 @@ ptt_highernodes = ptt.SelectLowerThan("z", val = -0.5, Strict = True,OnSurface =
 
 ### BOUNDARY CONDITIONS ###  [body, nodes, type, directions, values, times(*)]
 cond_bd1 = [ptt, ptt.SelectAll(), "dirichlet", "xyz"  , [0.0, 0.0, 0.0] ]
-cond_bd2 = [blk, blk_bottom   , "dirichlet", "xyz"  , [0.0, 0.0, 1.5], [0.0,0.5] ]
-cond_bd3 = [blk, blk_bottom   , "dirichlet", "xyz"  , [0.0, 4.0, 0.0], [0.4,1.0] ]
+cond_bd2 = [blk, blk_bottom   , "dirichlet", "xyz"  , [0.0, 0.0, 1.5], [0.0,0.4] ]
+cond_bd3 = [blk, blk_bottom   , "dirichlet", "xyz"  , [0.0, 5.0, 0.0], [0.3,1.0] ]
 
 BCs = [cond_bd1, cond_bd2,cond_bd3]
 
@@ -62,10 +86,11 @@ BCs = [cond_bd1, cond_bd2,cond_bd3]
 slave   = [blk , blk_top]
 master = [ptt,ptt_highernodes]
 
-contact1 = Contact(slave, master, kn=5, C1Edges = False, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
+contact1 = Contact(slave, master, kn=1e2, C1Edges = False, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
 
 ### MODEL ###
-model = FEModel([blk, ptt], [contact1], BCs)           # [bodies, contacts, BCs, opts*]
+subname = "_"+("plastic" if plastic else "elastic")+"_"+minimization_method+"_"+str(mesh)
+model = FEModel([blk, ptt], [contact1], BCs, subname=subname)           # [bodies, contacts, BCs, opts*]
 
 ndofs = 3*(len(X_blk)+len(ptt.X))
 ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
@@ -74,4 +99,28 @@ ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
 #############
 ## Running ##
 #############
-model.Solve(TimeSteps=200, recover=True, ForcedShift=False,max_iter=20)
+
+# import cProfile
+# import pstats
+# import io
+# pr.enable(# pr = cProfile.Profile())
+
+t0 = time()
+
+
+recov = "OUTPUT_202410290908ContactPotato_slideX_elastic_BFGS_10/"+"RecoveryData.dat","rb"
+model.Solve(TimeSteps=100,max_iter=20, recover=False ,minimethod=minimization_method,plot=1)
+
+
+
+print("this took",time()-t0,"seconds to compute")
+
+
+# pr.disable()
+# s = io.StringIO()
+# ps = pstats.Stats(pr, stream=s).sort_stats('cumulative')
+# ps.print_stats()
+
+# print(s.getvalue())
+
+

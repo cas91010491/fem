@@ -1081,16 +1081,16 @@ class FEModel:
                 f_new = f_h.copy()
                 update_signal = 1
 
-            if iter%50==0:
-                self.write_m_and_f(h,norm(f_new),iter)
-                if plot:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
-                    if self.transform_2d is None:
-                        # 3D case
-                        self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
-                    else:
-                        # for 2D case
-                        Ns,Nt = self.transform_2d
-                        self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
+
+            self.write_m_and_f(h,norm(f_new),iter)
+            if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
+                if self.transform_2d is None:
+                    # 3D case
+                    self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
+                else:
+                    # for 2D case
+                    Ns,Nt = self.transform_2d
+                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
 
 
             # print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdm:",m_h-m_new)
@@ -1504,6 +1504,7 @@ class FEModel:
                     if self.transform_2d is None:
                         # 3D case
                         self.savefig(ti,distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
+                        # self.savefig(ti,azimut=[0, 0],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)
                     else:
                         # for 2D case
                         self.savefig(ti,azimut=[-90, -90],elevation=[0,0],distance=[10,10],times=[t0,t,tf],fintC=False,Hooks=True)

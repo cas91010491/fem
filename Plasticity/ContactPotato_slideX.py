@@ -41,12 +41,10 @@ mesh_blk   = meshio.read("../Meshes/Cubes/cube"+str(mesh)+"x"+str(mesh)+"x"+str(
 
 X_blk     = mesh_blk.points
 hexas_blk = mesh_blk.cells_dict['hexahedron']
-
 if plastic:
     blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False,plastic_param=[0.01,0.05,1.0])
 else:
     blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
-
 blk.Youngsmodulus = 0.05
 blk.Translate([0.0,0.0,3.5])
 
@@ -87,12 +85,11 @@ BCs = [cond_bd1, cond_bd2]
 slave   = [blk , blk_bottom]
 master = [ptt,ptt_highernodes]
 
-# contact1 = Contact(slave, master, kn=5, C1Edges = False, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
 contact1 = Contact(slave, master, kn=1e2, C1Edges = False, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
 
 ### MODEL ###
 subname = "_"+("plastic" if plastic else "elastic")+"_"+minimization_method+"_"+str(mesh)
-model = FEModel([blk, ptt], [contact1], BCs,subname =subname)           # [bodies, contacts, BCs, opts*]
+model = FEModel([blk, ptt], [contact1], BCs, subname=subname)           # [bodies, contacts, BCs, opts*]
 
 ndofs = 3*(len(X_blk)+len(ptt.X))
 ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
