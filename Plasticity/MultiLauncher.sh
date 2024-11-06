@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#SBATCH -J 3d-LBFGS-500
+#SBATCH -J Ex2-el
 #SBATCH --mail-type=end
 #SBATCH --mail-user=diego.hurtado@uni.lu
 #SBATCH -N 1
@@ -7,7 +7,7 @@
 #SBATCH --mem=0
 #SBATCH --time=1-23:59:59
 #SBATCH -p batch
-#SBATCH --array=0-5
+#SBATCH --array=0-8
 #SBATCH --qos=normal
 #SBATCH -o %x-%j.log
 
@@ -18,9 +18,9 @@ echo "SLURMTMPDIR="$SLURMTMPDIR
 echo "working directory = "$SLURM_SUBMIT_DIR
 
 # Define possible values for each argument
-min_methods=("LBFGS500")
+min_methods=("BFGS" "LBFGS100" "LBFGS500")
 meshes=(5 10 15)
-plastics=(0 1)  #  0:elastic, 1:plastic
+plastics=(0)  #  0:elastic, 1:plastic
 
 # Calculate total number of combinations
 total_combinations=$(( ${#min_methods[@]} * ${#meshes[@]} * ${#plastics[@]} ))
@@ -45,7 +45,7 @@ plastic=${plastics[$plastic_index]}
 conda activate fem-env
 
 # Run Python script with the parameters
-python -u ContactPotato_slideX.py --min_method ${min_method} --mesh ${mesh} --plastic ${plastic}
+python -u ContactPotato_Indent+SlideX.py --min_method ${min_method} --mesh ${mesh} --plastic ${plastic}
 
 echo "==Ending run at $(date)"
 

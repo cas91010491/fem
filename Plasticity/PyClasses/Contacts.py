@@ -370,9 +370,9 @@ class Contact:
                             break
 
                 if is_patch_correct:        # if patch changed
-                    node_id = self.slaveNodes[idx]
+                    # node_id = self.slaveNodes[idx]
                     if changed:
-                        eventList_iter.append(str(node_id)+": "+str(self.actives[idx])+"-->"+str(patch_id))
+                        eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->"+str(patch_id))
 
                     # if abs(gn)>10:
                     #     set_trace()
@@ -381,7 +381,7 @@ class Contact:
                         if changed:
                             eventList_iter[-1]+=("out")     # ... if also changed patch ...
                         else:
-                            eventList_iter.append(str(node_id)+": out")     # ... or if only went out
+                            eventList_iter.append(str(idx)+": out")     # ... or if only went out
 
                     self.actives[idx] = patch_id
                     # self.t1t2cache[idx] = t
@@ -389,6 +389,7 @@ class Contact:
                 m += mC
                 force[sDoFs[idx]] += fintC[:3]      # only for the slave node DoFs
 
+        self.patch_changes=eventList_iter
 
         return m,force
     
@@ -396,6 +397,8 @@ class Contact:
         surf = self.masterSurf
 
         m=0
+        eventList_iter = []
+
         force=np.zeros(Model.fint.shape)
         sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
         # xs_all = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
@@ -406,6 +409,7 @@ class Contact:
         opa = self.OPA
         for idx in range(self.nsn):
             # set_trace()
+            changed = False
             xs = self.xs[idx]
             kn  = self.alpha_p[idx]*self.kn
             is_node_active = False
@@ -424,14 +428,24 @@ class Contact:
                     if gn<0:
                         m += mC
                         force[sDoFs[idx]] += fintC[:3]      # only for the slave node DoFs
+
+                        if patch_id != self.actives[idx]:
+                            eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->"+str(patch_id))
+                            changed = True
+
                         self.actives[idx] = patch_id
                         is_node_active = True
                         break
+                    
 
             if not is_node_active:
+                changed = self.actives[idx]!=None
+                if changed :
+                    eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->None")
                 self.actives[idx] = None
 
         # print("actives:",self.actives)
+        self.patch_changes=eventList_iter
 
         return m,force
     
@@ -498,9 +512,8 @@ class Contact:
                         changed = True
 
                 if is_patch_correct:        # if patch changed
-                    node_id = self.slaveNodes[idx]
                     if changed:
-                        eventList_iter.append(str(node_id)+": "+str(self.actives[idx])+"-->"+str(patch_id))
+                        eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->"+str(patch_id))
 
                     if abs(gn)>10:
                         set_trace()
@@ -509,7 +522,7 @@ class Contact:
                         if changed:
                             eventList_iter[-1]+=("out")     # ... if also changed patch ...
                         else:
-                            eventList_iter.append(str(node_id)+": out")     # ... or if only went out
+                            eventList_iter.append(str(idx)+": out")     # ... or if only went out
 
                     self.actives[idx] = patch_id
                     # self.t1t2cache[idx] = t
@@ -517,6 +530,7 @@ class Contact:
                 
                 force[sDoFs[idx]] += fintC[:3]      # only for the slave node DoFs
 
+        self.patch_changes=eventList_iter
 
         return force
     
@@ -531,7 +545,6 @@ class Contact:
         eventList_iter = []
         for idx in range(self.nsn):
             if self.actives[idx] is not None:
-                node_id = self.slaveNodes[idx]
                 changed = False
 
                 xs = xs_all[idx]
@@ -557,10 +570,10 @@ class Contact:
 
                 if is_patch_correct:        # if patch changed
                     if changed:
-                        eventList_iter.append(str(node_id)+": "+str(self.actives[idx])+"-->"+str(patch_id))
+                        eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->"+str(patch_id))
                     if gn>0:
                         if not changed:
-                            eventList_iter.append(str(node_id)+": out")
+                            eventList_iter.append(str(idx)+": out")
                         else:
                             eventList_iter[-1]+=("out")
 
@@ -570,7 +583,8 @@ class Contact:
                 
                 force[sDoFs[idx]] += fintC[:3]      # only for the slave node DoFs
 
-
+        self.patch_changes=eventList_iter
+        
         return force
 
     def compute_m(self, u,t=None):
@@ -721,12 +735,12 @@ class Contact:
                 if is_patch_correct:        # if patch changed
                     node_id = self.slaveNodes[idx]
                     if changed:
-                        eventList_iter.append(str(node_id)+": "+str(self.actives[idx])+"-->"+str(patch_id))
+                        eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->"+str(patch_id))
                     if gn>0:
                         if changed:
                             eventList_iter[-1]+=("out")     # ... if also changed patch ...
                         else:
-                            eventList_iter.append(str(node_id)+": out")     # ... or if only went out
+                            eventList_iter.append(str(idx)+": out")     # ... or if only went out
 
                     self.actives[idx] = patch_id
                     self.t1t2cache[idx] = t

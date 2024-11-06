@@ -1025,6 +1025,8 @@ class FEModel:
                 K = HESS(u)
                 K = K[np.ix_(free_ind,free_ind)]
 
+                condK = np.linalg.cond(K)
+
             r_new = -f_new.copy()
             p = r_new.copy()
             h = np.zeros(nfr)
@@ -1082,7 +1084,7 @@ class FEModel:
                 update_signal = 1
 
 
-            self.write_m_and_f(h,norm(f_new),iter)
+            self.write_list([norm(h),norm(f_new),condK],iter)
             if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
                 if self.transform_2d is None:
                     # 3D case
@@ -1101,6 +1103,13 @@ class FEModel:
 
         return u, m_new, iter,norm(f_new)
 
+
+    def write_list(self,the_list,iter,iter2a=0,iter2=0,case=0):
+        for ic, ctct in enumerate(self.contacts):
+            pchfile = self.output_dir+"ctct"+str(ic)+"iters_details.csv"
+            with open(pchfile, 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow([self.t if iter==0 else None,iter]+the_list+ctct.patch_changes)
 
     def write_m_and_f(self,m,f,iter,iter2a=0,iter2=0,case=0):
         for ic, ctct in enumerate(self.contacts):
