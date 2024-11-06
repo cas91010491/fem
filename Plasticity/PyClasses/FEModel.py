@@ -1395,12 +1395,12 @@ class FEModel:
                 Redo = False
                 cycle_found = False
                 for ic, ctct in enumerate(self.contacts):
-                    # ctct.actives_prev.append(list(ctct.actives))    # At this point, 'actives' is the observed state
-                    actives_prev = list(ctct.actives)    # At this point, 'actives' is the observed state
+
+                    actives_prev = list(ctct.actives)    # Actives after solving, before checking
                     acts_bool_prev = [True if el is not None else False for el in actives_prev]
                     ctct.getCandidates(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
                     # ctct.getCandidatesANN(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
-                    print("After checking :",list(self.contacts[0].actives))
+                    print("After checking :",list(ctct.actives))
 
 
 
@@ -1416,8 +1416,13 @@ class FEModel:
                         pchfile = self.output_dir+"ctct"+str(ic)+"iters_details.csv"
                         with open(pchfile, 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
                             csvwriter = csv.writer(csvfile)
-                            entered = list(set(ctct.actives).difference(set(actives_prev)))
-                            exited  = list(set(actives_prev).difference(set(ctct.actives)))
+                            # entered = list(set(ctct.actives).difference(set(actives_before_solving)))
+                            # exited  = list(set(actives_before_solving).difference(set(ctct.actives)))
+                            entered = [idx for idx in range(ctct.nsn) if (ctct.actives[idx] is not None and actives_after_solving[idx] is None)]
+                            exited =  [idx for idx in range(ctct.nsn) if (ctct.actives[idx] is None and actives_after_solving[idx] is not None)]
+
+                            if len(entered)==0 and len(exited)==0:
+                                set_trace()
 
                             csvwriter.writerow(['','','RedoAct','IN']+entered+['OUT']+exited)
 
