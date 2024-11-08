@@ -60,7 +60,6 @@ class FEModel:
 
 
         current_time=time.strftime("%Y%m%d%H%M", time.localtime())
-
         dir =  "OUTPUT_"+current_time+self.Mainname+subname+"/"
         if not os.path.exists(dir):
             os.mkdir(dir)
@@ -409,6 +408,11 @@ class FEModel:
         while RES>tol and niter<maxiter and not np.isnan(RES):
             self.COUNTS[3] += 1
 
+            with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.COUNTS_NAMES)
+                csvwriter.writerow(self.COUNTS.tolist())
+
             RES_prev = RES
 
             # getting K and KC
@@ -501,6 +505,11 @@ class FEModel:
             RES_prev = RES
             self.COUNTS[3] += 1
 
+            with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.COUNTS_NAMES)
+                csvwriter.writerow(self.COUNTS.tolist())
+
 
             # getting K and KC
             self.get_K(DispTime=TimeDisp)  # <-- uses self.u_temp           (no dirichlet)
@@ -574,7 +583,6 @@ class FEModel:
         K_new_inv = np.eye(nfr)
         f_new = np.zeros(nfr)
         m0 = 0
-
         
         for ctct in self.contacts:
             ctct.patch_changes = []
@@ -582,6 +590,11 @@ class FEModel:
         iter = 0
         while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
             self.COUNTS[4] += 1
+
+            with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.COUNTS_NAMES)
+                csvwriter.writerow(self.COUNTS.tolist())
 
             iter += 1
             print("ITER:",iter)
@@ -596,7 +609,6 @@ class FEModel:
                 K_new_inv = K_old_inv + ((np.inner(delta_u, delta_f) + np.inner(delta_f, np.dot(K_old_inv, delta_f)))*(np.outer(delta_u,delta_u)))/ (np.dot(delta_u, delta_f) ** 2)- (np.outer(np.dot(K_old_inv, delta_f),delta_u) + np.inner(np.outer(delta_u, delta_f),K_old_inv)) / np.dot(delta_u, delta_f)
                 h_new = -np.dot(K_new_inv, f_new)
 
-           
             if not np.isfinite(norm(h_new)):
                 set_trace()
 
@@ -618,15 +630,12 @@ class FEModel:
     
             print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
 
-
             # # a little experiment: Impose active set but update it every now an then
             # for ctct in self.contacts:
             #     print("actives     :",ctct.actives)
             #     if iter%10==0:
             #         ctct.getCandidates(Ns@Nt@ux, CheckActive = True, TimeDisp=False)
             #         print("actives_now :",ctct.actives)
-
-        
 
         return u, m0, iter , norm(f_2)
 
@@ -657,10 +666,15 @@ class FEModel:
         while np.linalg.norm(f_2 - f_new) > 0 and np.linalg.norm(f_2) > tol:
             self.COUNTS[4] += 1
 
+            with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.COUNTS_NAMES)
+                csvwriter.writerow(self.COUNTS.tolist())
+
+
+
             iter += 1
             print("ITER:",iter)
-
-
 
             f_old = f_new.copy()
             f_new = f_2.copy()
@@ -679,7 +693,6 @@ class FEModel:
                     h_new -= gamma_j*delta_f
                     gamma[j] = gamma_j
 
-
                 for j in range(max(0,nli-iter+1),nli):
                     rho_j = rho[j]
                     delta_u = DU[:,j]
@@ -689,7 +702,6 @@ class FEModel:
                     h_new += (gamma_j - eta)*delta_u
 
                 h_new = -h_new
-
 
             if not np.isfinite(norm(h_new)):
                 set_trace()
@@ -716,7 +728,6 @@ class FEModel:
                     # for 2D case
                     Ns,Nt = self.transform_2d
                     self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@ux,simm_time=simm_time)
-
 
             print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
 
@@ -1056,6 +1067,17 @@ class FEModel:
         u = u0.copy()
 
         while norm(f_new)>tol:
+            self.COUNTS[4] += 1
+
+
+            with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.COUNTS_NAMES)
+                csvwriter.writerow(self.COUNTS.tolist())
+
+
+
+
             iter += 1
             print("Iter:",iter)
 
@@ -1616,11 +1638,10 @@ class FEModel:
             print(count+":\t",val)
 
 
-        with open(self.output_dir+"COUNTERS.csv", 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+        with open(self.output_dir+"END_COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(self.COUNTS_NAMES)
             csvwriter.writerow(self.COUNTS.tolist())
-
 
 
 
