@@ -659,6 +659,9 @@ class FEModel:
 
             iter += 1
             print("ITER:",iter)
+
+
+
             f_old = f_new.copy()
             f_new = f_2.copy()
             delta_f = f_new - f_old
@@ -686,6 +689,7 @@ class FEModel:
                     h_new += (gamma_j - eta)*delta_u
 
                 h_new = -h_new
+
 
             if not np.isfinite(norm(h_new)):
                 set_trace()
@@ -756,7 +760,7 @@ class FEModel:
         f1 = h_new@f_new
         f_1 = f_new
 
-        tol2 = min(abs(f1)/100 , 1e-12)
+        tol2 = min(abs(f1)/1e6 , 1e-12)
 
         a2 = 2*alpha_init
         f2 = np.nan
@@ -765,6 +769,9 @@ class FEModel:
             f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
 
         ready_to_bisect = f2>0
+        if ready_to_bisect:
+            a_pos, f_pos, f__pos = a2,f2,f_2
+
         min_found = abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))
         # min_found = abs(f2)<tol2 and abs((np.dot(h_new, f_2)) < abs(c_par2 * np.dot(h_new, f_new)))
 
@@ -784,6 +791,7 @@ class FEModel:
 
             ready_to_bisect = f3>0
             if ready_to_bisect:
+                a_pos, f_pos, f__pos = a3,f3,f_3
                 a1,f2,f_1 = a2,f2,f_2   
                 a2,f2,f_2 = a3,f3,f_3       # from here it will go directly to bisection
             min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
@@ -823,7 +831,13 @@ class FEModel:
                     min_found = abs(f3)<tol2 and (np.dot(h_new, f_3) >= c_par2 * np.dot(h_new, f_new))
                     if ready_to_bisect or min_found:
                         a1,f2,f_1 = a2,f2,f_2   
-                        a2,f2,f_2 = a3,f3,f_3
+                        if f3>0:
+                            a_pos, f_pos, f__pos = a3,f3,f_3
+                            a2,f2,f_2 = a3,f3,f_3
+                        else:
+                            a2,f2,f_2 = a_pos,f_pos,f__pos
+
+
                         break
 
                     print("\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
@@ -838,6 +852,7 @@ class FEModel:
                         parab = {'zeros':None}
                         is_alpha_pos = False # This will force to search to the right (in while loop below)
 
+
                 if ready_to_bisect or min_found:
                     # this would mean they were found in the previous while loop
                     break
@@ -850,6 +865,9 @@ class FEModel:
                     f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
                 
                 ready_to_bisect = f0>0
+                if ready_to_bisect:
+                    a_pos, f_pos, f__pos = a0,f0,f_0
+
                 min_found = abs(f0)<tol2 and (np.dot(h_new, f_0) >= c_par2 * np.dot(h_new, f_new))
                 print("\talphas:",[a1,a2,a3,a0],"\tf",[f1,f2,f3,f0])
 
@@ -871,8 +889,11 @@ class FEModel:
         if not min_found:
 
             print("\t## Performing quadratic secant search ##")
-            a3,f3,f_3 = a2,f2,f_2
-            
+            if f2>0:
+                a3,f3,f_3 = a2,f2,f_2
+            else:
+                a3,f3,f_3 = a_pos, f_pos, f__pos
+
             a2 = (a1+a3)/2
             f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
 
@@ -891,13 +912,23 @@ class FEModel:
                     if parab["a"]>0:
                         a0 = max(parab["zeros"])
                     else:
-                        a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
+                        a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop, NOT!
+                    
+                    if a0<0:
+                        secant = True
+                        break
 
                 except:
                     secant = True
                     break
                 
                 f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
+
+                # storing values that give a f_pos in case we need to call it in the bisection/secant method
+                if 0<f0<f_pos: 
+                    a_pos, f_pos, f__pos = a0,f0,f_0
+
+
                 print("\talphas:",[a1,a2,a3],[a0],"\tf",[f1,f2,f3],[f0])
 
                 if a0>a3:    # In this case f1,f2,f3 are all negative. since f0~0 and f is increasing in the interval
@@ -944,6 +975,10 @@ class FEModel:
                 # Secant (linear) #
                 ###################
 
+                if f2<0:
+                    a2,f2,f_2 = a_pos, f_pos, f__pos
+
+
                 print("\t## parabola failed. Finishing off with Secant method ##")
                 print("\tInitially, we have:")
                 print("\t\talphas:",[a1,a2,a3],"\tf",[f1,f2,f3])
@@ -977,20 +1012,23 @@ class FEModel:
 
                 a2,f2,f_2 = a1,f1,f_1.copy()    # just to enter the loop
                 bisect_iter = 0
-                while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))):
+                while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))) and not (a2 in [a1,a3]):
                     if f2>0:
                         a3,f3,f_3 = a2,f2,f_2.copy()
                     else:
                         a1,f1,f_1 = a2,f2,f_2.copy()
 
                     a2 = (a1+a3)/2
+
+
+
                     f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
                     print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
 
                     bisect_iter +=1 
-                    if bisect_iter>40:
-                        print("\tmaxiter reached! returning current value")
-                        break
+                    # if bisect_iter>40:
+                    #     print("\tmaxiter reached! returning current value")
+                    #     break
 
         # Here, one could plot all the values stored in self.ALs and self.FFs
 
@@ -1416,8 +1454,6 @@ class FEModel:
                         pchfile = self.output_dir+"ctct"+str(ic)+"iters_details.csv"
                         with open(pchfile, 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
                             csvwriter = csv.writer(csvfile)
-                            # entered = list(set(ctct.actives).difference(set(actives_before_solving)))
-                            # exited  = list(set(actives_before_solving).difference(set(ctct.actives)))
                             entered = [idx for idx in range(ctct.nsn) if (ctct.actives[idx] is not None and actives_after_solving[idx] is None)]
                             exited =  [idx for idx in range(ctct.nsn) if (ctct.actives[idx] is None and actives_after_solving[idx] is not None)]
 
@@ -1588,3 +1624,30 @@ class FEModel:
 
 
 
+"""
+                # if iter==126:
+                #     set_trace()
+                #     import matplotlib.pyplot as plt
+
+                #     alphas = np.linspace(0.0, 500, 100)
+                #     f_values = []
+                #     for alpha in alphas:
+
+                #         ux = u.copy()
+                #         ux[free_ind] = u[free_ind] + alpha*h_new
+                #         f , _ = FUNJAC(ux)
+                #         f_3 = f[free_ind]
+                #         f3 = h_new@f_3
+                #         print(f3-h_new@f_new)
+                #         print(f3)
+                #         f_values.append(f3)
+
+                #     plt.figure(figsize=(8, 6))
+                #     plt.plot(alphas, f_values, label="dmda(alpha)", color="blue", linestyle="-", marker="")
+                #     plt.xlabel("Alpha")
+                #     plt.ylabel("dmda(alpha)")
+                #     plt.title("Line Search Plot between alpha_0 and alpha_1")
+                #     plt.legend()
+                #     plt.grid(True)
+                #     plt.show()
+"""
