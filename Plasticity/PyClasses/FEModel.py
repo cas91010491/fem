@@ -820,7 +820,7 @@ class FEModel:
                     parab = {'zeros':None}
                     is_alpha_on_the_right = False # This will force to search to the right (in while loop below)
 
-                # Make sure the parabola crosses X in ascending manner and that cross is at alpha>0.
+                # Make sure the parabola crosses X in ascending manner.
                 while parab["zeros"] is None or not is_alpha_on_the_right:
                     print("\tparabola not ready. Moving to right...")
                     # Let's move to the right
@@ -1363,6 +1363,9 @@ class FEModel:
 
 
         redo_count = 0
+        
+        print("\ndirectory:\n"+self.output_dir)
+
         while t+dt < tf+1e-4:
 
             if ForcedShift:
@@ -1638,6 +1641,9 @@ class FEModel:
 
         for val,count in zip(self.COUNTS,self.COUNTS_NAMES):
             print(count+":\t",val)
+
+
+        print("\ndirectory:\n"+self.output_dir)
 
 
         with open(self.output_dir+"A_END_COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
