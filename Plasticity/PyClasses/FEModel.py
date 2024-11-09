@@ -406,7 +406,7 @@ class FEModel:
 
         # while RES>tol and RES<5*RES_prev and niter<maxiter and not np.isnan(RES):
         while RES>tol and niter<maxiter and not np.isnan(RES):
-            self.COUNTS[3] += 1
+            self.COUNTS[2] += 1
 
             with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
                 csvwriter = csv.writer(csvfile)
@@ -503,7 +503,7 @@ class FEModel:
         # while RES>tol and RES<5*RES_prev and niter<maxiter and not np.isnan(RES):
         while RES>tol and  niter<maxiter and not np.isnan(RES):
             RES_prev = RES
-            self.COUNTS[3] += 1
+            self.COUNTS[2] += 1
 
             with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
                 csvwriter = csv.writer(csvfile)
@@ -1006,7 +1006,7 @@ class FEModel:
                     print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
 
                     sec_iter +=1 
-                    if sec_iter>10:
+                    if sec_iter>10 or not (0.01<(a2-a1)/(a3-a1)<0.99):
                         bisection = True
                         break
             else:
@@ -1023,7 +1023,7 @@ class FEModel:
 
                 a2,f2,f_2 = a1,f1,f_1.copy()    # just to enter the loop
                 bisect_iter = 0
-                while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))) and not (a2 in [a1,a3]):
+                while not (abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))):
                     if f2>0:
                         a3,f3,f_3 = a2,f2,f_2.copy()
                     else:
@@ -1031,10 +1031,11 @@ class FEModel:
 
                     a2 = (a1+a3)/2
 
-
-
                     f2,f_2,ux = func(a2,FUNJAC,u,free_ind,h_new)
                     print("\talphas:",[a1,a3],[a2],"\tf",[f1,f3],[f2])
+
+                    if a2 in [a1,a3]:
+                        break
 
                     bisect_iter +=1 
                     # if bisect_iter>40:
@@ -1398,8 +1399,8 @@ class FEModel:
             actives_before_solving = list(self.contacts[0].actives)
 
             if DoMinimization:
+                self.COUNTS[3] += 1
                 converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=plot-1)
-                self.COUNTS[2] += 1
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
             else:
                 # converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=plot-1)
@@ -1638,7 +1639,11 @@ class FEModel:
             print(count+":\t",val)
 
 
-        with open(self.output_dir+"END_COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+        with open(self.output_dir+"A_END_COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(self.COUNTS_NAMES)
+            csvwriter.writerow(self.COUNTS.tolist())
+        with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(self.COUNTS_NAMES)
             csvwriter.writerow(self.COUNTS.tolist())
