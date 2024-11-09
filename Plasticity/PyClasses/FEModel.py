@@ -25,7 +25,7 @@ class FEModel:
         self.transform_2d = transform_2d
 
         # main counter during the simulation
-        self.COUNTS_NAMES = ["incr_accptd", "incr_rjctd", "incr_mnmzd", "NR_iters", "mnmzn_iters", "mnmzn_fn_evals"]
+        self.COUNTS_NAMES = ["incr_accptd", "incr_rjctd", "NR_iters", "incr_mnmzd", "mnmzn_iters", "mnmzn_fn_evals"]
         self.COUNTS = np.zeros((6,),dtype = int)
 
         self.SED = [[] for _ in range(len(bodies))]     # stores nodal Strain-energy density for every successful increment
