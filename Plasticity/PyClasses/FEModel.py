@@ -784,7 +784,6 @@ class FEModel:
             a_pos, f_pos, f__pos = a2,f2,f_2
 
         min_found = abs(f2)<tol2 and (np.dot(h_new, f_2) >= c_par2 * np.dot(h_new, f_new))
-        # min_found = abs(f2)<tol2 and abs((np.dot(h_new, f_2)) < abs(c_par2 * np.dot(h_new, f_new)))
 
         print("\talphas:",[a1,a2],"\tf",[f1,f2])
 
@@ -815,13 +814,14 @@ class FEModel:
                         a0 = max(parab["zeros"])
                     else:
                         a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
-                    is_alpha_pos = a0>0
+                    # is_alpha_pos = a0>0
+                    is_alpha_on_the_right = a0>a3    # at this point I NEED to move to the right. I dont want 0<a0<a{1,2,3} !!
                 except:
                     parab = {'zeros':None}
-                    is_alpha_pos = False # This will force to search to the right (in while loop below)
+                    is_alpha_on_the_right = False # This will force to search to the right (in while loop below)
 
                 # Make sure the parabola crosses X in ascending manner and that cross is at alpha>0.
-                while parab["zeros"] is None or not is_alpha_pos:
+                while parab["zeros"] is None or not is_alpha_on_the_right:
                     print("\tparabola not ready. Moving to right...")
                     # Let's move to the right
                     delta = 1.5*2*(a2-a1) # step 50% bigger each time and initially double because it will do at least one bisection
@@ -858,10 +858,11 @@ class FEModel:
                             a0 = max(parab["zeros"])
                         else:
                             a0 = min(parab["zeros"])    # >0 already guaranteed by previous while loop
-                        is_alpha_pos = a0>0
+                        # is_alpha_pos = a0>0
+                        is_alpha_on_the_right = a0>a3    # at this point I NEED to move to the right. I dont want 0<a0<a{1,2,3} !!
                     except:
                         parab = {'zeros':None}
-                        is_alpha_pos = False # This will force to search to the right (in while loop below)
+                        is_alpha_on_the_right = False # This will force to search to the right (in while loop below)
 
 
                 if ready_to_bisect or min_found:
