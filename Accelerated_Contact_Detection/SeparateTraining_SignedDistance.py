@@ -18,7 +18,7 @@ neuron_options = [16, 32, 64]
 epochs = 10
 
 # Directory to save all models and results
-output_dir = 'signed_distance_models'
+output_dir = 'OUTPUT_signed_distance_models'
 os.makedirs(output_dir, exist_ok=True)
 
 # Initialize a list to collect performance metrics for each model

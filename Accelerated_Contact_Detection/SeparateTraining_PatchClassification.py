@@ -10,32 +10,32 @@ data = pd.read_csv('sampled_data_1_percent.csv')
 # Filter data based on the criterion -0.5 < gn < 1.5
 filtered_data = data[(data['gn'] > -0.5) & (data['gn'] < 1.5)]
 x_train = filtered_data[['x', 'y', 'z']].values
-y_distance = filtered_data['gn'].values.reshape(-1, 1)
+y_classification = filtered_data['p_id'].values  # Patch IDs as integer labels (0 to 95)
 
 # Configuration parameters
 layer_counts = [1, 2, 3]
-neuron_options = [16, 32, 64]
-epochs = 10
+neuron_options = [64, 128, 256]
+epochs = 50
+num_classes = 96  # Number of patches for classification
 
 # Directory to save all models and results
-output_dir = 'signed_distance_models'
+output_dir = 'OUTPUT_patch_classification_models'
 os.makedirs(output_dir, exist_ok=True)
 
 # Initialize a list to collect performance metrics for each model
 results = []
 
-# Function to build, train, and evaluate each model configuration
-def build_and_train_model(layer_config, x_train, y_distance, model_name):
+def build_and_train_model(layer_config, x_train, y_classification, model_name):
     # Build the model
     inputs = tf.keras.Input(shape=(3,))
     x = inputs
     for neurons in layer_config:
         x = layers.Dense(neurons, activation='relu')(x)
-    outputs = layers.Dense(1)(x)
+    outputs = layers.Dense(num_classes, activation='softmax')(x)  # 96 units with softmax for classification
     model = Model(inputs=inputs, outputs=outputs)
     
-    # Compile the model with MSE loss and MAE metric
-    model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+    # Compile the model with sparse categorical crossentropy for classification and accuracy metric
+    model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
     # Prepare the model directory
     model_dir = os.path.join(output_dir, model_name)
@@ -46,28 +46,28 @@ def build_and_train_model(layer_config, x_train, y_distance, model_name):
         model.summary(print_fn=lambda x: f.write(x + '\n'))
 
     # Train the model
-    history = model.fit(x_train, y_distance, epochs=epochs, batch_size=32, validation_split=0.2, verbose=0)
+    history = model.fit(x_train, y_classification, epochs=epochs, batch_size=32, validation_split=0.2, verbose=0)
 
     # Save training history data
     history_df = pd.DataFrame(history.history)
     history_df.to_csv(os.path.join(model_dir, 'training_history.csv'), index=False)
 
-    # Plot training and validation losses
+    # Plot training and validation accuracy
     plt.figure()
-    plt.plot(history.history['loss'], label='Training Loss')
-    plt.plot(history.history['val_loss'], label='Validation Loss')
+    plt.plot(history.history['accuracy'], label='Training Accuracy')
+    plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
     plt.xlabel('Epochs')
-    plt.ylabel('Loss (MSE)')
+    plt.ylabel('Accuracy')
     plt.legend()
-    plt.title(f'Training Loss for {model_name}')
-    plt.savefig(os.path.join(model_dir, 'loss_plot.png'))
+    plt.title(f'Training and Validation Accuracy for {model_name}')
+    plt.savefig(os.path.join(model_dir, 'accuracy_plot.png'))
     plt.close()
 
     # Collect metrics for summary
     final_train_loss = history.history['loss'][-1]
     final_val_loss = history.history['val_loss'][-1]
-    final_train_mae = history.history['mae'][-1]
-    final_val_mae = history.history['val_mae'][-1]
+    final_train_acc = history.history['accuracy'][-1]
+    final_val_acc = history.history['val_accuracy'][-1]
     total_params = model.count_params()
     
     # Add results to the list
@@ -77,8 +77,8 @@ def build_and_train_model(layer_config, x_train, y_distance, model_name):
         'Neurons per Layer': layer_config,
         'Final Training Loss': final_train_loss,
         'Final Validation Loss': final_val_loss,
-        'Final Training MAE': final_train_mae,
-        'Final Validation MAE': final_val_mae,
+        'Final Training Accuracy': final_train_acc,
+        'Final Validation Accuracy': final_val_acc,
         'Total Parameters': total_params
     })
 
@@ -87,7 +87,7 @@ for layer_count in layer_counts:
     for layer_config in itertools.product(neuron_options, repeat=layer_count):
         model_name = f"{layer_count}_layers_" + "_".join(map(str, layer_config)) + "_neurons"
         print(f"Training model: {model_name}")
-        build_and_train_model(layer_config, x_train, y_distance, model_name)
+        build_and_train_model(layer_config, x_train, y_classification, model_name)
 
 # Save all results to a CSV file
 results_df = pd.DataFrame(results)
@@ -99,24 +99,24 @@ print("Results summary saved to 'results_summary.csv'.")
 # Load the results dataframe if it’s not already loaded
 results_df = pd.read_csv(os.path.join(output_dir, 'results_summary.csv'))
 
-# 1. **Minimum Validation Loss with Preference for Simpler Models**
-min_val_loss = results_df['Final Validation Loss'].min()
-optimal_models = results_df[results_df['Final Validation Loss'] <= 1.05 * min_val_loss]
-best_model_by_val_loss = optimal_models.sort_values(by='Total Parameters').iloc[0]
+# 1. **Maximum Validation Accuracy with Preference for Simpler Models**
+max_val_acc = results_df['Final Validation Accuracy'].max()
+optimal_models = results_df[results_df['Final Validation Accuracy'] >= 0.95 * max_val_acc]
+best_model_by_val_acc = optimal_models.sort_values(by='Total Parameters').iloc[0]
 
-print("Best Model by Validation Loss (within 5% of min loss):")
-print(best_model_by_val_loss)
+print("Best Model by Validation Accuracy (within 5% of max accuracy):")
+print(best_model_by_val_acc)
 
-# 2. **Loss-to-Parameter Ratio for Efficiency**
-results_df['Loss-to-Parameter Ratio'] = results_df['Final Validation Loss'] / results_df['Total Parameters']
-best_model_by_ratio = results_df.loc[results_df['Loss-to-Parameter Ratio'].idxmin()]
+# 2. **Accuracy-to-Parameter Ratio for Efficiency**
+results_df['Accuracy-to-Parameter Ratio'] = results_df['Final Validation Accuracy'] / results_df['Total Parameters']
+best_model_by_ratio = results_df.loc[results_df['Accuracy-to-Parameter Ratio'].idxmax()]
 
-print("\nBest Model by Loss-to-Parameter Ratio:")
+print("\nBest Model by Accuracy-to-Parameter Ratio:")
 print(best_model_by_ratio)
 
 # 3. **Pareto Front for Balanced Trade-off**
-# Sort by 'Total Parameters' and then by 'Final Validation Loss' to identify Pareto front models
-sorted_df = results_df.sort_values(by=['Total Parameters', 'Final Validation Loss'])
+# Sort by 'Total Parameters' and then by 'Final Validation Accuracy' to identify Pareto front models
+sorted_df = results_df.sort_values(by=['Total Parameters', 'Final Validation Accuracy'], ascending=[True, False])
 pareto_front = sorted_df.drop_duplicates(subset='Total Parameters', keep='first')
 best_model_pareto = pareto_front.iloc[0]
 
@@ -125,31 +125,11 @@ print(best_model_pareto)
 
 # Save summary of best models to a text file
 with open(os.path.join(output_dir, 'best_model_summary.txt'), 'w') as f:
-    f.write("Best Model by Validation Loss (within 5% of min loss):\n")
-    f.write(str(best_model_by_val_loss) + "\n\n")
-    f.write("Best Model by Loss-to-Parameter Ratio:\n")
+    f.write("Best Model by Validation Accuracy (within 5% of max accuracy):\n")
+    f.write(str(best_model_by_val_acc) + "\n\n")
+    f.write("Best Model by Accuracy-to-Parameter Ratio:\n")
     f.write(str(best_model_by_ratio) + "\n\n")
     f.write("Best Model on Pareto Front (Balanced Trade-off):\n")
     f.write(str(best_model_pareto) + "\n")
 
 print("\nSummary of best models saved to 'best_model_summary.txt'")
-
-# Define acceptable error threshold
-error_threshold = 0.01
-
-# Function to calculate threshold accuracy (for MAE)
-def calculate_threshold_accuracy(mae, threshold):
-    return mae <= threshold
-
-# Collect threshold accuracy for each model
-threshold_accuracies = results_df['Final Validation MAE'].apply(lambda mae: calculate_threshold_accuracy(mae, error_threshold))
-results_df['Threshold Accuracy'] = threshold_accuracies
-
-# Select models that meet or exceed threshold accuracy
-acceptable_models = results_df[results_df['Threshold Accuracy']]
-
-print("\nModels with Validation MAE within the acceptable threshold (0.01):")
-print(acceptable_models)
-
-# Save threshold-acceptable models to a file
-acceptable_models.to_csv(os.path.join(output_dir, 'acceptable_models.csv'), index=False)

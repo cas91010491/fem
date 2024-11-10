@@ -1,6 +1,6 @@
 *.png
 *.gif
-OUTPUT_2024*/
+OUTPUT_*/
 */csv_files_edges/
 venv/
 fem-env/
