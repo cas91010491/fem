@@ -1,0 +1,34 @@
+Best Model by Validation Loss (within 5% of min loss):
+Model                        3_layers_64_64_32_neurons
+Layers                                               3
+Neurons per Layer                         (64, 64, 32)
+Final Training Loss                           0.000549
+Final Validation Loss                         0.000358
+Final Training Accuracy                            0.0
+Final Validation Accuracy                          0.0
+Total Parameters                                  6529
+Name: 37, dtype: object
+
+Best Model by Loss-to-Parameter Ratio:
+Model                        3_layers_64_64_32_neurons
+Layers                                               3
+Neurons per Layer                         (64, 64, 32)
+Final Training Loss                           0.000549
+Final Validation Loss                         0.000358
+Final Training Accuracy                            0.0
+Final Validation Accuracy                          0.0
+Total Parameters                                  6529
+Loss-to-Parameter Ratio                            0.0
+Name: 37, dtype: object
+
+Best Model on Pareto Front (Balanced Trade-off):
+Model                        1_layers_16_neurons
+Layers                                         1
+Neurons per Layer                          (16,)
+Final Training Loss                     0.012772
+Final Validation Loss                   0.012702
+Final Training Accuracy                      0.0
+Final Validation Accuracy                    0.0
+Total Parameters                              81
+Loss-to-Parameter Ratio                 0.000157
+Name: 0, dtype: object
