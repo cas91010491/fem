@@ -139,12 +139,12 @@ class BS:
         elif res == "value":
             return norm(BS2.x-self.x) - (BS2.r + self.r)
 
-    def plot(self,ax):
-        nl = 17
-        theta = np.linspace(0, 2 * np.pi, nl)
-        cc = self.r*np.cos(theta)
-        cs = self.r*np.sin(theta)
+    def plot(self,ax,ref=20,color='b',alpha=0.25):
+        # Create a transparent sphere
+        r,(x0,y0,z0) = self.r,self.x  # Radius of the sphere
+        phi, theta = np.mgrid[0.0:2.0*np.pi:ref*1j, 0.0:np.pi:ref*0.5j]
+        x = x0+r * np.sin(theta) * np.cos(phi)
+        y = y0+r * np.sin(theta) * np.sin(phi)
+        z = z0+r * np.cos(theta)
 
-        ax.plot( self.x[0]*np.ones_like(theta) , cc+self.x[1]*np.ones(nl) , cs+self.x[2]*np.ones(nl) )
-        ax.plot( cc+self.x[0]*np.ones(nl) , self.x[1]*np.ones_like(theta) , cs+self.x[2]*np.ones(nl) )
-        ax.plot( cc+self.x[0]*np.ones(nl) , cs+self.x[1]*np.ones(nl) , self.x[2]*np.ones_like(theta) )
+        ax.plot_surface(x, y, z, color=color, alpha=alpha)

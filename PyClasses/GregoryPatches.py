@@ -4,13 +4,13 @@ from numpy.core.numeric import outer
 from PyClasses.Utilities import Bernstein, dnBernstein, Unchain, printif, flatList, skew, contrVar
 import numpy as np
 from numpy.linalg import norm
-import time
+import time,csv
+
 
 from pdb import set_trace
 
-
 class GrgPatch:
-    def __init__(self,surf,iquad, masterNodes = False):
+    def __init__(self,surf,iquad, masterNodes = None):
         # GLOBALS
         self.surf = surf
         self.iquad = iquad
@@ -20,6 +20,12 @@ class GrgPatch:
         self.getLocals()    #attrs: squad, facets, num_outnodes, sorrounding_nodes
         self.X = self.surf.X[self.squad]
         self.eps = 1e-11             # treatment for undefined cases
+
+        # # This part is added only for the ANN experiment:
+        # from thesis_sourcecode.src.model_training.surface_points_model_settings import SurfacePointsModelForOnePatch
+        # name = f"final_surface_points_model_patch_{self.iquad}-shape-512-512-bs-64"
+        # self.ANN_projection_model = SurfacePointsModelForOnePatch(name=name)
+
 
     def getLocals(self):
         quad = self.quad
@@ -31,7 +37,7 @@ class GrgPatch:
             loc_id = self.surf.nodes.index(node)    # local id of the node in the surface
             neighbors = self.surf.NeighborNodes[loc_id]
             outerneighbors = Unchain(neighbors,exclude = [quad[nid-1],quad[nid-3]])
-            if self.masterNodes != False:   # No C1 continuity out of subsurf
+            if self.masterNodes is not None:   # No C1 continuity out of subsurf
                 sorrounding_nodes.append( [node for node in outerneighbors if node in self.masterNodes] )
             else:                           # C1 continuity out of subsurf
                 sorrounding_nodes.append( outerneighbors )
@@ -210,6 +216,7 @@ class GrgPatch:
 
         return CtrlPts
 
+
     def groupCtrlPts(self, cp = 0):
 
         if type(cp) == int:
@@ -222,19 +229,21 @@ class GrgPatch:
         ctrls = [row0,row1,row2,row3]
         self.CtrlPts = ctrls
 
-
     def Grg(self, t, deriv = 0):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
         u,v = t
         p       = np.array([0.0 , 0.0 , 0.0])
-        D1p     = np.array([0.0 , 0.0 , 0.0])
-        D2p     = np.array([0.0 , 0.0 , 0.0])
-        D1D1p   = np.array([0.0 , 0.0 , 0.0])
-        D1D2p   = np.array([0.0 , 0.0 , 0.0])
-        D2D2p   = np.array([0.0 , 0.0 , 0.0])
-        D1D1D1p = np.array([0.0 , 0.0 , 0.0])
-        D1D1D2p = np.array([0.0 , 0.0 , 0.0])
-        D1D2D2p = np.array([0.0 , 0.0 , 0.0])
-        D2D2D2p = np.array([0.0 , 0.0 , 0.0])
+        if deriv > 0:
+            D1p     = np.array([0.0 , 0.0 , 0.0])
+            D2p     = np.array([0.0 , 0.0 , 0.0])
+        if deriv > 1:
+            D1D1p   = np.array([0.0 , 0.0 , 0.0])
+            D1D2p   = np.array([0.0 , 0.0 , 0.0])
+            D2D2p   = np.array([0.0 , 0.0 , 0.0])
+        if deriv > 2:
+            D1D1D1p = np.array([0.0 , 0.0 , 0.0])
+            D1D1D2p = np.array([0.0 , 0.0 , 0.0])
+            D1D2D2p = np.array([0.0 , 0.0 , 0.0])
+            D2D2D2p = np.array([0.0 , 0.0 , 0.0])
         n, m = len(self.CtrlPts)-1, len(self.CtrlPts[0])-1
 
         for i  in range(n+1):
@@ -355,6 +364,48 @@ class GrgPatch:
             print("Derivative order not (yet) implemented")
             set_trace()
 
+
+    def Grg0(self, t):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
+        u,v = t
+        p       = np.array([0.0 , 0.0 , 0.0])
+        n, m = len(self.CtrlPts)-1, len(self.CtrlPts[0])-1
+
+        for i  in range(n+1):
+            for j in range(m+1):
+                # Inner nodes: values, derivatives and treatments
+                if i in [1,2] and j in [1,2]:
+                    if i==1 and j ==1:
+                        x110, x111 = self.CtrlPts[1][1]
+                        den = max(self.eps,u+v)  
+                        xij = (u*x110+v*x111)/(den)
+                            
+                    elif i==1 and j==2:
+                        x120, x121 = self.CtrlPts[1][2]
+                        den = max(self.eps,u+1-v)
+                        xij = (u*x120+(1-v)*x121)/(den)
+
+                    elif i==2 and j==1:
+                        x210, x211 = self.CtrlPts[2][1]
+                        den = max(self.eps, v+1-u)
+                        xij = ((1-u)*x210+v*x211)/(den)
+
+                    else:
+                        x220, x221 = self.CtrlPts[2][2]
+                        den = max(self.eps, 2-u-v)
+                        xij = ((1-u)*x220+(1-v)*x221)/(den)
+
+                else:
+                    xij = self.CtrlPts[i][j]
+
+                # Bernstein polynomials
+                Bi     =   Bernstein(n, i, u)
+                Bj     =   Bernstein(m, j, v)
+
+                p += Bi*Bj*xij
+
+
+        return p
+
     def D3Grg(self,t, normalize = True):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
         D1p, D2p = self.Grg(t, deriv = 1)[1].T
         D3p = np.cross(D1p,D2p)
@@ -391,17 +442,68 @@ class GrgPatch:
             d2Ndtau2dtau1 = -d2Ndtau1dtau2
             d2Ndxidxj = (np.tensordot(np.tensordot(d2Ndtau1dtau2,dtau1dxi,axes=[1,0]),dtau2dxi,axes=[1,0]) + np.tensordot(np.tensordot(d2Ndtau2dtau1,dtau2dxi,axes=[1,0]),dtau1dxi,axes=[1,0])).swapaxes(2,3)   #shape (3,3,3,20,20)
             d2ndxidxj = np.tensordot(np.tensordot(d2nd2N,dNdxi,axes=[1,0]),dNdxi,axes=[1,0]).swapaxes(2,3)+np.tensordot(dndN,d2Ndxidxj,axes=[1,0])
+            
             return dndxi.swapaxes(0,2).swapaxes(1,2), d2ndxidxj   #returns shapes (20,3,3), (20,20,3,3,3)
 
-    def MinDist(self, x, seeding = 10,x0x1y0y1 = [0.0,1.0,0.0,1.0],recursive = False,recursionLevel=0):
-        umin = 0
-        vmin = 0
+    def dndt(self,t,degree=1):
+        if degree==1:
+            _, dxcdt,d2xcdt2 = self.Grg(t, deriv = 2)
+        elif degree==2:
+            _, dxcdt,d2xcdt2,d3xcdt3 = self.Grg(t, deriv = 3)
+
+        tau1, tau2 = dxcdt.T
+        N = np.cross(tau1,tau2)
+        normN = norm(N)
+        nor = N/normN
+        dndN   = (np.eye(3) - np.outer(nor,nor))/normN
+        dNdtau1 =-skew(tau2)        # signs verified with Autograd
+        dNdtau2 = skew(tau1)        # signs verified with Autograd
+        dtau1dt = d2xcdt2[:,:,0]
+        dtau2dt = d2xcdt2[:,:,1]
+
+        dNdt = dNdtau1@dtau1dt + dNdtau2@dtau2dt
+        dndt = dndN@dNdt
+
+
+        if degree==1:
+            return dndt   #returns shape (20,3,3)
+
+        elif degree==2:
+            d2tau1d2t = d3xcdt3[:,:,:,0]
+            d2tau2d2t = d3xcdt3[:,:,:,1]
+            NI = np.multiply.outer(N,np.eye(3))
+            d2nd2N = 3*np.multiply.outer(np.outer(N,N),N)/normN**5 - (NI+NI.swapaxes(0,1)+NI.swapaxes(0,2))/normN**3
+            
+            # check symmetry 
+            d2Ndtau1dtau2 = -np.array([ [[0.0,0.0,0.0],[0.0,0.0,-1.0],[0.0,1.0,0.0]] , [[0.0,0.0,1.0],[0.0,0.0,0.0],[-1.0,0.0,0.0]] , [[0.0,-1.0,0.0],[1.0,0.0,0.0],[0.0,0.0,0.0]] ])
+            d2Ndtau2dtau1 = -d2Ndtau1dtau2
+
+            d2Nd2t = (np.tensordot(np.tensordot(d2Ndtau1dtau2,dtau1dt,axes=[1,0]),dtau2dt,axes=[1,0])                   \
+                    + np.tensordot(np.tensordot(d2Ndtau2dtau1,dtau2dt,axes=[1,0]),dtau1dt,axes=[1,0])).swapaxes(1,2)    \
+                    + np.tensordot(dNdtau1,d2tau1d2t,axes=[1,0])                                                        \
+                    + np.tensordot(dNdtau2,d2tau2d2t,axes=[1,0])                                                        #shape (3,3,3,20,20) 
+            
+            d2nd2t = np.tensordot(np.tensordot(d2nd2N,dNdt,axes=[1,0]),dNdt,axes=[1,0]).swapaxes(1,2) + np.tensordot(dndN,d2Nd2t,axes=[1,0])
+
+            # return dndt.swapaxes(0,2).swapaxes(1,2), d2nd2t   #returns shapes (20,3,3), (20,20,3,3,3)
+            return dndt, d2nd2t   #returns shapes (20,3,3), (20,20,3,3,3)
+        
+        else:
+            raise ValueError("In dndt: Only first and second order derivatives are implemented")
+
+    def MinDist(self, x, seeding = 10,x0x1y0y1 = [0.0,1.0,0.0,1.0],recursive = False,recursionLevel=0,prev_t=None):
+        
+        umin = 0.0
+        vmin = 0.0
         dmin = norm(x-self.CtrlPts[0][0])   # Starting point
 
         if recursive:
             x0,x1,y0,y1 = x0x1y0y1
-            seeding = 4
-            dx, dy = x1-x0, y1-y0
+            if recursive>1:
+                seeding = recursive
+            else:
+                seeding = 4
+            dx, dy = x1-x0, y1-y0   # they might change once the borders (0.0/1.0) have been considered
         else:
             x0,x1,y0,y1 = x0x1y0y1
 
@@ -411,35 +513,68 @@ class GrgPatch:
                 if d < dmin:
                     dmin, umin, vmin = d, u, v
         
+        # if recursive and recursionLevel<8:
         if recursive and recursionLevel<8:
-            delta = 0.1
-            x0 = max(0.0,umin-dx/4)
-            x1 = min(1.0,umin+dx/4)
-            y0 = max(0.0,vmin-dy/4)
-            y1 = min(1.0,vmin+dy/4)
-            return self.MinDist(x,seeding = seeding, x0x1y0y1=[x0,x1,y0,y1],recursive=recursive,recursionLevel=recursionLevel+1)
+            # if prev_t is None or (abs(prev_t[0]-umin)>5e-3 and abs(prev_t[1]-vmin)>5e-3):
+            if prev_t is None or (abs(prev_t[0]-umin)>5e-3 or abs(prev_t[1]-vmin)>5e-3):    # OR!
+                    # x0 = max(0.0,umin-dx*3/16)      # 3/16 is a bit less than 1/4
+                    # x1 = min(1.0,umin+dx*3/16)      # ... and this is useful 
+                    # y0 = max(0.0,vmin-dy*3/16)      # ... to increase variance 
+                    # y1 = min(1.0,vmin+dy*3/16)      # ... and reduce redundance.
+
+                    # x0 = max(0.0,umin-3*dx/(8*seeding))      # 3/4*(dx/(2*seeding))...
+                    # x1 = min(1.0,umin+3*dx/(8*seeding))      # ... and this is useful 
+                    # y0 = max(0.0,vmin-3*dy/(8*seeding))      # ... to increase variance 
+                    # y1 = min(1.0,vmin+3*dy/(8*seeding))      # ... and reduce redundance.
+
+                    x0 = max(0.0,umin-7*dx/(16*seeding))      # 7/8*(dx/(2*seeding))...
+                    x1 = min(1.0,umin+7*dx/(16*seeding))      # ... and this is useful 
+                    y0 = max(0.0,vmin-7*dy/(16*seeding))      # ... to increase variance 
+                    y1 = min(1.0,vmin+7*dy/(16*seeding))      # ... and reduce redundance.
+            
+                    return self.MinDist(x,seeding = seeding, x0x1y0y1=[x0,x1,y0,y1],recursive=recursive,recursionLevel=recursionLevel+1,prev_t=[umin,vmin])
 
 
         return umin , vmin      # Temporarily returning UV from the rough approximation on the grid. TODO: implement exact calculus
 
-    def findProjection(self,xs, seeding=10, decimals = None):
+    def MinDistANN(self,x,verbose='auto'):
+        return np.array(self.ANN_projection_model.predict(x,verbose=verbose),dtype=np.float64)
 
-        t = self.MinDist(xs, seeding=seeding,recursive=True)
-        # t = self.MinDist(xs, seeding=seeding,recursive=False)
+    def findProjection(self,xs, seeding=10, recursive=1, decimals = None,tracing =False, ANNapprox = False,t0 = None):
 
-        # set_trace()
+        def proj_final_check(self,xs,t):
+            # final check (for points at/beyond edges)
+            if not (0<=t[0]<=1 and 0<=t[1]<=1):
+                t1 = min(max(0.0,t[0]),1.0)     # trimming values
+                t2 = min(max(0.0,t[1]),1.0)     # trimming values
+                xc0= self.Grg0([t1,t2])
+                nor0=self.D3Grg([t1,t2])
+                x_tang = (xs-xc0)-(xs-xc0)@nor0
+                if norm(x_tang)>2*self.BS.r/100:         # some considerable order of magnitude with respect to the patch 'size'
+                    return np.array([-1.0,-1.0])
+            return t
+
+
+        if not ANNapprox:
+            t = np.array(self.MinDist(xs, seeding=seeding,recursive=recursive))
+        elif t0 is not None:
+            t = t0
+        else:
+            t = self.MinDistANN( np.array([xs + np.array([-6.0, 0.0, 0.0],dtype=np.float64)]) , verbose=0 )[0]
 
         tol = 1e-16
         res = 1+tol
         niter = 0
-        dist = norm(xs - self.Grg((0,0)))  # Initial guess for distance in case there is no convergence
-        tcandidate = t
+        tcandidate = t.copy()
+        dist = norm(xs - self.Grg0(tcandidate))  # Initial guess for distance in case there is no convergence
 
-        while res>tol and (0<=t[0]<=1 and 0<=t[1]<=1):
+        # opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
+        opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
+        while res>tol and (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
 
             xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
 
-            f = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
+            f = -2*(xs-xc)@dxcdt
             K =  2*(np.tensordot(-( xs-xc),d2xcd2t,axes=[[0],[0]]) + dxcdt.T @ dxcdt)
 
             dt=np.linalg.solve(-K,f)
@@ -447,15 +582,20 @@ class GrgPatch:
 
             res = np.linalg.norm(f)
 
+            # print("iter:",niter,"\tt:",t,"\tres:",res)
+
             niter +=1
             if niter > 10:
                 dist_new = norm(xs - xc )
                 if dist_new < dist:
                     dist = dist_new
-                    tcandidate = t
+                    tcandidate = t.copy()
                 if niter> 13:
-                    return tcandidate
-
+                    # return tcandidate
+                    return proj_final_check(self,xs,tcandidate)
+                
+        t = proj_final_check(self,xs,t)
+                
         return t if decimals is None else t.round(decimals)
 
     # xc derivs
@@ -1140,32 +1280,132 @@ class GrgPatch:
 
 
     # Contact Force & Stiffness
+    def mC(self, xs, kn, cubicT=None, OPA=1e-8,t = None):
+        """Frictionless contact potential"""
+        if t is None:
+            t = self.findProjection(xs)
+        xc,dxcdt = self.Grg(t,deriv=1)
+        D1p, D2p = dxcdt.T
+        D3p = np.cross(D1p,D2p)
+        normal = D3p/norm(D3p)
+        gn = (xs-xc)@normal
+
+        if  cubicT is None:
+            return 1/2*kn*gn**2
+        
+        # TODO: define following cubic cases
+        elif gn<cubicT:
+            print("Not yet defined")
+            set_trace()
+        else:
+            print("Not yet defined")
+            set_trace()
+
+
+
+
+    def mf_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, xs_check=None, ANNapprox = False,t0=None,recursive_seeding=1):       #Chain rule by hand
+        """Frictionless contact force"""
+        Ne = len(self.squad)
+
+        t = self.findProjection(xs,ANNapprox=ANNapprox,t0=t0,recursive = recursive_seeding)
+        xc,dxcdt = self.Grg(t,deriv=1)
+        D1p, D2p = dxcdt.T
+        D3p = np.cross(D1p,D2p)
+        normal = D3p/norm(D3p)
+        gn = (xs-xc)@normal
+
+        # print("id_patch: ",self.iquad,"gn: ",gn)
+        # print("         t: ",t)
+
+        opa = 0
+        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+            return 0.0, np.zeros(  3*(Ne+1) ), gn, t
+
+
+        dgndu    = np.zeros(  3*(Ne+1) )
+        dgndu[:3] = normal         # only the terms related to the slave node. Also dgndxc@dxcdxs = dgndn@dndxs = 0
+
+        if  cubicT is None:
+            fintCN = kn*gn*dgndu
+            mC = 0.5*kn*gn**2
+            # print("norm_force: ",(fintCN[:3]))
+
+            return mC,fintCN, gn, t
+        elif gn<cubicT:
+            return kn/2*(2*gn*dgndu - cubicT*dgndu), gn, t
+        else:
+            return kn/(2*cubicT)*gn**2*dgndu, gn, t
+        
+
+    def fintC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, xs_check=None, ANNapprox = False,t0=None,recursive_seeding=1):       #Chain rule by hand
+        """Frictionless contact force"""
+        Ne = len(self.squad)
+
+        t = self.findProjection(xs,ANNapprox=ANNapprox,t0=t0,recursive = recursive_seeding)
+        xc,dxcdt = self.Grg(t,deriv=1)
+        D1p, D2p = dxcdt.T
+        D3p = np.cross(D1p,D2p)
+        normal = D3p/norm(D3p)
+        gn = (xs-xc)@normal
+
+        # print("id_patch: ",self.iquad,"gn: ",gn)
+        # print("         t: ",t)
+
+        opa = 0
+        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+            return np.zeros(  3*(Ne+1) ), gn, t
+
+
+        dgndu    = np.zeros(  3*(Ne+1) )
+        dgndu[:3] = normal         # only the terms related to the slave node. Also dgndxc@dxcdxs = dgndn@dndxs = 0
+
+        if  cubicT is None:
+            fintCN = kn*gn*dgndu
+            # print("norm_force: ",(fintCN[:3]))
+
+            return fintCN, gn, t
+        elif gn<cubicT:
+            return kn/2*(2*gn*dgndu - cubicT*dgndu), gn, t
+        else:
+            return kn/(2*cubicT)*gn**2*dgndu, gn, t
+
     def fintC(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, xs_check=None):       #Chain rule by hand
         """Frictionless contact force"""
         Ne = len(self.squad)
 
         t = self.findProjection(xs)
-        xc, dxcdt, d2xcd2t= self.Grg(t, deriv = 2)
+        # xc, dxcdt, d2xcd2t= self.Grg(t, deriv = 2)
+        xc = self.Grg(t)
         normal = self.D3Grg(t)
         gn = (xs-xc)@normal
 
-        print("id_patch: ",self.iquad,"gn: ",gn)
-        print("         t: ",t)
+        # print("id_patch: ",self.iquad,"gn: ",gn)
+        # print("         t: ",t)
 
-        dgndxc = (xs-xc)/norm(xs-xc)            # norm(xs-xc) != gn   (opposite sign)
+        opa = 0
+        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+            return np.zeros(  3*(Ne+1) ), gn, t
+
+        # SAVE DATA for Leonint (if within projection   0<t<1)
+        with open("ContactData", 'a') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+            # creating a csv writer object
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow([xs[0],xs[1],xs[2],gn,normal[0],normal[1],normal[2]])
+
+        # dgndxc = (xs-xc)/norm(xs-xc)            # norm(xs-xc) != gn   (opposite sign)
+        dgndxc = -normal # this is more consistent with the definition of gn and allows attraction even when slave is outside
         dgndxs = -dgndxc
-        f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
-        dfdt =  -2*np.tensordot(xs-xc,d2xcd2t,axes=1) + 2*(dxcdt.T @ dxcdt)
-        dfdxs = -2*dxcdt.T
-        dtdxs = np.linalg.solve(-dfdt,dfdxs)
+        # f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
+        # dfdt =  -2*np.tensordot(xs-xc,d2xcd2t,axes=1) + 2*(dxcdt.T @ dxcdt)
+        # dfdxs = -2*dxcdt.T
+        # dtdxs = np.linalg.solve(-dfdt,dfdxs)
 
-        dxcdxs = dxcdt @ dtdxs
+        # dxcdxs = dxcdt @ dtdxs
 
-        # assert np.allclose(dgndxs,normal),     "wrong xs_check or projections!\nxs      :"+str(xs)+"\nxs_check:"+str(xs_check)
-
-        # partial derivatives
-        DxcDxi      = self.dxcdxi(t)                # shape (20,)
-        D2xcDxiDt   = self.d2xcdxidt(t)             # shape (20,2)
+        # # partial derivatives
+        # DxcDxi      = self.dxcdxi(t)                # shape (20,)
+        # D2xcDxiDt   = self.d2xcdxidt(t)             # shape (20,2)
 
         #########################
         ## fintC & KC assembly ##
@@ -1173,41 +1413,42 @@ class GrgPatch:
         dgndu    = np.zeros(  3*(Ne+1) )
 
         # fintC Slave :
-        dgndu[:3] += dgndxs + dgndxc @ dxcdxs
+        # dgndu[:3] += dgndxs + dgndxc @ dxcdxs
+        dgndu[:3] += dgndxs
 
-        # fintC CtrlPts :
-        for idx in range(1,21):
-            dxcdxi_part = DxcDxi[idx-1]*np.eye(3)
-            d2xcdxidt_part = np.array([D2xcDxiDt[idx-1,0]*np.eye(3),D2xcDxiDt[idx-1,1]*np.eye(3)]).swapaxes(0,2)     # shape = (3,3,2)
-            dfdxi = 2*(dxcdxi_part.T@dxcdt).T -2*((xs-xc)@d2xcdxidt_part).T
-            dtdxi = np.linalg.solve(-dfdt,dfdxi)
-            dxcdxi = dxcdxi_part + dxcdt@dtdxi
+        # # fintC CtrlPts :
+        # for idx in range(1,21):
+        #     dxcdxi_part = DxcDxi[idx-1]*np.eye(3)
+        #     d2xcdxidt_part = np.array([D2xcDxiDt[idx-1,0]*np.eye(3),D2xcDxiDt[idx-1,1]*np.eye(3)]).swapaxes(0,2)     # shape = (3,3,2)
+        #     dfdxi = 2*(dxcdxi_part.T@dxcdt).T -2*((xs-xc)@d2xcdxidt_part).T
+        #     dtdxi = np.linalg.solve(-dfdt,dfdxi)
+        #     dxcdxi = dxcdxi_part + dxcdt@dtdxi
 
-            dxidu = np.zeros((3,3*(Ne+1)))
-            if idx < 5:
-                dxidu[:,3*idx:3*(idx+1)] = np.eye(3)
-            elif idx < 13:
-                idx0    = int((idx-5)/2)        # edge in which the CtrlPt belongs
-                inverse = [True,False][idx%2]   # CW / CCW
-                dxidu[:,3:] = self.dy1du(idx0,inverse=inverse)
-            else:
-                idx0 = [ 0, 3, 0, 1, 2, 1, 2, 3 ][idx-13]       # edge in which the CtrlPt belongs
-                inverse = [False, True, True, False, False, True, True, False][idx-13]
-                dxidu[:,3:] = self.dyp1du(idx0,inverse=inverse)
+        #     dxidu = np.zeros((3,3*(Ne+1)))
+        #     if idx < 5:
+        #         dxidu[:,3*idx:3*(idx+1)] = np.eye(3)
+        #     elif idx < 13:
+        #         idx0    = int((idx-5)/2)        # edge in which the CtrlPt belongs
+        #         inverse = [True,False][idx%2]   # CW / CCW
+        #         dxidu[:,3:] = self.dy1du(idx0,inverse=inverse)
+        #     else:
+        #         idx0 = [ 0, 3, 0, 1, 2, 1, 2, 3 ][idx-13]       # edge in which the CtrlPt belongs
+        #         inverse = [False, True, True, False, False, True, True, False][idx-13]
+        #         dxidu[:,3:] = self.dyp1du(idx0,inverse=inverse)
 
-            dgndu += dgndxc @ dxcdxi @ dxidu
+        #     dgndu += dgndxc @ dxcdxi @ dxidu
 
-            # set_trace()
+        #     # set_trace()
 
         if  cubicT is None:
             fintCN = kn*gn*dgndu
-            print("norm_force: ",(fintCN[:3]))
+            # print("norm_force: ",(fintCN[:3]))
 
             return fintCN, gn, t
         elif gn<cubicT:
-            return kn/2*(2*gn*dgndu - cubicT*dgndu), gn
+            return kn/2*(2*gn*dgndu - cubicT*dgndu), gn, t
         else:
-            return kn/(2*cubicT)*gn**2*dgndu, gn
+            return kn/(2*cubicT)*gn**2*dgndu, gn, t
 
     def fintC1(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, t0=None):       #Chain rule by hand
         """gt is distance between xc and xc0"""
@@ -1892,6 +2133,110 @@ class GrgPatch:
         else:
             return kn/(2*cubicT)*gn**2*dgndu, gn
 
+    def KC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8,t=None):       #Chain rule by hand
+        Ne = len(self.squad)
+
+        t = self.findProjection(xs) if t is None else t
+        xc, dxcdt, d2xcd2t= self.Grg(t, deriv = 2)
+        D1p, D2p = dxcdt.T
+        D3p = np.cross(D1p,D2p)
+        normal = D3p/norm(D3p)
+        gn = (xs-xc)@normal
+
+        opa = 1e-3
+        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+            return np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
+
+        dgdxs =  normal
+
+        # f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
+        dfdt =  -2*np.tensordot(xs-xc,d2xcd2t,axes=1) + 2*(dxcdt.T @ dxcdt)
+        dfdxs = -2*dxcdt.T
+        dtdxs = np.linalg.solve(-dfdt,dfdxs)
+
+        # Vars for K---------------------------------------------------
+        dndt = self.dndt(t)
+        dndxs = dndt@dtdxs
+
+        #########################
+        ## fintC & KC assembly ##
+        #########################
+        dgdu    = np.zeros(  3*(Ne+1) )
+        d2gd2u  = np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
+
+        # fintC Slave :
+        dgdu[:3] = dgdxs
+
+        # K     Slave-Slave :
+        d2gd2u[:3,:3] =  dndxs
+
+                
+        if cubicT==None:
+            return kn*(np.outer(dgdu,dgdu)+gn*d2gd2u)
+        elif gn<cubicT:
+            return kn*(np.outer(dgdu,dgdu)+(gn-cubicT/2)*d2gd2u)
+        else:
+            return kn*((gn/cubicT)*np.outer(dgdu,dgdu)+(gn**2/(2*cubicT))*d2gd2u)
+
+    def KC_fless_rigidMaster_redundant(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8):       #Chain rule by hand
+        Ne = len(self.squad)
+
+        t = self.findProjection(xs)
+        xc, dxcdt, d2xcd2t, d3xcd3t= self.Grg(t, deriv = 3)
+        normal = self.D3Grg(t)
+        gn = (xs-xc)@normal
+
+        opa = 1e-3
+        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+            return np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
+
+        # dgdxc = -normal            # norm(xs-xc) != gn   (opposite sign)
+        dgdxs =  normal
+        dgdn  =  xs - xc
+
+        # f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
+        dfdt =  -2*np.tensordot(xs-xc,d2xcd2t,axes=1) + 2*(dxcdt.T @ dxcdt)
+        dfdxs = -2*dxcdt.T
+        dtdxs = np.linalg.solve(-dfdt,dfdxs)
+        dxcdxs = dxcdt @ dtdxs
+
+
+        # Vars for K---------------------------------------------------
+
+        # d/du(dxcdxs)
+        d2fdt2   = 2*(np.tensordot(dxcdt,d2xcd2t,axes=[[0],[0]]) + np.tensordot(d2xcd2t,dxcdt,axes=[0,0]) + np.tensordot(dxcdt,d2xcd2t,axes=[[0],[0]]).swapaxes(0,1) - np.tensordot(xs-xc,d3xcd3t,axes=[[0],[0]]) )
+        invdfdt = np.linalg.inv(dfdt)
+
+        d2fdxsdt = -2*d2xcd2t.swapaxes(0,1)
+        d2td2xs = np.tensordot(-invdfdt,(np.tensordot(np.tensordot(dtdxs,d2fdt2,axes=[0,1]),dtdxs,axes=[2,0]).swapaxes(0,1)  + np.tensordot(d2fdxsdt,dtdxs,axes=[2,0]) + np.tensordot(d2fdxsdt,dtdxs,axes=[2,0]).swapaxes(1,2)),axes = [[1],[0]])
+        d2xcd2xs = np.tensordot( np.tensordot(dtdxs,d2xcd2t,axes=[0,2]),dtdxs,axes=[2,0]).swapaxes(0,1) + np.tensordot(dxcdt,d2td2xs,axes=[1,0])
+
+        dndt, d2nd2t = self.dndt(t,degree=2)
+        dndxs = dndt@dtdxs
+        d2nd2xs = np.tensordot(np.tensordot(d2nd2t,dtdxs,axes=[1,0]),dtdxs,axes=[1,0]).swapaxes(1,2) + np.tensordot(dndt,d2td2xs,axes=[1,0])
+
+
+        #########################
+        ## fintC & KC assembly ##
+        #########################
+        dgdu    = np.zeros(  3*(Ne+1) )
+        d2gd2u  = np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
+
+        # fintC Slave :
+        dgdu[:3] = dgdxs
+
+        # K     Slave-Slave :
+        set_trace()
+        d2gd2u[:3,:3] =  dndxs - dndxs@dxcdxs - np.tensordot(normal,d2xcd2xs, axes=[0,0]) + (np.eye(3)-dxcdxs)@dndxs + np.tensordot(dgdn,d2nd2xs,axes=[0,0])
+
+                
+        if cubicT==None:
+            return kn*(np.outer(dgdu,dgdu)+gn*d2gd2u)
+        elif gn<cubicT:
+            return kn*(np.outer(dgdu,dgdu)+(gn-cubicT/2)*d2gd2u)
+        else:
+            return kn*((gn/cubicT)*np.outer(dgdu,dgdu)+(gn**2/(2*cubicT))*d2gd2u)
+
     def KC(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8):       #Chain rule by hand
         Ne = len(self.squad)
 
@@ -1900,8 +2245,20 @@ class GrgPatch:
         normal = self.D3Grg(t)
         gn = (xs-xc)@normal
 
-        dgdxc = (xs-xc)/norm(xs-xc)            # norm(xs-xc) != gn   (opposite sign)
-        dgdxs = -dgdxc
+        opa = 1e-3
+        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+            return np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
+
+        #### EXPERIMENT #######
+        ## REPLACING THIS ###
+        # dgdxc = (xs-xc)/norm(xs-xc)            # norm(xs-xc) != gn   (opposite sign)
+        # dgdxs = -dgdxc
+        ## BY THIS 333
+        dgdxc = -normal            # norm(xs-xc) != gn   (opposite sign)
+        dgdxs =  normal
+        ########################
+
+
         f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
         dfdt =  -2*np.tensordot(xs-xc,d2xcd2t,axes=1) + 2*(dxcdt.T @ dxcdt)
         dfdxs = -2*dxcdt.T
@@ -1924,15 +2281,15 @@ class GrgPatch:
 
 
 
-        DxcDxi = self.dxcdxi(t)             # shape (20,)
-        D2xcDxiDt = self.d2xcdxidt(t)       # shape (20,2)
-        D3xcDxiD2t = self.d3xcdxid2t(t)     # shape (20,2,2)
-        # DxcDxi_tot = []
-        # DtDxi = []
-        # D2fDxiDt = []
-        DtDxi      = np.empty((20,2,3)  ,dtype=float)
-        D2fDxiDt   = np.empty((20,2,3,2),dtype=float)
-        DxcDxi_tot = np.empty((20,3,3)  ,dtype=float)
+        # DxcDxi = self.dxcdxi(t)             # shape (20,)
+        # D2xcDxiDt = self.d2xcdxidt(t)       # shape (20,2)
+        # D3xcDxiD2t = self.d3xcdxid2t(t)     # shape (20,2,2)
+        # # DxcDxi_tot = []
+        # # DtDxi = []
+        # # D2fDxiDt = []
+        # DtDxi      = np.empty((20,2,3)  ,dtype=float)
+        # D2fDxiDt   = np.empty((20,2,3,2),dtype=float)
+        # DxcDxi_tot = np.empty((20,3,3)  ,dtype=float)
 
         #########################
         ## fintC & KC assembly ##
@@ -1941,97 +2298,99 @@ class GrgPatch:
         d2gd2u  = np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
 
         # fintC Slave :
-        dgdu[:3] += dgdxs + dgdxc @ dxcdxs
+        # dgdu[:3] += dgdxs + dgdxc @ dxcdxs
+        dgdu[:3] += dgdxs
 
         # K     Slave-Slave :
-        d2gd2u[:3,:3] +=  d2gd2xs + 2*d2gdxsdxc@dxcdxs + d2gd2xc@dxcdxs@dxcdxs + np.tensordot(dgdxc,d2xcd2xs, axes=[0,0])
+        # d2gd2u[:3,:3] +=  d2gd2xs + 2*d2gdxsdxc@dxcdxs + d2gd2xc@dxcdxs@dxcdxs + np.tensordot(dgdxc,d2xcd2xs, axes=[0,0])
+        d2gd2u[:3,:3] +=  d2gd2xs + 2*d2gdxsdxc@dxcdxs + (d2gd2xc@dxcdxs).T@dxcdxs + np.tensordot(dgdxc,d2xcd2xs, axes=[0,0])
 
         # DxiDu   = []        # will be used in nested loop below
-        DxiDu   = np.empty((20,3,3*(Ne+1))  ,dtype=float)        # will be used in nested loop below
-        for idx in range(1,21):
-            dxcdxi = DxcDxi[idx-1]*np.eye(3)
-            d2xcdxidt = np.array([D2xcDxiDt[idx-1,0]*np.eye(3),D2xcDxiDt[idx-1,1]*np.eye(3)]).swapaxes(0,2)
-            d3xcdxid2t = np.array([[ D3xcDxiD2t[idx-1,0,0]*np.eye(3) , D3xcDxiD2t[idx-1,0,1]*np.eye(3) ],
-                                   [ D3xcDxiD2t[idx-1,1,0]*np.eye(3) , D3xcDxiD2t[idx-1,1,1]*np.eye(3) ]]).swapaxes(0,2).swapaxes(1,3)
+        # DxiDu   = np.empty((20,3,3*(Ne+1))  ,dtype=float)        # will be used in nested loop below
+        # for idx in range(1,21):
+        #     dxcdxi = DxcDxi[idx-1]*np.eye(3)
+        #     d2xcdxidt = np.array([D2xcDxiDt[idx-1,0]*np.eye(3),D2xcDxiDt[idx-1,1]*np.eye(3)]).swapaxes(0,2)
+        #     d3xcdxid2t = np.array([[ D3xcDxiD2t[idx-1,0,0]*np.eye(3) , D3xcDxiD2t[idx-1,0,1]*np.eye(3) ],
+        #                            [ D3xcDxiD2t[idx-1,1,0]*np.eye(3) , D3xcDxiD2t[idx-1,1,1]*np.eye(3) ]]).swapaxes(0,2).swapaxes(1,3)
 
-            dfdxi = 2*((dxcdxi.T@dxcdt) - np.tensordot(xs-xc,d2xcdxidt,axes=[0,0])).T
-            dtdxi = -invdfdt@dfdxi          # torch-verified
+        #     dfdxi = 2*((dxcdxi.T@dxcdt) - np.tensordot(xs-xc,d2xcdxidt,axes=[0,0])).T
+        #     dtdxi = -invdfdt@dfdxi          # torch-verified
 
-            # DtDxi.append(dtdxi)
+        #     # DtDxi.append(dtdxi)
 
-            DtDxi[idx-1] = dtdxi
+        #     DtDxi[idx-1] = dtdxi
 
-            d2fdxidt  = 2*(np.tensordot(dxcdxi,d2xcd2t,axes=[0,0]) + np.tensordot(d2xcdxidt,dxcdt,axes=[0,0]) + np.tensordot(dxcdt,d2xcdxidt,axes=[0,0]).swapaxes(0,1) - np.tensordot(xs-xc,d3xcdxid2t,axes=[0,0])).swapaxes(0,1)
-            # D2fDxiDt.append(d2fdxidt)
-            D2fDxiDt[idx-1] = d2fdxidt
-            d2fdxidxs = -2*d2xcdxidt.swapaxes(0,2)
-            d2tdxidxs = np.tensordot(-invdfdt,  ((d2fdt2@dtdxi).swapaxes(1,2)+d2fdxidt)@dtdxs + (d2fdxsdt@dtdxi).swapaxes(1,2) + d2fdxidxs , axes = [1,0])
-            d2xcdxidxs = np.tensordot(dxcdt,d2tdxidxs,axes=[1,0]) + ((d2xcd2t@dtdxi).swapaxes(1,2)+d2xcdxidt)@dtdxs
+        #     d2fdxidt  = 2*(np.tensordot(dxcdxi,d2xcd2t,axes=[0,0]) + np.tensordot(d2xcdxidt,dxcdt,axes=[0,0]) + np.tensordot(dxcdt,d2xcdxidt,axes=[0,0]).swapaxes(0,1) - np.tensordot(xs-xc,d3xcdxid2t,axes=[0,0])).swapaxes(0,1)
+        #     # D2fDxiDt.append(d2fdxidt)
+        #     D2fDxiDt[idx-1] = d2fdxidt
+        #     d2fdxidxs = -2*d2xcdxidt.swapaxes(0,2)
+        #     d2tdxidxs = np.tensordot(-invdfdt,  ((d2fdt2@dtdxi).swapaxes(1,2)+d2fdxidt)@dtdxs + (d2fdxsdt@dtdxi).swapaxes(1,2) + d2fdxidxs , axes = [1,0])
+        #     d2xcdxidxs = np.tensordot(dxcdt,d2tdxidxs,axes=[1,0]) + ((d2xcd2t@dtdxi).swapaxes(1,2)+d2xcdxidt)@dtdxs
 
-            dxcdxi += dxcdt@dtdxi # checking here <====
-            # DxcDxi_tot.append(dxcdxi)
-            DxcDxi_tot[idx-1] = dxcdxi
+        #     dxcdxi += dxcdt@dtdxi # checking here <====
+        #     # DxcDxi_tot.append(dxcdxi)
+        #     DxcDxi_tot[idx-1] = dxcdxi
 
-            if idx < 5:
-                dxidu = np.zeros((3,3*(Ne+1)))
-                dxidu[:,3*idx:3*(idx+1)] = np.eye(3)
-                d2xid2u = 0
-            elif idx < 13:
-                idx0    = int((idx-5)/2)        # edge in which the CtrlPt belongs
-                inverse = [True,False][idx%2]   # CW / CCW
-                # dxidu = np.hstack((np.zeros((3,3)),self.dy1du(idx0,inverse=inverse)))
-                dxidu = np.zeros((3,3*(Ne+1)))
-                dxidu[:,3:] = self.dy1du(idx0,inverse=inverse)
-                d2xid2u = np.zeros((3,3*(Ne+1),3*(Ne+1)))
-                d2xid2u[:,3:,3:] = self.d2y1d2u(idx0,inverse=inverse)
-            else:
-                idx0 = [ 0, 3, 0, 1, 2, 1, 2, 3 ][idx-13]       # edge in which the CtrlPt belongs
-                inverse = [False, True, True, False, False, True, True, False][idx-13]
-                dxidu = np.zeros((3,3*(Ne+1)))
-                dxidu[:,3:] = self.dyp1du(idx0,inverse=inverse)
-                d2xid2u = np.zeros((3,3*(Ne+1),3*(Ne+1)))
-                d2xid2u[:,3:,3:] = self.d2yp1d2u(idx0,inverse=inverse)
+        #     if idx < 5:
+        #         dxidu = np.zeros((3,3*(Ne+1)))
+        #         dxidu[:,3*idx:3*(idx+1)] = np.eye(3)
+        #         d2xid2u = 0
+        #     elif idx < 13:
+        #         idx0    = int((idx-5)/2)        # edge in which the CtrlPt belongs
+        #         inverse = [True,False][idx%2]   # CW / CCW
+        #         # dxidu = np.hstack((np.zeros((3,3)),self.dy1du(idx0,inverse=inverse)))
+        #         dxidu = np.zeros((3,3*(Ne+1)))
+        #         dxidu[:,3:] = self.dy1du(idx0,inverse=inverse)
+        #         d2xid2u = np.zeros((3,3*(Ne+1),3*(Ne+1)))
+        #         d2xid2u[:,3:,3:] = self.d2y1d2u(idx0,inverse=inverse)
+        #     else:
+        #         idx0 = [ 0, 3, 0, 1, 2, 1, 2, 3 ][idx-13]       # edge in which the CtrlPt belongs
+        #         inverse = [False, True, True, False, False, True, True, False][idx-13]
+        #         dxidu = np.zeros((3,3*(Ne+1)))
+        #         dxidu[:,3:] = self.dyp1du(idx0,inverse=inverse)
+        #         d2xid2u = np.zeros((3,3*(Ne+1),3*(Ne+1)))
+        #         d2xid2u[:,3:,3:] = self.d2yp1d2u(idx0,inverse=inverse)
 
-            # DxiDu.append(dxidu)
-            DxiDu[idx-1] = dxidu
-
-
-            # set_trace()
+        #     # DxiDu.append(dxidu)
+        #     DxiDu[idx-1] = dxidu
 
 
-            # fintC CtrlPts :
-            dgdu += dgdxc @ dxcdxi @ dxidu
+        #     # set_trace()
+
+
+        #     # fintC CtrlPts :
+        #     dgdu += dgdxc @ dxcdxi @ dxidu
             
-            # K     Slave-CtrlPts :
-            d2gd2u[:3,:] += ((d2gdxsdxc + (d2gd2xc@dxcdxs).T)@dxcdxi + np.tensordot(dgdxc,d2xcdxidxs,axes=[0,0]).T)@dxidu
+        #     # K     Slave-CtrlPts :
+        #     d2gd2u[:3,:] += ((d2gdxsdxc + (d2gd2xc@dxcdxs).T)@dxcdxi + np.tensordot(dgdxc,d2xcdxidxs,axes=[0,0]).T)@dxidu
 
-            # K     CtrlPts-Slave:
-            d2gd2u[ : , :3] += (((d2gdxsdxc+(d2gd2xc@dxcdxs).T)@dxcdxi + np.tensordot(dgdxc,d2xcdxidxs,axes=[0,0]).T) @ dxidu).T
+        #     # K     CtrlPts-Slave:
+        #     d2gd2u[ : , :3] += (((d2gdxsdxc+(d2gd2xc@dxcdxs).T)@dxcdxi + np.tensordot(dgdxc,d2xcdxidxs,axes=[0,0]).T) @ dxidu).T
 
-            # K     CtrlPts-CtrlPts:
-            d2gd2u += np.tensordot(dgdxc@dxcdxi,d2xid2u,axes=[0,0]) if type(d2xid2u)!=int else 0
+        #     # K     CtrlPts-CtrlPts:
+        #     d2gd2u += np.tensordot(dgdxc@dxcdxi,d2xid2u,axes=[0,0]) if type(d2xid2u)!=int else 0
 
-        # K     CtrlPts-CtrlPts (2):
-        for idx in range(1,21):
-            dxidu = DxiDu[idx-1]
-            dxcdxi = DxcDxi_tot[idx-1]
-            d2xcdxidt = np.array([D2xcDxiDt[idx-1,0]*np.eye(3),D2xcDxiDt[idx-1,1]*np.eye(3)]).swapaxes(0,2)
-            dtdxi = DtDxi[idx-1]
-            d2fdxidt = D2fDxiDt[idx-1]
-            for jdx in range(1,21):
-                dxjdu = DxiDu[jdx-1]
-                dxcdxj = DxcDxi_tot[jdx-1]
-                d2xcdxjdt = np.array([D2xcDxiDt[jdx-1,0]*np.eye(3),D2xcDxiDt[jdx-1,1]*np.eye(3)]).swapaxes(0,2)
-                dtdxj = DtDxi[jdx-1]
-                d2fdxjdt = D2fDxiDt[jdx-1]
+        # # K     CtrlPts-CtrlPts (2):
+        # for idx in range(1,21):
+        #     dxidu = DxiDu[idx-1]
+        #     dxcdxi = DxcDxi_tot[idx-1]
+        #     d2xcdxidt = np.array([D2xcDxiDt[idx-1,0]*np.eye(3),D2xcDxiDt[idx-1,1]*np.eye(3)]).swapaxes(0,2)
+        #     dtdxi = DtDxi[idx-1]
+        #     d2fdxidt = D2fDxiDt[idx-1]
+        #     for jdx in range(1,21):
+        #         dxjdu = DxiDu[jdx-1]
+        #         dxcdxj = DxcDxi_tot[jdx-1]
+        #         d2xcdxjdt = np.array([D2xcDxiDt[jdx-1,0]*np.eye(3),D2xcDxiDt[jdx-1,1]*np.eye(3)]).swapaxes(0,2)
+        #         dtdxj = DtDxi[jdx-1]
+        #         d2fdxjdt = D2fDxiDt[jdx-1]
 
-                d2fdxidxj = 2*(np.tensordot(dxcdxi,d2xcdxjdt, axes = [0,0]).swapaxes(0,1) + np.tensordot(dxcdxj,d2xcdxidt,axes=[0,0])).swapaxes(0,2)
-                d2tdxidxj = np.tensordot(-invdfdt , (((d2fdt2@dtdxj).swapaxes(1,2)+d2fdxjdt)@dtdxi).swapaxes(1,2) + d2fdxidxj + d2fdxidt@dtdxj , axes=[1,0])
+        #         d2fdxidxj = 2*(np.tensordot(dxcdxi,d2xcdxjdt, axes = [0,0]).swapaxes(0,1) + np.tensordot(dxcdxj,d2xcdxidt,axes=[0,0])).swapaxes(0,2)
+        #         d2tdxidxj = np.tensordot(-invdfdt , (((d2fdt2@dtdxj).swapaxes(1,2)+d2fdxjdt)@dtdxi).swapaxes(1,2) + d2fdxidxj + d2fdxidt@dtdxj , axes=[1,0])
                 
-                d2xcdxidxj = d2xcdxidt@dtdxj + ((d2xcdxjdt+(d2xcd2t@dtdxj).swapaxes(1,2))@dtdxi).swapaxes(1,2) + np.tensordot(dxcdt,d2tdxidxj,axes=[1,0])
-                d2gdxidxj = (d2gd2xc@dxcdxi).T@dxcdxj + np.tensordot(dgdxc,d2xcdxidxj,axes=[0,0])
+        #         d2xcdxidxj = d2xcdxidt@dtdxj + ((d2xcdxjdt+(d2xcd2t@dtdxj).swapaxes(1,2))@dtdxi).swapaxes(1,2) + np.tensordot(dxcdt,d2tdxidxj,axes=[1,0])
+        #         d2gdxidxj = (d2gd2xc@dxcdxi).T@dxcdxj + np.tensordot(dgdxc,d2xcdxidxj,axes=[0,0])
 
-                d2gd2u += (d2gdxidxj@dxjdu).T@dxidu
+        #         d2gd2u += (d2gdxidxj@dxjdu).T@dxidu
                 
         if cubicT==None:
             return kn*(np.outer(dgdu,dgdu)+gn*d2gd2u)
@@ -3138,29 +3497,116 @@ class GrgPatch:
         return KCN,KCT,KCNT
 
 
+    def get_Dgn_for_rigids(self, gn, t):       #Chain rule by hand
 
+        xc, dxcdt, d2xcd2t, d3xcd3t= self.Grg(t, deriv = 3)
+        normal = self.D3Grg(t)
+        xs = xc + gn*normal
+
+        # opa = 0
+        # if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+        #     print("the point does not belong in the patch!!!!")
+        #     set_trace()
+
+
+
+        dgdxc = (xs-xc)/norm(xs-xc)            # norm(xs-xc) != gn   (opposite sign)
+        dgdxs = -dgdxc
+        # f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
+        dfdt =  -2*np.tensordot(xs-xc,d2xcd2t,axes=1) + 2*(dxcdt.T @ dxcdt)
+        dfdxs = -2*dxcdt.T
+        dtdxs = np.linalg.solve(-dfdt,dfdxs)
+        dxcdxs = dxcdt @ dtdxs
+
+
+        # Vars for K---------------------------------------------------
+        d2gd2xs = np.eye(3)/gn - np.outer((xs-xc),(xs-xc))/gn**3         
+        d2gd2xc = d2gd2xs
+        d2gdxsdxc = -d2gd2xs
+
+        # d/du(dxcdxs)
+        d2fdt2   = 2*(np.tensordot(dxcdt,d2xcd2t,axes=[[0],[0]]) + np.tensordot(d2xcd2t,dxcdt,axes=[0,0]) + np.tensordot(dxcdt,d2xcd2t,axes=[[0],[0]]).swapaxes(0,1) - np.tensordot(xs-xc,d3xcd3t,axes=[[0],[0]]) )
+        invdfdt = np.linalg.inv(dfdt)
+
+        d2fdxsdt = -2*d2xcd2t.swapaxes(0,1)
+        d2td2xs = np.tensordot(-invdfdt,(np.tensordot(np.tensordot(dtdxs,d2fdt2,axes=[0,1]),dtdxs,axes=[2,0]).swapaxes(0,1)  + np.tensordot(d2fdxsdt,dtdxs,axes=[2,0]) + np.tensordot(d2fdxsdt,dtdxs,axes=[2,0]).swapaxes(1,2)),axes = [[1],[0]])
+        # d2xcd2xs = np.tensordot( np.tensordot(dtdxs,d2xcd2t,axes=[0,2]),dtdxs,axes=[2,0]).swapaxes(0,1) + np.tensordot(dxcdt,d2td2xs,axes=[1,0])
+
+
+        # dgdu = dgdxs + dgdxc @ dxcdxs     # the last product is always zero
+        # dgdu = dgdxs
+        # d2gd2u =  d2gd2xs + 2*d2gdxsdxc@dxcdxs + (d2gd2xc@dxcdxs).T@dxcdxs + np.tensordot(dgdxc,d2xcd2xs, axes=[0,0])
+
+        # result = np.array([xs[0],xs[1],xs[2],t[0],t[1],gn,
+        #                    dgdu[0],dgdu[1],dgdu[2],
+        #                    d2gd2u[0,0],d2gd2u[1,1],d2gd2u[2,2],
+        #                    d2gd2u[0,1],d2gd2u[1,2],d2gd2u[0,2]])
+
+
+        result = np.array([xs[0],xs[1],xs[2],self.iquad,t[0],t[1],gn])
+
+
+
+        return result
 
     # Plot options
-    def plot(self,axis, color = "blue", ref=10, surf=True,wire=False, label = False):
+    def plot(self,axis, color = "blue", ref=10, surf=True,wire=False, label = False, Edges=True):
         x = np.zeros((ref+1,ref+1),dtype = float)
         y = np.zeros((ref+1,ref+1),dtype = float)
         z = np.zeros((ref+1,ref+1),dtype = float)
 
+        if Edges:
+            e1,e2,e3,e4 = np.zeros((4,ref+1,3),dtype=float)
+
+
         for i in range(ref+1):
             ti = i/(ref)
+
             for j in range(ref+1):
                 tj = j/(ref)
-                x[i,j], y[i,j], z[i,j] = self.Grg((ti,tj))
+                point = self.Grg((ti,tj))
+                x[i,j], y[i,j], z[i,j] = point
+
+                if Edges and i==0:
+                    e3[j] = point
+                elif Edges and i==ref:
+                    e4[j] = point
+
+                if Edges and j==0:
+                    e1[i] = point
+                elif Edges and j==ref:
+                    e2[i] = point
+
+        plotObj = []
 
         if surf:
-            axis.plot_surface(x, y, z, color=color)
+            surfObj = axis.plot_surface(x, y, z, color=color,edgecolors=None)
+            plotObj.append(surfObj)
         if wire:
-            axis.plot_wireframe(x, y, z, color="black")
+            wireObj = axis.plot_wireframe(x, y, z, color="black",lw=0.4)
+            plotObj.append(wireObj)
+
         if label:
-            xm,ym,zm =(np.mean(x[np.ix_([0,-1])][:,np.ix_([0,-1])]),
-                       np.mean(y[np.ix_([0,-1])][:,np.ix_([0,-1])]),
-                       np.mean(z[np.ix_([0,-1])][:,np.ix_([0,-1])]))
-            axis.text(xm,ym,zm, str(self.iquad))
+            # xm,ym,zm =(np.mean(x[np.ix_([0,-1])][:,np.ix_([0,-1])]),
+            #            np.mean(y[np.ix_([0,-1])][:,np.ix_([0,-1])]),
+            #            np.mean(z[np.ix_([0,-1])][:,np.ix_([0,-1])]))
+            xm,ym,zm = self.Grg((0.5,0.5))
+            text_orientation, _ = self.Grg((0.5,0.5), deriv = 1)[1].T
+            axis.text(xm,ym,zm, str(self.iquad),text_orientation)
+
+        # if self.iquad==34:
+        #     self.BS.plot(axis,ref=100)
+
+
+        if Edges:
+            cline=list(color)
+            # cline=[0.1,0.1,0.1,1.0]
+            cline[-1]=1.0
+            axis.plot(e1[:,0],e1[:,1],e1[:,2],color=cline,linewidth=0.2)
+            axis.plot(e2[:,0],e2[:,1],e2[:,2],color=cline,linewidth=0.2)
+            axis.plot(e3[:,0],e3[:,1],e3[:,2],color=cline,linewidth=0.2)
+            axis.plot(e4[:,0],e4[:,1],e4[:,2],color=cline,linewidth=0.2)
+        return plotObj
         
     def plotCtrlPtsLines(self, axis):
         cps = self.flatCtrlPts()
@@ -3181,17 +3627,47 @@ class GrgPatch:
                 Xline = np.array([p1,p2,p3,p4])
                 axis.plot(Xline[:,0],Xline[:,1],Xline[:,2], color="black", lw = 0.2)
 
-    def plotIsolate(self, xs = None, ForcesAt = None):
+    def plotIsolate(self, xs = None, ax= None, ForcesAt = None, xyz_lims = None,ref = 10, show2d = False):
         
-        import matplotlib.pyplot as plt
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        if ax is None:
+            import matplotlib.pyplot as plt
+            fig = plt.figure()
+            ax = fig.add_subplot(111, projection='3d')
 
-        ax.set_xlim3d((0, 4))
-        ax.set_ylim3d((0, 4))
-        ax.set_zlim3d((1, 4))
+        if show2d:
+            ax.set_proj_type('ortho')
+            ax.view_init(elev=0, azim=-90, roll=0)
+            ax.set_yticks([])
 
-        self.plot(ax, color =(0,0,1, 0.75))
+
+        if xyz_lims is None:
+            ctrlPts = np.array(self.flatCtrlPts())
+            xmin = min(ctrlPts[:,0])
+            xmax = max(ctrlPts[:,0])
+            ymin = min(ctrlPts[:,1])
+            ymax = max(ctrlPts[:,1])
+            zmin = min(ctrlPts[:,2])
+            zmax = max(ctrlPts[:,2])
+            if xs is not None:
+                xmin = min(xmin,xs[0])
+                xmax = max(xmax,xs[0])
+                ymin = min(ymin,xs[1])
+                ymax = max(ymax,xs[1])
+                zmin = min(zmin,xs[2])
+                zmax = max(zmax,xs[2])
+            dx,dy,dz = xmax-xmin,ymax-ymin,zmax-zmin
+            dmax = max(dx,dy,dz)
+            x0,y0,z0 = 0.5*(xmin+xmax),0.5*(ymin+ymax),0.5*(zmin+zmax)
+            xyz_lims = [[x0-dmax/2,x0+dmax/2],[y0-dmax/2,y0+dmax/2],[z0-dmax/2,z0+dmax/2]]
+
+
+        ax.set_xlim3d((xyz_lims[0][0],xyz_lims[0][1] ))
+        ax.set_ylim3d((xyz_lims[1][0],xyz_lims[1][1] ))
+        ax.set_zlim3d((xyz_lims[2][0],xyz_lims[2][1] ))
+        ax.set_aspect('equal', 'box')
+
+
+        self.plot(ax, color =(0,0,1, 0.75),ref=ref)
 
         if type(xs) == np.ndarray:
             Ne = len(self.squad)
@@ -3235,8 +3711,8 @@ class GrgPatch:
 
 
 
-
-        plt.show()
+        if ax is None:
+            plt.show()
 
 
     # Torch tool for Autograd
@@ -3761,921 +4237,24 @@ def wij(Xi,Xj):
 
     return wij
 
-
-
-
-
-
-
-
-"""
-    def N_tild(self,t1,t2,normal):          # DELETE: use dxcdxi to buil N_tild in self.fintC&K instead
-        N = np.zeros((21,3))
-        N[0] = 1.0
-        c_edges = [[0,0],[3,0],[3,3],[0,3],[1,0],[2,0],[3,1],[3,2],[2,3],[1,3],[0,2],[0,1]]
-        for ic, c in enumerate(c_edges):
-            N[ic+1] = -Bernstein(3, c[0], t1)*Bernstein(3, c[1], t2)
-
-        den = max(self.eps,t1+t2)
-        N[13] = -Bernstein(3, 1, t1)*Bernstein(3, 1, t2)*(t1/den)
-        N[14] = -Bernstein(3, 1, t1)*Bernstein(3, 1, t2)*(t2/den)
-        den = max(self.eps,1-t1+t2)
-        N[15] = -Bernstein(3, 2, t1)*Bernstein(3, 1, t2)*((1-t1)/den)
-        N[16] = -Bernstein(3, 2, t1)*Bernstein(3, 1, t2)*(t2/den)
-        den = max(self.eps,2-t1-t2)
-        N[17] = -Bernstein(3, 2, t1)*Bernstein(3, 2, t2)*((1-t1)/den)
-        N[18] = -Bernstein(3, 2, t1)*Bernstein(3, 2, t2)*((1-t2)/den)
-        den = max(self.eps,t1+1-t2)
-        N[19] = -Bernstein(3, 1, t1)*Bernstein(3, 2, t2)*(t1/den)
-        N[20] = -Bernstein(3, 1, t1)*Bernstein(3, 2, t2)*((1-t2)/den)
-
-        N *= normal
-
-        return N
-
-
-    def dy1v(self,idx, v, inverse = False, tracing=False):
-        "idx0: index of the edge (0,..,3). 'inverse' option does the rest"
-        Ne = len(self.squad)
-        dy1v = np.zeros((Ne,3))     # Here I don't consider the DoF_slave
-
-        if inverse:
-            y3, y0 = self.Y0Y3(idx)
-            idx3  = idx
-            idx0  = [1,2,3,0][idx]
-        else:
-            y0, y3 = self.Y0Y3(idx)
-            idx0 = idx
-            idx3 = [1,2,3,0][idx]
-
-        m0 = self.normals[idx0]
-        XI = self.W[idx0]
-
-        c1 = (m0 @ v) / (m0 @ m0)
-        c2 = ( (y3-y0) @ m0 ) / (m0 @ m0)
-
-        # dy1v[idx0] += v + 1/3*(2*v + c1*m0)   # Wrong formula! 
-        dy1v[idx0] += 1/3*(2*v + c1*m0)
-        dy1v[idx3] += 1/3*(v-c1*m0)
-        dy1v       += (XI.T @ (1/3*(2*c1*c2*m0 - c1*(y3-y0) - c2*v))).reshape((Ne,3))
-
-        return dy1v
-
-    def dyp1v(self,idx, v, inverse = False):
-        "idx0: index of the edge (0,..,3). 'inverse' option does the rest"
-        Ne = len(self.squad)
-        dyp1v = np.zeros((Ne,3))     # Here I don't consider the DoF_slave
-
-        if inverse:
-            y3,   y0   = self.Y0Y3(idx)
-            y2,   y1   = self.Y1Y2(idx)
-            yp3,  yp0  = self.Yp0Yp3(idx)
-            idx3  = idx
-            idx0  = [1,2,3,0][idx]
-
-            idx00 = idx0
-            idx03 = [3,0,1,2][idx]
-
-        else:
-            y0,   y3   = self.Y0Y3(idx)
-            y1,   y2   = self.Y1Y2(idx)
-            yp0,  yp3  = self.Yp0Yp3(idx)
-            idx0 = idx
-            idx3 = [1,2,3,0][idx]
-
-            idx00 = [3,0,1,2][idx]
-            idx03 = idx3
-
-        m0, m3 = self.normals[idx0], self.normals[idx3]
-        XI0, XI3 = self.W[idx0], self.W[idx3]
-
-        # a0, a3, c0, c1, c2, b0, b3, k0, k1, h0, h1
-        c0, c1, c2 = y1-y0, y2-y1, y3-y2
-        b0, b3 = yp0-y0 , yp3-y3
-        a0 = np.cross(m0,(y3-y0))/norm( np.cross(m0,(y3-y0)) )
-        a3 = np.cross(m3,(y3-y0))/norm( np.cross(m3,(y3-y0)) )
-        k0, k1 = np.dot(a0,b0), np.dot(a3,b3)
-        h0, h1 = np.dot(c0,b0)/np.dot(c0,c0) , np.dot(c2,b3)/np.dot(c2,c2)
-        # constants c1-c4   (not vectors)
-        cc1 = (a0 @ v + a3 @ v)/(a0 @ a0)
-        cc2 = (a0 @ v)/(a3 @ a3)
-        cc3 = (c1 @ v)/(c0 @ c0)
-        cc4 = (c0 @ v)/(c2 @ c2)
-
-        # vectors v1-v7
-        # (Puso & Laursen)
-        v1 = 1/3*((k1+k0)*v + cc1*(b0-2*k0*a0))
-        v2 = 1/3*(k0*v + cc2*(b3-2*k1*a3))
-        v3 = 1/3*(cc1*a0 + 2*cc3*c0)
-        v4 = 1/3*(cc2*a3 + cc4*c2)
-        v5 = 1/3*(h1*v + 2*cc3*(b0-2*h0*c0))
-        v6 = 1/3*(cc4*(b3 - 2*h1*c2))
-        v7 = 2/3*(h0*v)
-
-        # vectors v1-v7
-        # (mine)
-        # v1 = 1/3*((k1+k0)*v + np.outer(b0,a0+a3)@v)
-        # v2 = 1/3*(( k0  )*v + np.outer(b3, a0  )@v)
-        # for v3,...,v7 I get the same value but probably Puso's is faster
-        # v3 = 1/3*(np.outer(a0,a0+a3)+2*np.outer(c0,c1)/np.dot(c0,c0))@v
-        # v4 = 1/3*(np.outer(a3,  a0 )+ np.outer(c2,c0)/np.dot(c2,c2))@v
-        # v5 = 1/3*(h1*np.eye(3) + 2*(np.outer(b0,c0)-2*np.outer(c0,b0))@np.outer(c0,c1)/np.dot(c0,c0)**2)@v
-        # v6 = 1/3*(np.outer(b3,c2)-2*np.outer(c2,b3))@np.outer(c2,c0)@v/np.dot(c2,c2)**2
-        # v7 = 2/3*(h0*v)
-
-
-        # set_trace()
-
-        # dy1v
-        dyp1v       += self.dy1v(idx, v, inverse=inverse)
-
-        # # da0v1       (Puso)
-        # dyp1v       += (XI0 @ np.cross((y3 - y0),v1) ).reshape((Ne,3))  #Change here
-        # dyp1v[idx3] += -np.cross(m0,v1)
-        # dyp1v[idx0] +=  np.cross(m0,v1)
-        # # da3v2       (Puso)
-        # dyp1v       += (XI3 @ np.cross((y3 - y0),v2) ).reshape((Ne,3))
-        # dyp1v[idx3] += -np.cross(m3,v2)
-        # dyp1v[idx0] +=  np.cross(m3,v2)
-        
-        # da0v1 (mine)
-        dyp1v       += (XI0.T @ np.cross((y3 - y0),(np.eye(3)-np.outer(a0,a0))@v1/norm(np.cross(m0,y3-y0))) ).reshape((Ne,3))
-        dyp1v[idx0] +=  np.cross(m0,(np.eye(3)-np.outer(a0,a0))@v1/norm(np.cross(m0,y3-y0)))
-        dyp1v[idx3] += -np.cross(m0,(np.eye(3)-np.outer(a0,a0))@v1/norm(np.cross(m0,y3-y0)))
-        
-        # da3v2 (mine)
-        dyp1v       += (XI3.T @ np.cross((y3 - y0),(np.eye(3)-np.outer(a3,a3))@v2/norm(np.cross(m3,y3-y0))) ).reshape((Ne,3))
-        dyp1v[idx0] +=  np.cross(m3,(np.eye(3)-np.outer(a3,a3))@v2/norm(np.cross(m3,y3-y0)))
-        dyp1v[idx3] += -np.cross(m3,(np.eye(3)-np.outer(a3,a3))@v2/norm(np.cross(m3,y3-y0)))
-        
-        # db0v3
-        dyp1v       += self.dy1v(idx00, v3, inverse = not inverse)
-        dyp1v[idx0] += -v3                              # Algo B
-        
-        # db3v4
-        dyp1v       += self.dy1v(idx03, v4, inverse = inverse)
-        dyp1v[idx3] += -v4                              # Algo B
-        
-        # dc0v5
-        dyp1v       += self.dy1v(idx, v5, inverse = inverse)
-        dyp1v[idx0] += -v5                              # Algo B
-        
-        # dc2v6
-        dyp1v[idx3] += v6                              # Algo B
-        dyp1v       += -self.dy1v(idx, v6, inverse = not inverse)
-        
-        # dc1v7
-        dyp1v       +=  self.dy1v(idx, v7, inverse = not inverse)
-        dyp1v       += -self.dy1v(idx, v7, inverse = inverse)
-
-        return dyp1v
-
-
-    def fintC_puso(self, xs, kn, seeding = 10, tracing = False, toprint=None):       # using Puso & Laursen variables fro chain rule
-        Ne = len(self.squad)
-
-        t1,t2 = self.findProjection(xs,seeding=seeding)
-        if not (0<=t1<=1 and 0<=t2<=1):
-            return 0.0 , 0.0
-
-        
-        xc = self.Grg(t1,t2)
-        normal = self.D3Grg(t1,t2)
-        gn = (xs-xc) @ normal             # np.dot(a,b) <=> a @ b
-        if gn < 0:
-            
-            N_tild = self.N_tild(t1,t2,normal)
-
-            t_n = kn*gn   # < 0     because gn<0 at this point
-            r_tild = -t_n*N_tild   # forces conjugated to slave+CtrlPts
-
-
-
-            fintC = np.zeros((Ne+1,3),dtype=float)
-            # N = np.zeros((Ne+1,3),dtype=float)
-
-            # SLAVE:
-            fintC[0] = r_tild[0]
-            # N[0] = N_tild[0]
-
-            # VERTICES:
-            for idx in range(1,5):
-                v  = r_tild[idx]
-
-                fintC[idx] += v
-
-                # N[idx] += N_tild[idx]
-
-                printif(idx==toprint, v)
-
-            # EDGES:
-            for idx in range(5,13):
-                v  = r_tild[idx]
-
-                if idx%2==1:        # 5,7,9,11 (normal, CCW)
-                    idx0 = int((idx-5)/2)                       # edge in which the node belongs
-                    inverse = False                             # is orientation inverse (CW)?
-                else:               # 6,8,10,12 (CW)
-                    idx0 = int((idx-6)/2)                       # edge in which the node belong 
-                    inverse = True                              # is orientation inverse (CW)?
-
-
-                dy1v = self.dy1v(idx0, v, inverse=inverse)
-                fintC[1:] += dy1v
-
-                # dy1N = self.dy1v(idx0, N_tild[idx], inverse=inverse)
-                # N[1:] = dy1N
-
-                printif(idx==toprint, dy1v)
-
-
-            # print(fintC)
-            # INTERIOR:
-            for idx in range(13,21):
-                v  = r_tild[idx]
-
-                idx0 = [ 0, 3, 0, 1, 2, 1, 2, 3 ][idx-13]       # edge in which the node belongs
-                inverse = [False, True, True, False, False, True, True, False][idx-13]
-
-                dyp1v = self.dyp1v(idx0, v, inverse=inverse)
-                fintC[1:] += dyp1v
-
-                # dyp1N = self.dyp1v(idx0, N_tild[idx], inverse=inverse)
-                # N[1:] = dyp1N
-                
-                printif(idx==toprint, dyp1v)
-
-                assert np.allclose(v,sum(dyp1v)), "f_cp !=  sum(f_nodes)"
-
-
-
-            assert np.allclose(sum(fintC), np.array([0,0,0])) , "forces in CtrlPts and nodes dont match!"
-
-
-            # k = -kn*np.outer(N,N)
-
-            return fintC.ravel()
-
-        else:
-            return 0.0, 0.0
-
-    def fintC_mine_cp(self, xs, kn, seeding = 10, toprint=None):       #Chain rule by hand
-
-        t1,t2 = self.findProjection(xs, seeding=seeding)
-        if not (0<=t1<=1 and 0<=t2<=1):
-            return 0.0
-        
-        xc = self.Grg(t1,t2)
-        normal = self.D3Grg(t1,t2)
-        gn = (xs-xc) @ normal             # np.dot(a,b) <=> a @ b
-        
-
-        if gn < 0:
-
-            dgdxi = np.zeros((20,3))
-            
-            dgdxc = -(xs-xc)/norm(xs-xc)            # norm(xs-xc) != gn   (opposite sign)
-            DxcDxi = -self.N_tild(t1,t2, 1.0)[1:]           ### <<<=== N_tild contains -dGrgdxi(t1,t2,normal)
-
-            #############
-            ## CtrlPts ##:
-            #############
-            for idx in range(0,20):
-                dgdxi[ idx ] += dgdxc @ np.diag(DxcDxi[idx])
-
-                printif(idx==toprint, kn*gn*dgdxc @ np.diag(DxcDxi[idx]))
-
-            return kn*gn*dgdxi
-
-        else:
-            return 0.0
-
-
-    def fintC_fd(self, xs, kn, u0, seeding = 10, du = 1e-10):       # finite difference at nodes
-
-
-        t1,t2 = self.findProjection(xs, seeding = seeding)
-        if not (0<=t1<=1 and 0<=t2<=1):
-            set_trace()
-
-        xc = self.Grg(t1,t2)
-        normal = self.D3Grg(t1,t2)
-        gn = (xs-xc) @ normal             # np.dot(a,b) <=> a @ b
-
-        if gn>0:
-            return 0
-
-        else:
-
-            dofs = np.append([0,0,0],self.surf.DoFs[self.squad])
-            n = 3*(len(self.squad)+1)
-            E0 = 0.5*kn*gn**2
-
-            fintC = np.zeros(n)
-            for idx, dof in enumerate(dofs):
-                u = np.array(u0)
-                xs_now = np.array(xs)
-
-                if idx < 3 :
-                    xs_now[idx] += du
-                else:
-                    u[dof] += du
-                    self.getCtrlPts(u)
-
-                t1,t2 = self.findProjection(xs_now, seeding = seeding)
-                xc = self.Grg(t1,t2)
-                normal = self.D3Grg(t1,t2)
-                gn = (xs_now-xc) @ normal             # np.dot(a,b) <=> a @ b
-
-                fintC[idx]= (0.5*kn*gn**2 - E0)/du
-
-
-            self.getCtrlPts(u0)         #restoring the CtrlPts before finishing
-            return fintC
-
-    def fintC_fd_cp(self, xs, kn, u0, seeding = 10):    # finite differente at CtrlPts
-        self.getCtrlPts(u0)         #restoring the CtrlPts before finishing
-
-        t1,t2 = self.findProjection(xs, seeding = seeding)
-        if not (0<=t1<=1 and 0<=t2<=1):
-            set_trace()
-
-        xc = self.Grg(t1,t2)
-        normal = self.D3Grg(t1,t2)
-        gn = (xs-xc) @ normal             # np.dot(a,b) <=> a @ b
-
-        if gn>0:
-            return 0
-
-        else:
-
-            cp0 = np.array(self.flatCtrlPts()).ravel()
-            dofs = np.append([0,0,0],cp0)
-            n = len(cp0)+3
-            E0 = 0.5*kn*gn**2
-            fintC = np.zeros(n)
-
-            du = 1e-9
-            for idx, dof in enumerate(dofs):
-                xs_now = np.array(xs)
-                self.CtrlPts = np.array(cp0)
-
-                if idx < 3 :
-                    xs_now[idx] += du
-                else:
-                    self.CtrlPts[idx-3] += du
-
-                self.CtrlPts = self.CtrlPts.reshape(20,3)
-                self.groupCtrlPts()
-                t1,t2 = self.findProjection(xs_now, seeding = seeding)
-                xc = self.Grg(t1,t2)
-                normal = self.D3Grg(t1,t2)
-                gn = (xs_now-xc) @ normal             # np.dot(a,b) <=> a @ b
-
-                fintC[idx]= (0.5*kn*gn**2 - E0)/du
-
-
-            self.getCtrlPts(u0)         #restoring the CtrlPts before finishing
-            return fintC
-
-
-    def torch_fintC_KC(self, xs, kn, u, seeding = 10):
-        import torch
-
-        from scipy.special import comb, factorial
-        def Bernstein(n,k,x):
-            return comb(n,k)*(x**k)*((1-x)**(n-k))
-
-        def dnBernstein(n,k,x,p):
-            coef = factorial(n)/factorial(n-p)
-            desde = max(0,k+p-n)
-            hasta = min(k,p)
-            dnB = coef*sum([(-1)**(i+p)*comb(p,i)*Bernstein(n-p,k-i,x) for i in range(desde,hasta+1)])
-            return dnB
-
-        def Grg(CtrlPts,u,v, eps = 1e-8):                      # with treatment for undefinition at nodes
-            p = torch.tensor([0.0 , 0.0 , 0.0],dtype = torch.float64)
-            n, m = len(CtrlPts)-1, len(CtrlPts[0])-1
-
-            for i  in range(n+1):
-                for j in range(m+1):
-                    if i in [1,2] and j in [1,2]:
-                        if i==1 and j ==1:
-                            x110, x111 = CtrlPts[1][1]
-                            den = max(eps,u+v)  
-                            xij = (u*x110+v*x111)/(den)
-                        elif i==1 and j==2:
-                            x120, x121 = CtrlPts[1][2]
-                            den = max(eps,u+1-v)
-                            xij = (u*x120+(1-v)*x121)/(den)
-
-                        elif i==2 and j==1:
-                            x210, x211 = CtrlPts[2][1]
-                            den = max(eps, v+1-u)
-                            xij = ((1-u)*x210+v*x211)/(den)
-                        else:
-                            x220, x221 = CtrlPts[2][2]
-                            den = max(eps, 2-u-v)
-                            xij = ((1-u)*x220+(1-v)*x221)/(den)
-                            
-                    else:
-                        xij = CtrlPts[i][j]
-
-                    Bi   =  Bernstein(n, i, u)
-                    Bj   =  Bernstein(m, j, v)
-                    p += Bi*Bj*xij
-            return p
-
-        def DtGrg(CtrlPts,u,v, order = 1 , eps = 1e-8):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
-            D1p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D2p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D1D1p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D1D2p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D2D2p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D1D1D1p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D1D1D2p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D1D2D2p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            D2D2D2p = torch.tensor([0.0 , 0.0 , 0.0],dtype=torch.float64)
-            n, m = len(CtrlPts)-1, len(CtrlPts[0])-1
-
-            for i  in range(n+1):
-                for j in range(m+1):
-                    # Inner nodes: values, derivatives and treatments
-                    if i in [1,2] and j in [1,2]:
-                        if i==1 and j ==1:
-                            x110, x111 = CtrlPts[1][1]
-                            den = max(eps,u+v)  
-                            xij = (u*x110+v*x111)/(den)
-                            D1xij = x110/(den) - (u*x110 + v*x111)/((den)**2)
-                            D2xij = x111/(den) - (u*x110 + v*x111)/((den)**2)
-                            if order > 1:
-                                D11xij =-2*v*(x110 - x111)/(den)**3
-                                D12xij = (u - v)*(x110 - x111)/(den)**3
-                                D22xij = 2*u*(x110 - x111)/(den)**3
-                            if order > 2:
-                                D111xij = 6*v*(x110-x111)/(den)**4
-                                D112xij = -(2*(u-2*v)*(x110-x111)/(den)**4)
-                                D122xij = -(2*(2*u-v)*(x110-x111)/(den)**4)
-                                D222xij = -(6*u*(x110-x111)/(den)**4)
-                                
-                        elif i==1 and j==2:
-                            x120, x121 = CtrlPts[1][2]
-                            den = max(eps,u+1-v)
-                            xij = (u*x120+(1-v)*x121)/(den)
-                            D1xij = x120/(den) - (u*x120 + (1-v)*x121)/((den)**2)
-                            D2xij = -x121/(den) + (u*x120 + (1-v)*x121)/((den)**2)
-                            if order > 1:
-                                D11xij = (2*(-1 + v)*(x120 - x121))/(den)**3
-                                D12xij = -(((-1 + u + v)*(x120 - x121))/(den)**3)
-                                D22xij = (2*u*(x120 - x121))/(den)**3
-                            if order > 2:
-                                D111xij = -(6*(-1+v)*(x120-x121)/(den)**4)
-                                D112xij = (2*(-2+u+2*v)*(x120-x121)/(den)**4)
-                                D122xij = -(2*(-1+2*u+v)*(x120-x121)/(den)**4)
-                                D222xij = (6*u*(x120-x121)/(den)**4)
-
-                        elif i==2 and j==1:
-                            x210, x211 = CtrlPts[2][1]
-                            den = max(eps, v+1-u)
-                            xij = ((1-u)*x210+v*x211)/(den)
-                            D1xij = -x210/(den) + ((1-u)*x210 + v*x211)/((den)**2)
-                            D2xij = x211/(den) - ((1-u)*x210 + v*x211)/((den)**2)
-                            if order > 1:
-                                D11xij = (2*v*(x210 - x211))/(-den)**3
-                                D12xij = ((-1 + u + v)*(x210 - x211))/(den)**3
-                                D22xij = (2*(-1 + u)*(x210 - x211))/(-den)*3
-                            if order > 2:
-                                D111xij = -(6*v*(x210-x211)/(den)**4)
-                                D112xij = (2*(-1+u+2*v)*(x210-x211)/(den)**4)
-                                D122xij = -(2*(-2+2*u+v)*(x210-x211)/(den)**4)
-                                D222xij = (6*(-1+u)*(x210-x211)/(den)**4)
-
-                        else:
-                            x220, x221 = CtrlPts[2][2]
-                            den = max(eps, 2-u-v)
-                            xij = ((1-u)*x220+(1-v)*x221)/(den)
-                            D1xij = -x220/(den) + ((1-u)*x220 + (1-v)*x221)/((den)**2)
-                            D2xij = -x221/(den) + ((1-u)*x220 + (1-v)*x221)/((den)**2)
-                            if order > 1:
-                                D11xij = -((2*(-1 + v)*(x220 - x221))/(-den)**3)
-                                D12xij = ((u - v)*(x220 - x221))/(-den)**3
-                                D22xij = (2*(-1 + u)*(x220 - x221))/(-den)**3
-                            if order > 2:
-                                D111xij = 6*(-1+v)*(x220-x221)/(-den)**4
-                                D112xij = -(2*(1+u-2*v)*(x220-x221)/(-den)**4)
-                                D112xij = -(2*(-1+2*u-v)*(x220-x221)/(-den)**4)
-                                D222xij = -(6*(-1+u)*(x220-x221)/(-den)**4)
-
-                    else:
-                        xij = CtrlPts[i][j]
-                        D1xij, D2xij = 0.0 , 0.0
-                        D11xij, D12xij, D22xij = 0.0 , 0.0 , 0.0
-                        D111xij, D112xij, D122xij, D222xij = 0.0 , 0.0 , 0.0 , 0.0
-
-                    # Bernstein polynomials
-                    Bi     =   Bernstein(n, i, u)
-                    Bj     =   Bernstein(m, j, v)
-                    D1Bi     =  dnBernstein(n, i, u, 1)
-                    D2Bj     =  dnBernstein(m, j, v, 1)
-                    if order > 1:
-                        DD1Bi = dnBernstein(n, i, u, 2)
-                        DD2Bj = dnBernstein(m, j, v, 2)
-
-                    if order > 2:
-                        DDD1Bi = dnBernstein(n, i, u, 3)
-                        DDD2Bj = dnBernstein(m, j, v, 3)
-
-                    #TODO: Unify Grg and D3Grg: Just add "p" bellow to be computed as p+=...
-
-                    # Tangent Derivatives w/r to LOCAL parameters
-                    D1p += D1Bi*Bj*xij + Bi*Bj*D1xij
-                    D2p += Bi*D2Bj*xij + Bi*Bj*D2xij
-
-                    if order > 1:
-                        D1D1p += (DD1Bi*xij + 2*D1Bi*D1xij + Bi*D11xij)*Bj
-                        D1D2p += D1Bi*D2Bj*xij + D1Bi*Bj*D2xij + Bi*D2Bj*D1xij + Bi*Bj*D12xij
-                        D2D2p += (DD2Bj*xij + 2*D2Bj*D2xij + Bj*D22xij)*Bi
-
-                    if order > 2:
-                        D1D1D1p += (DDD1Bi*xij + 3*DD1Bi*D1xij + 3*D1Bi*D11xij + Bi*D111xij)*Bj
-                        D1D1D2p += (DD1Bi*D2xij + 2*D1Bi*D12xij + Bi*D112xij)*Bj + (DD1Bi*xij + 2*D1Bi*D1xij + Bi*D11xij)*D2Bj
-                        D1D2D2p += (DD2Bj*D1xij + 2*D2Bj*D12xij + Bj*D122xij)*Bi + (DD2Bj*xij + 2*D2Bj*D2xij + Bj*D22xij)*D1Bi
-                        D2D2D2p += (DDD2Bj*xij + 3*DD2Bj*D2xij + 3*D2Bj*D22xij + Bj*D222xij)*Bi
-
-            if order==1:
-                return torch.transpose(torch.stack([D1p, D2p]),0,1)
-            elif order == 2:
-                return torch.transpose(torch.stack([D1p, D2p]),0,1), torch.transpose(torch.stack([torch.stack([D1D1p, D1D2p]),
-                                                    torch.stack( [D1D2p, D2D2p])    ]),0,1)
-            elif order == 3:
-                return torch.transpose(torch.stack([D1p, D2p]),0,1), torch.transpose(torch.stack([[D1D1p, D1D2p], [D1D2p, D2D2p]]),0,1), torch.transpose(torch.stack([[[D1D1D1p,D1D1D2p],[D1D1D2p,D1D2D2p]], [[D1D1D2p,D1D2D2p],[D1D2D2p,D2D2D2p]]]),0,1)
-
-        def D3Grg(CtrlPts, u,v, normalize = True):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
-            D1p, D2p = DtGrg(CtrlPts,u,v).T
-            D3p = torch.cross(D1p,D2p)
-            if normalize:
-                D3p = D3p/torch.norm(D3p)       # The NORMALIZED vectors are continuous from patch to patch (doesnt make sense otherwise)
-            return D3p
-
-        def MinDist(CtrlPts, xs, seeding = seeding):
-            umin = 0
-            vmin = 0
-            dmin = torch.norm(xs-CtrlPts[0][0])   # Starting point
-
-            for u in torch.linspace(0,1,seeding+1):
-                for v in torch.linspace(0,1,seeding+1):
-                    d = torch.norm(xs - Grg(CtrlPts,u,v))
-                    if d < dmin:
-                        dmin, umin, vmin = d, u, v
-
-            return umin , vmin
-
-        def findProjection(CtrlPts,xs, seeding=seeding):
-
-            t = torch.tensor(MinDist(CtrlPts, xs, seeding=seeding))
-
-            tol = 1e-12
-            res = 1+tol
-            count = 0
-            while res>tol and (0<=t[0]<=1 and 0<=t[1]<=1) and count<100:
-
-                xc = Grg(CtrlPts, t[0],t[1])
-
-                dxcdt, d2xcd2t = DtGrg(CtrlPts,t[0],t[1], order = 2)
-
-
-                f = -2*torch.matmul((xs-xc),dxcdt)                        # Unnecessary (?)
-                K =  2*(torch.tensordot(-( xs-xc),d2xcd2t,dims = ([0],[2])) + torch.tensordot(dxcdt,dxcdt,dims= ([0],[0]) ) )
-
-
-                dt = torch.linalg.solve(-K,f)
-
-                t = t + dt
-
-                res = torch.norm(f)
-
-                count += 1
-            return t
-
-        def jacobian(y, x, create_graph=False):                                                            
-            jac = []                                                                                       
-            flat_y = y.reshape(-1)                                                                         
-            grad_y = torch.zeros_like(flat_y)                                                                 
-            for i in range(len(flat_y)):                                                                   
-                grad_y[i] = 1.                                                                             
-                grad_x, = torch.autograd.grad(flat_y, x, grad_y, retain_graph=True, create_graph=create_graph)
-                jac.append(grad_x.reshape(x.shape))                                                        
-                grad_y[i] = 0.                                                                                
-            return torch.stack(jac).reshape(y.shape + x.shape)        
-
-        def hessian(y, x):                                                                                 
-            return jacobian(jacobian(y, x, create_graph=True), x)                                          
-
-        # Slave node
-        Xs = torch.tensor(xs,dtype=torch.float64, requires_grad=False)
-        us = torch.zeros(3)
-        # Master nodes
-        Xm = torch.tensor(self.X,dtype=torch.float64, requires_grad = False)
-        um = torch.tensor(u[self.surf.DoFs[self.squad]])
-
-        # Displacements vector
-        u =  torch.row_stack((us,um)).flatten()
-        u.requires_grad = True
-
-        x = torch.row_stack((Xs,Xm))+u.reshape(-1,3)
-        xs = x[0,:]
-        xm = x[1:,:]
-
-        #Computation of normals
-        facets = self.facets
-        normals = []
-        for vert_idx, vert in enumerate(facets):
-            Xi, xi = Xm[vert_idx], xm[vert_idx]
-            ntmp = 0
-            n0mp = 0
-            ntm = 0
-
-            for facet in vert:
-                Xna, Xnb = [Xm[i] for i in facet]
-                xna, xnb = [xm[i] for i in facet]
-
-                Xa, Xb = (Xna)-(Xi) , (Xnb)-(Xi)
-                xa, xb = (xna)-(xi) , (xnb)-(xi)
-
-                ntm_e = torch.cross(xb,xa)
-                n0m_e = torch.cross(Xb,Xa)
-                w0m_e = torch.norm(n0m_e)
-
-                ntmp += ntm_e / w0m_e
-                n0mp += n0m_e / w0m_e
-
-            wm = torch.norm( n0mp )
-            
-            ntm = ntmp / wm
-            normals.append(ntm)
-
-        # Computation of CtrlPts
-        start = []
-        edge  = []
-        inner = []
-
-        # going through every edge of the patch to find edge points
-        for idx in range(4):
-            y0, y3 = xm[range(4)[idx-1]], xm[idx]
-            m0, m3 = normals[idx-1] , normals[idx]
-
-            c0 = 1/3*((y3-y0)-torch.matmul((y3-y0),torch.outer(m0,m0)/torch.dot(m0,m0)))
-            c2 = 1/3*((y3-y0)-torch.matmul((y3-y0),torch.outer(m3,m3)/torch.dot(m3,m3)))
-            y1, y2 = y0+c0, y3-c2
-
-            start.append(y0)
-            edge.append([y1,y2])
-
-        # going through every edge of the patch to find inner points
-        for idx in range(4):
-            y0, y3 = xm[range(4)[idx-1]] , xm[idx]
-            m0, m3 = normals[idx-1] , normals[idx]
-            
-            y1, y2 = edge[idx][0], edge[idx][1]
-            y0p , y3p = edge[idx-1][1], edge[idx-3][0]
-
-            # c0, c1, c2 = y1-y0, y2-y1, y3-y2
-            c0 = y1-y0
-            c1 = y2-y1
-            c2 = y3-y2
-            b0, b3 = y0p-y0 , y3p-y3
-
-            a0 = torch.cross(m0,(y3-y0))/torch.norm( torch.cross(m0,(y3-y0)) )
-            a3 = torch.cross(m3,(y3-y0))/torch.norm( torch.cross(m3,(y3-y0)) )
-
-            k0, k1 = torch.dot(a0,b0), torch.dot(a3,b3)
-            h0, h1 = torch.dot(c0,b0)/torch.dot(c0,c0) , torch.dot(c2,b3)/torch.dot(c2,c2)
-
-            b1 = 1/3*((k1+k0)*a0+k0*a3+2*h0*c1+h1*c0)
-            b2 = 1/3*((k1+k0)*a3+k1*a0+2*h1*c1+h0*c2)
-
-            y1p, y2p = y1+b1 , y2+b2
-
-            inner.append([y1p,y2p])
-
-        # Assembly of CtrlPts matrix of the patch
-        row0 = [ start[1]  ,         edge[0][1]        ,         edge[0][0]        ,  start[0]  ]     #This "matrix" HAS to be transposed (for indexing purposes)
-        row1 = [edge[1][0] , [inner[1][0],inner[0][1]] , [inner[3][1],inner[0][0]] , edge[3][1] ]
-        row2 = [edge[1][1] , [inner[1][1],inner[2][0]] , [inner[3][0],inner[2][1]] , edge[3][0] ]
-        row3 = [ start[2]  ,         edge[2][0]        ,         edge[2][1]        ,  start[3]  ]
-
-        CtrlPts = [row0,row1,row2,row3]
-
-
-        cp = CtrlPts
-        CtrlPts_flat = torch.stack([
-            cp[0][0], cp[3][0], cp[3][3], cp[0][3],
-            cp[1][0], cp[2][0], cp[3][1], cp[3][2],cp[2][3], cp[1][3], cp[0][2], cp[0][1],
-            cp[1][1][0], cp[1][1][1], cp[2][1][0], cp[2][1][1],cp[2][2][0], cp[2][2][1], cp[1][2][0], cp[1][2][1],
-        ])
-
-        # CtrlPts_flat.requires_grad=True
-
-        cp = CtrlPts_flat
-        row0 = [ cp[0] ,      cp[11]     ,       cp[10]    , cp[3] ]            #This "matrix" HAS to be transposed (for indexing purposes)
-        row1 = [ cp[4] , [cp[12],cp[13]] , [cp[18],cp[19]] , cp[9] ]
-        row2 = [ cp[5] , [cp[14],cp[15]] , [cp[16],cp[17]] , cp[8] ]
-        row3 = [ cp[1] ,       cp[6]     ,       cp[7]     , cp[2] ]
-        
-        CtrlPts = [row0,row1,row2,row3]
-
-
-        t = findProjection(CtrlPts,xs)
-
-        xc = Grg(CtrlPts , t[0], t[1])
-        normal = D3Grg(CtrlPts, t[0], t[1])
-        gn = torch.dot( xs-xc , normal )
-
-        Energy = 1/2*kn*(-gn)**2 if gn < 0 else 0
-
-        f1 = jacobian(Energy, u)                                                                           
-        K1 = hessian(Energy, u)
-
-        
-        return f1, K1
-
-
-    # FINITE DIFFERENCES FOR (VERIFICATION PURPOSES)
-    def dfdt_fd(self,xs, t0=0 ,dt = 1e-6):
-        if type(t0)==int:
-            t0 = self.findProjection(xs)
-
-        xc0, dxcdt0 = self.Grg(t0[0],t0[1], deriv = 1)
-        f0    = -2*(xs-xc0)@dxcdt0                  # Unnecessary (?)
-
-        dfdt = np.zeros((len(f0),len(t0)))
-        for i in range(len(t0)):
-            t = np.array(t0)
-            t[i] += dt
-            xc, dxcdt = self.Grg(t[0],t[1], deriv = 1)
-            f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
-            dfdt[:,i] = (f-f0)/dt
-
-        return dfdt
-            
-    def d2fd2t_fd(self,xs, dt = 1e-6, ddt=1e-6):
-        t0 = self.findProjection(xs)
-        dfdt0 = self.dfdt_fd(xs,dt=ddt)
-        d2fd2t = np.zeros((dfdt0.shape[0],dfdt0.shape[1],len(t0)))
-        for i in range(len(t0)):
-            t = np.array(t0)
-            t[i] += dt
-            dfdt    = self.dfdt_fd(xs, t0=t ,dt=ddt)                  # Unnecessary (?)
-            d2fd2t[:,:,i] = (dfdt-dfdt0)/dt
-
-        return d2fd2t
-
-    def d2fdtdxs_fd(self,xs0, dx = 1e-6, ddt=1e-6):
-        dfdt0 = self.dfdt_fd(xs0,dt=ddt)
-        d2fdtdxs = np.zeros((dfdt0.shape[0],dfdt0.shape[1],len(xs0)))
-        for i in range(len(xs0)):
-            xs = np.array(xs0)
-            xs[i] += dx
-            dfdt    = self.dfdt_fd(xs, dt=ddt)                  # Unnecessary (?)
-            d2fdtdxs[:,:,i] = (dfdt-dfdt0)/dx
-
-        return d2fdtdxs
-
-    def dfdxs_fd(self,xs0, dx = 1e-6):
-        t0 = self.findProjection(xs0)
-        xc0, dxcdt0 = self.Grg(t0[0],t0[1], deriv = 1)
-        f0    = -2*(xs0-xc0)@dxcdt0                  # Unnecessary (?)
-        dfdxs = np.zeros((len(f0),len(xs0)))
-        for i in range(len(xs0)):
-            xs = np.array(xs0)
-            xs[i] += dx
-            t = self.findProjection(xs)
-            xc, dxcdt = self.Grg(t[0],t[1], deriv = 1)
-            f    = -2*(xs-xc)@dxcdt                  # Unnecessary (?)
-            # f    = -2*(xs-xc0)@dxcdt0                  # Unnecessary (?)
-
-            dfdxs[:,i] = (f-f0)/dx
-
-        return dfdxs
-
-    def d2fd2xs_fd(self,xs0, dx = 1e-6, ddx=1e-6):
-        dfdxs0    = self.dfdxs_fd(xs0,dx=ddx)                 # Unnecessary (?)
-        d2fd2xs = np.zeros((dfdxs0.shape[0],dfdxs0.shape[1],len(xs0)))
-        for i in range(len(xs0)):
-            xs = np.array(xs0)
-            xs[i] += dx
-            dfdxs    = self.dfdxs_fd(xs,dx=ddx)                 # Unnecessary (?)
-
-            d2fd2xs[:,i] = (dfdxs-dfdxs0)/dx
-
-        return d2fd2xs
-
-    def dtdxs_fd(self,xs0, dx = 1e-6):
-        t0 = self.findProjection(xs0)
-        dtdxs = np.zeros((len(t0),len(xs0)))
-        for i in range(len(xs0)):
-            xs = np.array(xs0)
-            xs[i] += dx
-            t = self.findProjection(xs)
-            dtdxs[:,i]    = (t-t0)/dx
-
-        return dtdxs
-
-    def d2td2xs_fd(self,xs0, dx = 1e-6, ddx=1e-6):
-        dtdxs0 = self.dtdxs_fd(xs0, dx = ddx)
-        d2td2xs = np.zeros((dtdxs0.shape[0],dtdxs0.shape[1],len(xs0)))
-        for i in range(len(xs0)):
-            xs = np.array(xs0)
-            xs[i] += dx
-            dtdxs = self.dtdxs_fd(xs, dx = ddx)
-            d2td2xs[:,:,i]    = (dtdxs-dtdxs0)/dx
-
-        return d2td2xs
-
-    def dfdxi_fd(self,xs, dx=1e-6):
-        t0 = self.findProjection(xs)
-        xc0, dxcdt0 = self.Grg(t0[0],t0[1],deriv=1)
-        f0 = -2*(xs-xc0)@dxcdt0
-        cp0 = self.flatCtrlPts()
-
-        dfdxi = np.zeros((2,20,3))
-        for i in range(20):
-            for j in range(3):
-                cp = np.array(cp0)
-                cp[i,j] += dx
-                self.CtrlPts = cp
-                self.groupCtrlPts()
-                xc, dxcdt = self.Grg(t0[0],t0[1],deriv=1)
-                f = -2*(xs-xc)@dxcdt
-                dfdxi[:,i,j] = (f-f0)/dx
-
-        return dfdxi
-
-    def d2xcdtdxi_fd(self,xs, dx =1e-6):
-        t0 = self.findProjection(xs)
-        _, dxcdt0 = self.Grg(t0[0],t0[1],deriv=1)
-        cp0 = self.flatCtrlPts()
-
-        d2xcdtdxi = np.zeros((3,2,20,3))
-        for i in range(20):
-            for j in range(3):
-                cp = np.array(cp0)
-                cp[i,j] += dx
-                self.CtrlPts = cp
-                self.groupCtrlPts()
-                _, dxcdt = self.Grg(t0[0],t0[1],deriv=1)
-                d2xcdtdxi[:,:,i,j] = (dxcdt-dxcdt0)/dx
-
-        self.CtrlPts = cp0
-        self.groupCtrlPts()
-
-        return d2xcdtdxi
-
-    def d3xcd2tdxi_fd(self,xs, dx =1e-6):
-        t0 = self.findProjection(xs)
-        _, _, d2xcd2t0 = self.Grg(t0[0],t0[1],deriv=2)
-        cp0 = self.flatCtrlPts()
-
-        d2xcdtdxi = np.zeros((3,2,2,20,3))
-        for i in range(20):
-            for j in range(3):
-                cp = np.array(cp0)
-                cp[i,j] += dx
-                self.CtrlPts = cp
-                self.groupCtrlPts()
-                _, _, d2xcd2t = self.Grg(t0[0],t0[1],deriv=2)
-                d2xcdtdxi[:,:,:,i,j] = (d2xcd2t-d2xcd2t0)/dx
-
-        self.CtrlPts = cp0
-        self.groupCtrlPts()
-
-        return d2xcdtdxi
-
-    def KC_fd(self, xs, kn, u0, seeding = 10, du = 1e-10):
-        
-        # set_trace()
-        dofs = np.append([0,0,0],self.surf.DoFs[self.squad])
-        n = 3*(len(self.squad)+1)
-        f0 = self.fintC_fd(xs, kn, u0, seeding=seeding, du=du)
-
-        if type(f0) == int:         # equivalent to "if gn>=0"
-            return 0
-        else:
-                
-            K = np.zeros((n,n))
-            for idx, dof in enumerate(dofs):
-                u = np.array(u0)
-                xs_now = np.array(xs)
-
-                if idx>2:
-                    u[dof] += du
-                    self.getCtrlPts(u)
-                else:
-                    xs_now[idx] += du
-
-                K[:,idx] = (self.fintC_fd(xs_now,kn, u0, seeding=seeding, du=du) - f0) / du
-
-            self.getCtrlPts(u0)         #restoring the CtrlPts before finishing
-            return K
-
-"""
+    """    def lolol_CtrlPts(self):
+            cp = self.CtrlPts
+            asd  = np.array([0.0,0.0,0.0])
+            CtrlPts = [[cp[0][0],asd],[cp[0][1],asd],[cp[0][2],asd],[cp[0][3],asd],
+                    [cp[1][0],asd],[cp[1][1][0],cp[1][1][1]],[cp[1][2][0],cp[1][2][1]],[cp[1][3],asd],
+                    [cp[2][0],asd],[cp[2][1][0],cp[2][1][1]],[cp[2][2][0],cp[2][2][1]],[cp[2][3],asd],
+                    [cp[3][0],asd],[cp[3][1],asd],[cp[3][2],asd],[cp[3][3],asd],
+                    ]
+            return CtrlPts
+
+        def Grg(self, t, deriv = 0):
+            result = Grg_fast(np.array(self.lolol_CtrlPts(),dtype=np.float64),self.eps,t,deriv=deriv)
+            if deriv == 0:
+                return result[0]
+            elif deriv == 1:
+                return result[0],result[1:3].T
+            elif deriv == 2:
+                return result[0],result[1:3].T,result[3:6].T
+            else:
+                return result[0],result[1:3].T,result[3:6].T,result[6:].T
+    """

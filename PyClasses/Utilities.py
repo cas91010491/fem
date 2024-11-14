@@ -3,9 +3,11 @@
 #################
 from numpy.matrixlib import defmatrix
 import numpy as np
-from scipy.special import comb, factorial
+# from scipy.special import comb, factorial   # Using these package's functions doesn't allow to use numba
 import math
 from pdb import set_trace
+from numba import njit      # This makes Berntein, dBernstein,... much much faster
+
 
 # def RandDispl(dirs = dirs, range = interv,steps= steps, X0 = [0.0, 0.0, 0.0]):
 #     x = np.array(X0)
@@ -14,6 +16,107 @@ from pdb import set_trace
 #         if "x" in dirs or "X" in dirs:
 #             dx = 0
 #             while x[0] + dx
+
+def quadratic_fit_min_zeros_noErrors(points):
+    """
+    Given three points, this function returns the minimum (vertex)
+    and zeros (roots) of the quadratic equation that fits these points.
+
+    :param points: A list of three tuples, each representing a point (x, y)
+    :return: A dictionary with the minimum point and zeros (roots)
+    """
+    # Create matrices for the system of equations
+    X = np.array([
+        [points[0][0]**2, points[0][0], 1],
+        [points[1][0]**2, points[1][0], 1],
+        [points[2][0]**2, points[2][0], 1]
+    ])
+
+    Y = np.array([points[0][1], points[1][1], points[2][1]])
+
+    # Solve for coefficients [a, b, c]
+    a, b, c = np.linalg.solve(X, Y)
+
+    # Find the minimum (vertex of the parabola)
+    x_min = -b / (2 * a)
+    y_min = a * x_min**2 + b * x_min + c
+    min_point = (x_min, y_min)
+
+    # Find the zeros (roots) using the quadratic formula
+    discriminant = b**2 - 4 * a * c
+    if discriminant >= 0:
+        x_zero1 = (-b + np.sqrt(discriminant)) / (2 * a)
+        x_zero2 = (-b - np.sqrt(discriminant)) / (2 * a)
+        zeros = (x_zero1, x_zero2)
+    else:
+        zeros = None  # No real roots
+
+    return {
+        "minimum": min_point,
+        "zeros": zeros,
+        "a":a,
+        "b":b,
+        "c":c,
+    }
+
+import numpy as np
+
+def quadratic_fit_min_zeros(points):
+    """
+    Given three points, this function returns the minimum (vertex)
+    and zeros (roots) of the quadratic equation that fits these points.
+    
+    Raises ValueError if invalid values (e.g., division by zero or
+    negative discriminants) are encountered.
+    
+    :param points: A list of three tuples, each representing a point (x, y)
+    :return: A dictionary with the minimum point and zeros (roots)
+    """
+    # Create matrices for the system of equations
+    X = np.array([
+        [points[0][0]**2, points[0][0], 1],
+        [points[1][0]**2, points[1][0], 1],
+        [points[2][0]**2, points[2][0], 1]
+    ])
+
+    Y = np.array([points[0][1], points[1][1], points[2][1]])
+
+    # Solve for coefficients [a, b, c]
+    try:
+        a, b, c = np.linalg.solve(X, Y)
+    except np.linalg.LinAlgError as e:
+        raise ValueError("The points do not define a valid quadratic equation.") from e
+
+    # Check for division by zero before calculating the vertex
+    if a == 0:
+        raise ValueError("Coefficient 'a' is zero, this is not a valid quadratic function.")
+
+    # Find the minimum (vertex of the parabola)
+    x_min = -b / (2 * a)
+    y_min = a * x_min**2 + b * x_min + c
+    min_point = (x_min, y_min)
+
+    # Find the zeros (roots) using the quadratic formula
+    discriminant = b**2 - 4 * a * c
+    if discriminant < 0:
+        raise ValueError("The discriminant is negative, no real roots exist.")
+
+    # Check for division by zero when calculating the roots
+    try:
+        x_zero1 = (-b + np.sqrt(discriminant)) / (2 * a)
+        x_zero2 = (-b - np.sqrt(discriminant)) / (2 * a)
+        zeros = (x_zero1, x_zero2)
+    except ZeroDivisionError as e:
+        raise ValueError("Division by zero encountered while calculating the roots.") from e
+
+    return {
+        "minimum": min_point,
+        "zeros": zeros,
+        "a": a,
+        "b": b,
+        "c": c,
+    }
+
 
 def relDiff(A,B, disp=False, tol=1e-10, reciproc=True):
     "Computes the relative difference between matrices"
@@ -56,9 +159,23 @@ def printif(cond, *args):
     if cond:
         print(*args)
 
+@njit
+def factorial(n):
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+
+
+@njit
+def comb(n, k):
+    return factorial(n) // (factorial(k) * factorial(n - k))
+
+@njit
 def Bernstein(n,k,x):
     return comb(n,k)*(x**k)*((1-x)**(n-k))
 
+@njit
 def dBernstein(n,k,x, cases = True):
     if cases:
         if k==0:
@@ -72,6 +189,7 @@ def dBernstein(n,k,x, cases = True):
 
     return dB
 
+@njit
 def d2Bernstein(n,k,x, cases = True):
     if cases:           # without cases there are number/0 problems   for x=0
         if k==0:
@@ -89,7 +207,7 @@ def d2Bernstein(n,k,x, cases = True):
 
     return d2B
 
-def float_to_fraction (x, error=0.000001):
+def float_to_fraction (x, error=0.00000001):
     n = int(math.floor(x))
     x -= n
     if x < error:
@@ -169,6 +287,21 @@ def contrVar(a,b):
     return np.array([tau1p,tau2p]).T
 
 
+def plot_coords(ax,orig=(0.0,0.0,0.0),labels=['x','y','z']):
+    x, y, z = np.array(orig)
+    # I want to plot 3 arrows, each of them starting from the origin and pointing in directions x, y and z
+    dl = 1
+    objs = []
+    objs.append(ax.quiver(x, y, z,dl,0,0))
+    objs.append(ax.quiver(x, y, z,0,dl,0))
+    objs.append(ax.quiver(x, y, z,0,0,dl))
+    objs.append(ax.text(x+dl,y,z,labels[0]))
+    objs.append(ax.text(x,y+dl,z,labels[1]))
+    objs.append(ax.text(x,y,z+dl,labels[2]))
+
+    return objs
+
+@njit
 def dnBernstein(n,k,x,p):
     coef = factorial(n)/factorial(n-p)
     desde = max(0,k+p-n)
@@ -254,6 +387,75 @@ def checkVarsSize():
         print("{:>30}: {:>8}".format(name, sizeof_fmt(size)))
 
 
+def brents_method(f, a, b, tol=1e-5, max_iter=100):
+    """
+    Brent's method for finding the root of f within the interval [a, b].
+    
+    Parameters:
+    f       -- The function whose root we want to find (in your case, the derivative of the objective function)
+    a, b    -- The initial interval [a, b] where a root is suspected to exist
+    tol     -- Tolerance for the stopping criterion
+    max_iter -- Maximum number of iterations
+    
+    Returns:
+    The value of x that is the root of f(x) within the interval [a, b].
+    """
+    
+    fa = f(a)
+    fb = f(b)
+    
+    if fa * fb > 0:
+        raise ValueError("The function must have different signs at a and b")
+    
+    if abs(fa) < abs(fb):
+        a, b = b, a
+        fa, fb = fb, fa
+    
+    c = a
+    fc = fa
+    d = e = b - a
+    
+    for iteration in range(max_iter):
+        if fb == 0 or abs(b - a) < tol:
+            return b  # Root found
+        
+        if fa != fc and fb != fc:
+            # Inverse quadratic interpolation
+            s = (a * fb * fc) / ((fa - fb) * (fa - fc)) + \
+                (b * fa * fc) / ((fb - fa) * (fb - fc)) + \
+                (c * fa * fb) / ((fc - fa) * (fc - fb))
+        else:
+            # Secant method
+            s = b - fb * (b - a) / (fb - fa)
+        
+        # Conditions for bisection method
+        cond1 = (s < (3 * a + b) / 4 or s > b)
+        cond2 = (e < tol or abs(s - b) >= abs(e) / 2)
+        cond3 = (abs(s - b) >= abs(d) / 2)
+        cond4 = (abs(b - a) < tol)
+        cond5 = (abs(fb) >= abs(fa))
+
+        if cond1 or cond2 or cond3 or cond4 or cond5:
+            # Perform bisection if conditions are met
+            s = (a + b) / 2
+            e = d = b - a
+        
+        else:
+            d = e
+            e = b - s
+        
+        fs = f(s)
+        a, fa = b, fb
+        if fa * fs < 0:
+            b, fb = s, fs
+        else:
+            c, fc = s, fs
+        
+        if abs(fa) < abs(fb):
+            a, b = b, a
+            fa, fb = fb, fa
+    
+    raise RuntimeError(f"Maximum iterations ({max_iter}) reached without convergence")
 
 
 
