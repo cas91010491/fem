@@ -1,13 +1,13 @@
-from PyClasses.FEAssembly import *
-from PyClasses.Contacts import *
-from PyClasses.FEModel import *
-
 import argparse
 import sys, os, pickle
 import numpy as np
 from pdb import set_trace
 from time import time
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from PyClasses.FEAssembly import *
+from PyClasses.Contacts import *
+from PyClasses.FEModel import *
 
 #####################
 ### Setting model ###

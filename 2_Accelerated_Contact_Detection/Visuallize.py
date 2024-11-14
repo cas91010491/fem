@@ -1,9 +1,11 @@
-import os, pickle
+import os, pickle, sys
 import numpy as np
 import matplotlib.pyplot as plt
 from pdb import set_trace
 from time import time
 import colorsys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 cwd = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,7 +17,7 @@ ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
 
 
 # Assuming 'cwd' is correctly defined somewhere above this snippet
-folderPath = os.path.join(cwd, '../csv_files')
+folderPath = os.path.join(cwd, 'csv_files')
 # folderPath = os.path.join(cwd, 'csv_files_edges')
 
 # Step 1: Determine the total number of rows across all CSV files

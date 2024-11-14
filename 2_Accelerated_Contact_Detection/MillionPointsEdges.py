@@ -1,7 +1,3 @@
-from PyClasses.FEAssembly import *
-from PyClasses.Contacts import *
-from PyClasses.FEModel import *
-
 import argparse
 import sys, os, pickle
 import numpy as np
@@ -9,6 +5,10 @@ from pdb import set_trace
 import time
 import random
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from PyClasses.FEAssembly import *
+from PyClasses.Contacts import *
+from PyClasses.FEModel import *
 
 #####################
 ### Setting model ###
@@ -198,20 +198,6 @@ for patch in patches_here:
                     gm[i,1] = max(ppoe[(ppoe[:,0]>i*border)&(ppoe[:,0]<(i+1)*border),-1])
                 except:
                     gm[i,1] = border
-
-
-            # fig = plt.figure()
-            # ax = fig.add_subplot(121, projection='3d')
-            # ax.scatter(pp_out[ iedge][:,0],pp_out[ iedge][:,1],pp_out[ iedge][:,2],color=(1,0,0,1),s=0.2)
-            # ax.scatter(pp_in[ iedge][:,0],pp_in[ iedge][:,1],pp_in[ iedge][:,2],color=(0,1,0,1),s=0.2)
-            # patch.plot(ax,color=(0,0,1,1))
-            # ax2 = fig.add_subplot(122)
-            # ax2.scatter(ppoe[:,0],ppoe[:,1],color=(1,0,0,1),s=0.3)
-            # ax2.scatter(ppie[:,0],ppie[:,1],color=(0,1,0,1),s=0.3)
-            # plt.show()
-
-
-
 
 
             # generate 2500 random edge values between  0 and 1
