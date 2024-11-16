@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from pdb import set_trace
 from math import pi
 
-import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from PyClasses.FEAssembly import *
 from PyClasses.Contacts import *

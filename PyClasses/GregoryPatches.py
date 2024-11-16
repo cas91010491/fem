@@ -544,7 +544,8 @@ class GrgPatch:
 
         def proj_final_check(self,xs,t):
             # final check (for points at/beyond edges)
-            if not (0<=t[0]<=1 and 0<=t[1]<=1):
+            # if not (0<=t[0]<=1 and 0<=t[1]<=1):
+            if not (0<t[0]<1 and 0<t[1]<1):         # Camilo
                 t1 = min(max(0.0,t[0]),1.0)     # trimming values
                 t2 = min(max(0.0,t[1]),1.0)     # trimming values
                 xc0= self.Grg0([t1,t2])
@@ -553,6 +554,7 @@ class GrgPatch:
                 if norm(x_tang)>2*self.BS.r/100:         # some considerable order of magnitude with respect to the patch 'size'
                     return np.array([-1.0,-1.0])
             return t
+
 
 
         if not ANNapprox:

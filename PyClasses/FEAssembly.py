@@ -166,7 +166,6 @@ class FEAssembly:
         self.surf.X = newX
 
 
-
     # SELECTION OF NODES
     def SelectNodesByBox(self,xyz_a,xyz_b, OnSurface = False):
         nodes = []

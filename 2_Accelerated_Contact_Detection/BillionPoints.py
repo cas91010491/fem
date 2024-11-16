@@ -24,7 +24,7 @@ model = FEModel([ptt], [],[])           # [bodies, contacts, BCs, opts*]
 ptt.Translate([-6.0, 0.0, 0.0])
 model.X = ptt.X.ravel()
 ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
-# model.plotNow()       # Uncomment to see and verify geometry
+model.plotNow()       # Uncomment to see and verify geometry
 
 
 # Argument parsing
@@ -41,6 +41,14 @@ args = parser.parse_args()
 points_per_side = args.points_per_side
 chunks_per_side = args.chunks_per_side
 i, j, k = args.i, args.j, args.k
+
+
+
+# points_per_side = 200
+# chunks_per_side = 1
+# i, j, k = 0,0,0
+
+
 chunksize = int(points_per_side/chunks_per_side)+1
 
 if i == chunks_per_side - 1:
@@ -58,7 +66,7 @@ else:
 
 
 offset = 0.1
-# n_per_side = 100 
+# n_per_side = 200 
 
 
 model_X = model.X.reshape(-1,3)
@@ -94,13 +102,13 @@ for x in np.linspace(xmin,xmax, points_per_side)[chunksize*i:chunksize*i+chunksi
 #                [-2.7660309231561615,-1.0611164444611427,-0.7705807581335125],
 #                [-2.7660309231561615,-1.0611164444611427,-0.7180776791466976]])
 
-
-# xsi = xs[7705]
+# xs = [xs[1631446]]
 # patch = model.bodies[0].surf.patches[75]
 # t1t2 = patch.findProjection(xsi,recursive=3)
 
+set_trace()
 
-t0 = time()
+# t0 = time()
 
 with open("Points_"+str(i)+'_'+str(j)+'_'+str(k)+".csv", 'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
 # with open("Points_chacking.csv", 'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
@@ -122,11 +130,12 @@ with open("Points_"+str(i)+'_'+str(j)+'_'+str(k)+".csv", 'w') as csvfile:       
     # set_trace()
 
     for i,xsi in enumerate(xs):
-        for ip,patch in enumerate(patches):
-            raw_distances[ip] = distance_matrix[ip,i]
+        # for ip,patch in enumerate(patches):
+        #     raw_distances[ip] = distance_matrix[ip,i]
+        raw_distances = distance_matrix[:,i]
 
 
-        rec_lvl = 2 # seeding for recursive MinDist search (u_i = np.linspace(x0,x1,seeding+1))
+        rec_seeding = 3 # seeding for recursive MinDist search (u_i = np.linspace(x0,x1,seeding+1))
         # get candidates of closest patch
         mindist = min(raw_distances)
         maxdist = max(raw_distances)
@@ -134,13 +143,13 @@ with open("Points_"+str(i)+'_'+str(j)+'_'+str(k)+".csv", 'w') as csvfile:       
         size_factor = 0.03      # offset percentage for search radius where search_radius = mindist + size_factor*(maxdist-mindist)
         candidates = [patch for patch, dist in zip(patches, raw_distances) if dist < mindist+size_factor*(maxdist-mindist)]
 
-        if i%100==0:
-            print("pt_nr:",i,"\txsi=",xsi, "\ttotal_time:",time()-t0)  # to visualize evolution of computation
+        # if i%100==0:
+        #     print("pt_nr:",i,"\txsi=",xsi, "\ttotal_time:",time()-t0)  # to visualize evolution of computation
 
         t1t2 = np.zeros((len(candidates),2))
         gns = np.zeros(len(candidates))         # global normal vectors
         for ip,patch in enumerate(candidates):
-            t1t2[ip] = patch.findProjection(xsi,recursive=rec_lvl)
+            t1t2[ip] = patch.findProjection(xsi,recursive=rec_seeding)
             xc = patch.Grg0(t1t2[ip])
             nor = patch.D3Grg(t1t2[ip])
             gns[ip] = (xsi-xc)@nor
@@ -158,9 +167,9 @@ with open("Points_"+str(i)+'_'+str(j)+'_'+str(k)+".csv", 'w') as csvfile:       
             candidates = [patch for patch, dist in zip(patches, raw_distances) if dist < mindist+size_factor*(maxdist-mindist)]
             t1t2 = np.zeros((len(candidates),2))
             gns = np.zeros(len(candidates))         # global normal vectors
-            rec_lvl += 1
+            rec_seeding += 1
             for ip,patch in enumerate(candidates):
-                t1t2[ip] = patch.findProjection(xsi,recursive=rec_lvl)
+                t1t2[ip] = patch.findProjection(xsi,recursive=rec_seeding)
                 xc = patch.Grg0(t1t2[ip])
                 nor = patch.D3Grg(t1t2[ip])
                 inside = ((0<=t1t2[ip][0]<=1) and (0<=t1t2[ip][1]<=1))
