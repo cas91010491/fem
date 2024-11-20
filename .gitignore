@@ -13,3 +13,4 @@ cache_directory/
 RecoveryOuters.dat
 csv_files
 PyClasses/__pycache__/
+*.sh
