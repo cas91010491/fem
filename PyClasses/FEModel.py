@@ -357,7 +357,11 @@ class FEModel:
     def get_fint(self, DispTime = False, temp = False):
         t0_fint = time.time()
         self.fint = np.zeros_like(self.u,dtype=float)
-        for body in self.bodies: body.get_fint(self, temp = temp)
+        # for body in self.bodies: body.get_fint_fast(self, temp = temp)
+        # for body in self.bodies: body.get_fint(self, temp = temp)
+        u = self.u if temp==False else self.u_temp
+        for body in self.bodies: 
+            self.fint += body.compute_mf_plastic(u,self)[0]
         if DispTime: print("Getting fint : ",time.time()-t0_fint,"s")
 
         u = self.u if temp==False else self.u_temp
@@ -375,7 +379,9 @@ class FEModel:
         t0_K = time.time()
         self.K = sparse.coo_matrix((self.ndof,self.ndof),dtype=float)
         for body in self.bodies:
-            body.get_K(self)    # uses model.u_temp
+            # body.get_K(self)    # uses model.u_temp
+            self.K += body.compute_k_plastic(self.u_temp,self)
+
 
         printif(DispTime,"Getting K : ",time.time()-t0_K,"s")
 
@@ -526,7 +532,8 @@ class FEModel:
             fexb=fext_r[fr]     # always zero (?)
 
 
-            dub =spsolve(Kbb,fexb-finb-Kba.dot(dua))     # Uses all available processors
+            # dub =spsolve(Kbb,fexb-finb-Kba.dot(dua))     # Uses all available processors
+            dub =spsolve(Kbb,(fexb-finb-Kba.dot(dua)).T)     # Uses all available processors
             fext_r[di] = (fina + Kaa.dot(dua) + Kab.dot(dub))
             # self.fext = Ns@self.fext
 
@@ -1215,6 +1222,7 @@ class FEModel:
 
         for body in self.bodies: 
 
+            # force_bi, Ebi = body.compute_mf_plastic(u,self)
             force_bi, Ebi = body.compute_mf_plastic(u,self)
             En += Ebi
             force_body+=force_bi

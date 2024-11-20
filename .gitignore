@@ -1,3 +1,5 @@
+
+
 *.png
 *.gif
 OUTPUT_*/
@@ -10,3 +12,4 @@ cache_directory/
 *.pyc
 RecoveryOuters.dat
 csv_files
+PyClasses/__pycache__/

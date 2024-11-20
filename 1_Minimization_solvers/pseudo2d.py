@@ -1,13 +1,15 @@
-from PyClasses.FEAssembly import *
-from PyClasses.Contacts import *
-from PyClasses.FEModel import *
-
 import meshio, sys, os, pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from pdb import set_trace
 from math import pi
 from scipy import sparse
+
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from PyClasses.FEAssembly import *
+from PyClasses.Contacts import *
+from PyClasses.FEModel import *
 
 from time import time
 import argparse
@@ -153,7 +155,7 @@ base.surf.ComputeGrgPatches(np.zeros(ndofs),base_top,exactNodesGiven=True)
 
 t0 = time()
 
-recov = "OUTPUT_202411081530pseudo2d_elastic_LBFGS100_15/"+"RecoveryData.dat"
+recov = "OUTPUT_202411181809pseudo2d_plastic_BFGS_5/"+"RecoveryData.dat"
 model.Solve(TimeSteps=100,max_iter=15, recover=False ,minimethod=minimization_method,plot=2)
 
 print("this took",time()-t0,"seconds to compute")
