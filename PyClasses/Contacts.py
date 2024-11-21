@@ -15,7 +15,7 @@ from pdb import set_trace
 
 class Contact:
     def __init__(self,slave, master, kn=1.0, kt=None,
-                    cubicT=None, C1Edges=True, OutPatchAllowance=0.0, maxGN=None, mu=0, f0=0):          # initialized either with bodies or surfaces. Finally internally handled slave/master pair are surfaces.
+                    cubicT=None, C1Edges=True, OutPatchAllowance=0.0, maxGN=None, mu=0, f0=0, ANNmodel = None):          # initialized either with bodies or surfaces. Finally internally handled slave/master pair are surfaces.
 
         if type(slave) == list:        # pair [ body/surf , subsurf_nodes ]
             self.slaveBody = slave[0] if type(slave[0])==FEAssembly else slave[0].body
@@ -72,6 +72,8 @@ class Contact:
         self.new      = np.full (nsn,True)  # This remains True until the iterarion where the spring starts acting (inclusive)
 
         self.patch_changes = []
+
+        self.ANNmodel = ANNmodel
 
         patch_classifier_name = "final_patch_model_edges-shape-512-512-bs-64"
         # self.patch_classifier = PatchClassificationModel(name=patch_classifier_name)

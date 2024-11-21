@@ -325,6 +325,10 @@ class FEAssembly:
             FPtemp = np.zeros_like(FPconv)
             DELTA_EPcum = np.zeros_like(EPcum)
 
+
+            # if norm(DELTA_EPcum)==0.07890567257758312:
+            #     set_trace()
+
             # for hex_id in prange(len(hexas)):  # Use prange for parallel loops
             for hex_id in range(len(hexas)):
 
@@ -336,15 +340,21 @@ class FEAssembly:
                 # u_hex = u[dofs[hexa].ravel()].reshape(-1,3)
                 # u_ref_hex = u_ref[dofs[hexa].ravel()].reshape(-1,3)
 
-                m_el, fint_el, fptemp_hex,delta_epcum_hex =  fast_mfk.mf_el_plastic(X_hex, u_hex, u_ref_hex, FPconv[hex_id], EPcum[hex_id],
-                                        Youngsmodulus, Poissonsratio, My0, Hardening_modulus, Hardening_exponent, maxBisect)
+                try:
+                    m_el, fint_el, fptemp_hex,delta_epcum_hex =  fast_mfk.mf_el_plastic(X_hex, u_hex, u_ref_hex, FPconv[hex_id], EPcum[hex_id],
+                                            Youngsmodulus, Poissonsratio, My0, Hardening_modulus, Hardening_exponent, maxBisect)
+                except:
+                    return np.nan, np.nan, np.nan, np.nan
+
 
                 if m_el>-1.0:
                     FPtemp[hex_id] = fptemp_hex
                     DELTA_EPcum[hex_id] = delta_epcum_hex
                 else:
-                    m_el = np.nan
-                    fint_el = np.nan
+                    return np.nan, np.nan, np.nan, np.nan
+
+                    # m_el = np.nan
+                    # fint_el = np.nan
 
                 # Update results (atomic updates to shared arrays can cause issues if not handled carefully)
                 force[dofs[hexa].ravel()] += fint_el
@@ -353,6 +363,8 @@ class FEAssembly:
 
             return m, force, FPtemp, DELTA_EPcum
             # return sum(m_els), force, FPtemp, DELTA_EPcum     # parallel  case
+
+        # set_trace()
 
 
 
@@ -518,7 +530,7 @@ class FEAssembly:
 
 
 
-"""
+
 # Fast funcions (out of the class)
 # Residuals at Finite Element level
 @njit
@@ -618,6 +630,7 @@ def mf_el_plastic(X,u,u_ref,FPconv_el,epcum_el,Youngsmodulus,Poissonsratio,My0,H
                 detFe = np.linalg.det(Fe)
 
                 if detFe < 1e-12  or detFe is np.nan:
+                    print("detFe < 1e-12  or detFe is np.nan 633")
                     cur_time -= delta_time
                     delta_time /= 2                    
                     continue
@@ -946,6 +959,8 @@ def mf_el_plastic(X,u,u_ref,FPconv_el,epcum_el,Youngsmodulus,Poissonsratio,My0,H
 
                     Fp_temp=(np.exp(depcum_last*eigenvalues[0])*np.outer(eigenvectors[:,0],eigenvectors[:,0])+np.exp(depcum_last*eigenvalues[1])*np.outer(eigenvectors[:,1],eigenvectors[:,1])+np.exp(depcum_last*eigenvalues[2])*np.outer(eigenvectors[:,2],eigenvectors[:,2]))@Fp
 
+                    if np.linalg.det(Fp_temp) is np.nan:
+                        print("np.linalg.det(Fp_temp) is np.nan 963")
 
                     if np.linalg.det(Fp_temp) < 1e-12 or np.linalg.det(Fp_temp) is np.nan:
                         # cur_time -= delta_time
@@ -1680,7 +1695,7 @@ def K_el_plastic(X,u,fp_conv_el,epcum_el,
         Kgp = compute_Kgp(PdF, dNdx)
         
 
-        # Kgp = np.tensordot(dNdx,np.tensordot(PdF,dNdx,axes=[3,1]),axes=[1,0]).swapaxes(2,3)
+        # Kgp0 = np.tensordot(dNdx,np.tensordot(PdF,dNdx,axes=[3,1]),axes=[1,0]).swapaxes(2,3)
 
         # assert np.allclose(Kgp- np.tensordot(dNdx,np.tensordot(PdF,dNdx,axes=[3,1]),axes=[1,0]).swapaxes(2,3),0.0)
 
@@ -1705,7 +1720,7 @@ def compute_Kgp(PdF, dNdx):
                             Kgp[m1, i, m2, j] += PdF[k,i,j,l] * dNdx[m1, k] * dNdx[m2, l]
     return Kgp
 
-"""
+
 
 
 

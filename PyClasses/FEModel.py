@@ -392,10 +392,10 @@ class FEModel:
                 contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
 
 
-    def solve_NR(self,tol=1e-10,maxiter=10,plotIters=False):
+    def NR(self,tol=1e-10,maxiter=10,plotIters=False):
 
         if self.transform_2d is not None:
-            return self.solve_NR_2d(tol=tol,maxiter=maxiter,plotIters=plotIters)
+            return self.NR_2d(tol=tol,maxiter=maxiter,plotIters=plotIters)
 
         # NEWTON-RAPHSON
         di, fr = self.diri, self.free
@@ -435,7 +435,7 @@ class FEModel:
             finb=self.fint[fr]
             fexb=self.fext[fr]      # always zero (?)
 
-            dub =spsolve(Kbb,fexb-finb-Kba.dot(dua))     # Uses all available processors
+            dub =spsolve(Kbb,(fexb-finb-Kba.dot(dua)).T)     # Uses all available processors
             self.fext[di] = fina + Kaa.dot(dua) + Kab.dot(dub)
 
             dua = np.zeros_like(self.u[di])
@@ -445,6 +445,11 @@ class FEModel:
             self.get_fint(DispTime=TimeDisp)   # uses self.u
 
             RES = self.residual(printRes=True)
+
+            # if RES>10:
+            #     set_trace()
+
+
 
             if RES<minRES:
                 minRES = float(RES)
@@ -467,7 +472,7 @@ class FEModel:
 
         return RES<tol, RES
 
-    def solve_NR_2d(self,tol=1e-10,maxiter=10,plotIters=True):
+    def NR_2d(self,tol=1e-10,maxiter=10,plotIters=True):
 
         # N = self.transform_2d*np.sqrt(0.5)
         Ns,Nt = self.transform_2d
@@ -1108,12 +1113,12 @@ class FEModel:
                 #     set_trace()
                 #     signal = 3
                 # elif norm(h+alpha*p)<TR_rad:
-                if norm(h+alpha*p)<TR_rad:
+                if norm(h+alpha*p)<TR_rad and p.T@K@p>0:            # In trust region AND convex direction
                     h += alpha*p
                     r_new = r_old - np.array(alpha*K@p).reshape(-1)
                     beta = (r_new@r_new)/(r_old@r_old)
                     p = r_new+beta*p
-                    if norm(r_new)<tol2:
+                    if norm(r_new)<max(tol2,1e-5*norm(f_new)):
                         signal = 0
                 else:
                     a = p@p
@@ -1187,27 +1192,6 @@ class FEModel:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow([self.t if iter==0 else None,[iter,iter2a,iter2,case],[m,f]]+ctct.patch_changes)
 
-
-    def Energy(self,u):
-        En,EnC = 0.0, 0.0
-        for body in self.bodies: 
-            En+=body.compute_m_plastic(u)
-            # En+=body.compute_m(u)
-        for ctct in self.contacts:
-            EnC+=ctct.compute_m(u)
-        # print('En',En,"\tEnC",EnC,'\t\tEn_tot',En+EnC)
-        return En+EnC
-    
-    def Force(self,u):
-        force = np.zeros_like(self.fint)
-        for body in self.bodies: 
-            force+=body.compute_f_plastic(u,self)  #called like that to differentiate from get_fint which takes u=Model.u and modifies Model.fint
-            # force+=body.compute_f(u,self)  #called like that to differentiate from get_fint which takes u=Model.u and modifies Model.fint
-        for ctct in self.contacts:
-            force+=ctct.compute_f(u,self)
-        # print('Force',np.linalg.norm(force))
-        force[self.diri]=0.0
-        return force
 
     def Energy_and_Force(self,u,split=False,show=False,unilateral=True):
         self.COUNTS[5] += 1
@@ -1416,7 +1400,7 @@ class FEModel:
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
             else:
                 # converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=plot-1)
-                converged, res = self.solve_NR(tol=tolerance,maxiter=max_iter)
+                converged, res = self.NR(tol=tolerance,maxiter=max_iter)
             actives_after_solving = list(self.contacts[0].actives)
 
             print("ACTIVE NODES:")
