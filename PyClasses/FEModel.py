@@ -369,10 +369,14 @@ class FEModel:
             if temp: ctct.patch_changes = []                 # to keep track of the changes during iterations
             sDoFs  = ctct.slaveBody.DoFs[ctct.slaveNodes]
             ctct.xs = np.array(ctct.slaveBody.X )[ctct.slaveNodes ] + np.array(u[sDoFs ])      # u_temp
-            if self.IterUpdate:
-                ctct.getfintC_unilateral(self, DispTime=DispTime,useANN=False)      # uses xs
+            
+            if ctct.ANNmodel is not None:
+                ctct.get_fintCamilo(self,DispTime = False, tracing = False)
             else:
-                ctct.getfintC(self, DispTime=DispTime,useANN=False)      # uses xs
+                if self.IterUpdate:
+                    ctct.getfintC_unilateral(self, DispTime=DispTime,useANN=False)      # uses xs
+                else:
+                    ctct.getfintC(self, DispTime=DispTime,useANN=False)      # uses xs
 
 
     def get_K(self, DispTime = False):
@@ -386,10 +390,14 @@ class FEModel:
         printif(DispTime,"Getting K : ",time.time()-t0_K,"s")
 
         for contact in self.contacts:
-            if self.IterUpdate:
-                contact.getKC_unilateral(self, DispTime=DispTime)     #uses model.u_temp
+            if contact.ANNmodel is not None:
+                contact.get_KCamilo(self,DispTime = False, tracing = False)
             else:
-                contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
+
+                if self.IterUpdate:
+                    contact.getKC_unilateral(self, DispTime=DispTime)     #uses model.u_temp
+                else:
+                    contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
 
 
     def NR(self,tol=1e-10,maxiter=10,plotIters=False):
@@ -1213,6 +1221,7 @@ class FEModel:
 
             # En+=body.compute_m(u)
         for ctct in self.contacts:
+
             if unilateral:
                 mCi,fCi = ctct.compute_mf_unilateral(u,self)
             else:
