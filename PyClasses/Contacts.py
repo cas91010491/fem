@@ -639,6 +639,36 @@ class Contact:
 
         return K
 
+    def get_fintCamilo(self,Model,DispTime = False, tracing = False):
+        # Here we use the ANNmodel attribute to predict gn, dgndu and d2gndu2 for the set of slave nodes xs
+        # The ANNmodel is a keras model that takes as input the slave nodes xs and returns the predicted values
+        # for gn, dgndu and d2gndu2. The model is trained with the data from the master surface.
+
+        gns, dgndus, d2gndu2s = self.ANNmodel.predict(self.xs)
+        self.ANNmodel_cache = {'gns':gns,'dgndus':dgndus,'d2gndu2s':d2gndu2s}
+
+        for i in range(len(self.xs)):
+            gn = gns[i]
+            if gn<0:
+                dof = self.slaveBody.DoFs[self.slaveNodes[i]]
+                Model.fint[dof] += -self.kn*gn*dgndus[i]
+
+
+    def get_KCamilo(self,Model,DispTime = False, tracing = False):
+        gns     = self.ANNmodel_cache['gns']
+        dgndus  = self.ANNmodel_cache['dgndus']
+        d2gndu2s= self.ANNmodel_cache['d2gndu2s']
+
+        for i in range(len(self.xs)):
+            gn = gns[i]
+            if gn<0:
+                dgndu = dgndus[i]
+                d2gndu2s = d2gndu2s[i]
+                dof = self.slaveBody.DoFs[self.slaveNodes[i]]
+                Model.K[dof,dof] += self.kn*(np.outer(dgndu,dgndu)+gn*d2gndu2s)
+
+
+
 
 
     def getfintC(self, Model, DispTime = False, useANN = False,tracing = False):
