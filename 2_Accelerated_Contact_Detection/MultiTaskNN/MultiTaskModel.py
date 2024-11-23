@@ -1,5 +1,6 @@
 import pandas as pd
 import tensorflow as tf
+import glob
 from tensorflow.keras import layers, Model
 import matplotlib.pyplot as plt
 from tensorflow.keras import backend as K
@@ -10,20 +11,42 @@ from pdb import set_trace
 # Clear any lingering session state
 K.clear_session()
 
-# # Load data
-# data = pd.read_csv('../sampled_data_1_percent.csv')
-# x_train = data[['x', 'y', 'z']].values
-# y_distance = data['gn'].values.reshape(-1, 1)  # Shape (batch_size, 1)
-# y_classification = data['p_id'].values.reshape(-1, 1)  # Integer labels for sparse crossentropy
-# y_projection = data[['xi1', 'xi2']].values  # Shape (batch_size, 2)
+# # Define the path where your CSV files are located
+# csv_files_path = '2_Accelerated_Contact_Detection/csv_files/*.csv'
 
+# # Uncomment this section if you need to recreate a random 1% sample
+# data_frames = []
+# for file in glob.glob(csv_files_path):
+#     df = pd.read_csv(file, header=None)  # Load without headers
+#     if df.shape[1] == 7:                 # Ensure it has exactly 7 columns
+#         data_frames.append(df)           # Append if structure is correct
+#     else:
+#         print(f"Skipping file {file} due to unexpected number of columns: {df.shape[1]}")
+
+# # Concatenate all valid DataFrames
+# all_data = pd.concat(data_frames, ignore_index=True)
+
+# # Assign column names
+# all_data.columns = ['x', 'y', 'z', 'p_id', 'xi1', 'xi2', 'gn']
+
+# # Drop any rows with NaN values
+# all_data.dropna(inplace=True)
+
+# # Randomly sample 1% of the data
+# sampled_data = all_data.sample(frac=0.1, random_state=42)
+
+# # Save the sample
+# sampled_data.to_csv('2_Accelerated_Contact_Detection/sampled_data_10_percent.csv', index=False)
 
 # Load the data
-data = pd.read_csv('../sampled_data_1_percent.csv')
+data = pd.read_csv('2_Accelerated_Contact_Detection/sampled_data_10_percent.csv')
 
-# Filter rows where gn is within [-1.2, 1.2]
+# Filter rows where gn is within [-0.5, 1.5]
 filtered_data = data[(data['gn'] >= -0.5) & (data['gn'] <= 1.5)]
 n_data = filtered_data.shape[0]
+
+
+set_trace()
 
 # Separate features and labels
 x_train = filtered_data[['x', 'y', 'z']].values
@@ -110,7 +133,7 @@ history = model.fit(
     x_train, 
     # [y_distance, y_classification, y_projection],
     [y_distance, y_classification, y_projection_one_hot],
-    epochs=10, batch_size=32, validation_split=0.2
+    epochs=200, batch_size=32, validation_split=0.2
 )
 
 # Plot training and validation losses

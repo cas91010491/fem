@@ -94,7 +94,7 @@ model = FEModel([blk, ptt], [contact1], BCs, subname=subname)           # [bodie
 
 ndofs = 3*(len(X_blk)+len(ptt.X))
 ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
-# model.plotNow()       # Uncomment to see and verify geometry
+model.plotNow()       # Uncomment to see and verify geometry
 
 #############
 ## Running ##
