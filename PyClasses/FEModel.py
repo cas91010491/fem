@@ -1067,7 +1067,132 @@ class FEModel:
 
         return a2,f2,f_2,ux
 
-    def TR(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False, unilateral=True):
+    def TR(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False, unilateral=True,precond = False):
+        if free_ind is None:
+            free_ind = self.free
+
+        nfr = len(free_ind)
+
+        TR_rad = 0.01*nfr
+        TR_rad_min = 0*nfr
+        TR_rad_max = 10000000*nfr
+
+        ff , m_new = FUNJAC(u0,unilateral=unilateral)
+        f_new = ff[free_ind]
+
+        rho = 1
+        iter = 0
+        update_signal = 1
+
+        h_full = np.zeros_like(u0)
+
+        u = u0.copy()
+
+        while norm(f_new)>tol:
+            self.COUNTS[4] += 1
+
+
+            with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.COUNTS_NAMES)
+                csvwriter.writerow(self.COUNTS.tolist())
+
+
+            iter += 1
+            print("Iter:",iter)
+
+            if update_signal==1:
+                K = HESS(u)
+                K = K[np.ix_(free_ind,free_ind)]
+                if not precond:
+                    M = np.eye(nfr)
+                elif precond == "diag":
+                    M = sparse.diags(np.asarray(K.diagonal())[0])
+                elif precond == "tril":
+                    M = sparse.csr_matrix(np.tril(K,k=0))
+
+                condK = np.linalg.cond(K)
+
+            r_new = -M.T@f_new.copy()
+            p = r_new.copy()
+            h = np.zeros(nfr)
+            signal = 1
+            signalx = 0
+
+            while signal==1:
+                r_old = r_new.copy()
+                alpha = float(r_old@r_old/(p.T@M.T@K@M@p))
+                # if p.T@K@p < 0:
+                #     set_trace()
+                #     signal = 3
+                # elif norm(h+alpha*p)<TR_rad:
+                if norm(h+alpha*p)<TR_rad and p.T@M.T@K@M@p>0:            # In trust region AND convex direction
+                    h += alpha*p
+                    r_new = r_old - np.array(alpha*M.T@K@M@p).reshape(-1)
+                    beta = (r_new@r_new)/(r_old@r_old)
+                    p = r_new+beta*p
+                    if norm(r_new)<max(tol2,1e-5*norm(f_new)):
+                        signal = 0
+                else:
+                    a = p@p
+                    b = 2*p@h
+                    c = h@h - TR_rad**2
+                    alpha = 1e-2
+                    eq = a*alpha**2 + b*alpha + c
+                    while abs(eq)>1e-10:
+                        stiff = 2*a*alpha + b
+                        d_alpha = -eq/stiff
+                        alpha += d_alpha
+                        eq = a*alpha**2 + b*alpha + c
+                    h += alpha*p
+                    signalx = 1
+                    signal = 2
+
+            h = M@h
+            h_full[free_ind] = h.copy()
+            ff , m_h = FUNJAC(u + h_full,unilateral=unilateral)
+            f_h = ff[free_ind]
+        
+            rho = (f_new+f_h)@h/(0.5*h.T@K@h + f_new.T@h)
+            # rho = -(m_new-m_h)/(0.5*h.T@K@h + f_new.T@h)
+
+            if rho<0.25:
+                TR_rad = max(0.25*TR_rad,TR_rad_min)
+            else:
+                
+                if (rho>0.75) and signalx==1:
+                    TR_rad = min(2*TR_rad,TR_rad_max)
+
+            update_signal = 0
+
+            if rho>0.25:
+                # print(h.reshape(1,-1))
+                u += h_full
+                m_new = m_h
+                f_new = f_h.copy()
+                update_signal = 1
+
+
+            self.write_list([norm(h),norm(f_new),condK],iter)
+            if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
+                if self.transform_2d is None:
+                    # 3D case
+                    self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
+                else:
+                    # for 2D case
+                    Ns,Nt = self.transform_2d
+                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
+
+
+            # print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdm:",m_h-m_new)
+            print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdmda:",f_new@h)
+            for ctct in self.contacts:
+                print("actives:",ctct.actives)
+
+
+        return u, m_new, iter,norm(f_new)
+
+    def TR_backup20241125(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False, unilateral=True):
         if free_ind is None:
             free_ind = self.free
 
@@ -1096,8 +1221,6 @@ class FEModel:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(self.COUNTS_NAMES)
                 csvwriter.writerow(self.COUNTS.tolist())
-
-
 
 
             iter += 1
@@ -1297,11 +1420,18 @@ class FEModel:
 
         if "LBFGS" in method:
             nli = int(method.replace("LBFGS",""))
+
             self.u, m_new, iter,res = self.LBFGS(self.Energy_and_Force,u0,nli=nli,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral)
         elif "BFGS" in method:
             self.u, m_new, iter,res = self.BFGS(self.Energy_and_Force,u0,free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral)
+
         elif "TR" in method:
-            self.u, m_new, iter,res = self.TR(self.Energy_and_Force,self.Hessian, u0, free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral)
+            precond = False
+            if "diag" in method:
+                precond = "diag"
+            elif "tril" in method:
+                precond = "tril"
+            self.u, m_new, iter,res = self.TR(self.Energy_and_Force,self.Hessian, u0, free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral,precond=precond)
 
 
         if self.transform_2d is not None:
