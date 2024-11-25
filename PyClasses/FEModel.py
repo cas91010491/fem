@@ -1068,12 +1068,14 @@ class FEModel:
         return a2,f2,f_2,ux
 
     def TR(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False, unilateral=True,precond = False):
+        from ilupp import icholt
+
         if free_ind is None:
             free_ind = self.free
 
         nfr = len(free_ind)
 
-        TR_rad = 0.01*nfr
+        TR_rad = 0.0001*nfr
         TR_rad_min = 0*nfr
         TR_rad_max = 10000000*nfr
 
@@ -1087,6 +1089,7 @@ class FEModel:
         h_full = np.zeros_like(u0)
 
         u = u0.copy()
+
 
         while norm(f_new)>tol:
             self.COUNTS[4] += 1
@@ -1110,6 +1113,17 @@ class FEModel:
                     M = sparse.diags(np.asarray(K.diagonal())[0])
                 elif precond == "tril":
                     M = sparse.csr_matrix(np.tril(K,k=0))
+                elif precond == "icho":
+                    cnt_precon=0
+                    K0 = K.copy()
+                    while np.linalg.cond(np.asarray(K))>1e7:
+                        cnt_precon += 1
+                        print("Condition number of K is too high. Using diagonal preconditioner,(",np.linalg.cond(np.asarray(K)))
+                        Kdiag = sparse.diags(np.asarray(K0.diagonal())[0])*10**(-8+cnt_precon)
+                        K = K0 + Kdiag
+                    M = icholt(sparse.csr_matrix(K), add_fill_in=0, threshold=0.0)
+                elif precond == "same":
+                    M = sparse.csr_matrix(np.linalg.inv(K))
 
                 condK = np.linalg.cond(K)
 
@@ -1126,6 +1140,21 @@ class FEModel:
                 #     set_trace()
                 #     signal = 3
                 # elif norm(h+alpha*p)<TR_rad:
+                # if p.T@M.T@K@M@p<0:
+
+                #     import matplotlib.pyplot as plt
+
+                #     vals = []
+                #     for alpha in np.linspace(0, 1, 100):
+                #         vals.append(float((h + alpha * p) @ f_new + 1 / 2 * (h + alpha * p).T @ K @ (h + alpha * p)))
+
+                #     plt.plot(np.linspace(0, 1, 100), vals)
+                #     plt.xlabel('Alpha')
+                #     plt.ylabel('Value')
+                #     plt.title('Plot of vals')
+                #     plt.show()
+
+                #     set_trace()
                 if norm(h+alpha*p)<TR_rad and p.T@M.T@K@M@p>0:            # In trust region AND convex direction
                     h += alpha*p
                     r_new = r_old - np.array(alpha*M.T@K@M@p).reshape(-1)
@@ -1155,6 +1184,8 @@ class FEModel:
         
             rho = (f_new+f_h)@h/(0.5*h.T@K@h + f_new.T@h)
             # rho = -(m_new-m_h)/(0.5*h.T@K@h + f_new.T@h)
+            if np.isnan(rho):
+                rho = -1e5
 
             if rho<0.25:
                 TR_rad = max(0.25*TR_rad,TR_rad_min)
@@ -1431,6 +1462,10 @@ class FEModel:
                 precond = "diag"
             elif "tril" in method:
                 precond = "tril"
+            elif "icho" in method:
+                precond = "icho"
+            elif "same" in method:
+                precond = "same"
             self.u, m_new, iter,res = self.TR(self.Energy_and_Force,self.Hessian, u0, free_ind = fr,ti=ti,simm_time=simm_time,plot=plot,unilateral=unilateral,precond=precond)
 
 
