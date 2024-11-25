@@ -956,6 +956,10 @@ class FEModel:
                 
                 f0,f_0,ux = func(a0,FUNJAC,u,free_ind,h_new)
 
+                if np.isnan(f0):
+                    secant = True
+                    break
+
                 # storing values that give a f_pos in case we need to call it in the bisection/secant method
                 if 0<f0<f_pos: 
                     a_pos, f_pos, f__pos = a0,f0,f_0
