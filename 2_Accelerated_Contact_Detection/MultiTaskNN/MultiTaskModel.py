@@ -6,13 +6,16 @@ import matplotlib.pyplot as plt
 from tensorflow.keras import backend as K
 import numpy as np
 from pdb import set_trace
-
+import os
+from datetime import datetime
+from tensorflow.keras.utils import plot_model
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Clear any lingering session state
 K.clear_session()
 
 # # Define the path where your CSV files are located
-# csv_files_path = '2_Accelerated_Contact_Detection/csv_files/*.csv'
+# csv_files_path = '../csv_files/*.csv'
 
 # # Uncomment this section if you need to recreate a random 1% sample
 # data_frames = []
@@ -36,17 +39,45 @@ K.clear_session()
 # sampled_data = all_data.sample(frac=0.1, random_state=42)
 
 # # Save the sample
-# sampled_data.to_csv('2_Accelerated_Contact_Detection/sampled_data_10_percent.csv', index=False)
+# sampled_data.to_csv('../sampled_data_10_percent.csv', index=False)
+
+
+
 
 # Load the data
-data = pd.read_csv('2_Accelerated_Contact_Detection/sampled_data_10_percent.csv')
+data = pd.read_csv('../sampled_data_100_percent.csv')
+epochs = 200
+
+
+
+model_name = 'multitask_'+str(epochs)+'epochs_100percent'
+
 
 # Filter rows where gn is within [-0.5, 1.5]
 filtered_data = data[(data['gn'] >= -0.5) & (data['gn'] <= 1.5)]
 n_data = filtered_data.shape[0]
 
 
-set_trace()
+
+
+# Get the current time
+current_time = datetime.now().strftime('%Y%m%d%H%M')
+
+# Create the output directory name
+output_dir = f'OUTPUT_{current_time}_{model_name}'
+
+# Create the directory if it doesn't exist
+os.makedirs(output_dir, exist_ok=True)
+
+
+
+
+
+
+
+
+
+
 
 # Separate features and labels
 x_train = filtered_data[['x', 'y', 'z']].values
@@ -71,7 +102,11 @@ shared_layer = layers.Dense(64, activation='relu')(input_layer)
 
 # Branch for Signed Distance Regression
 distance_branch = layers.Dense(32, activation='relu')(shared_layer)
-signed_distance_output = layers.Dense(1, name='signed_distance_output')(distance_branch)
+concat_for_dist_layer = layers.Concatenate()([input_layer,distance_branch])
+distance_layer = layers.Dense(64, activation='relu')(concat_for_dist_layer)
+concat_for_dist_layer2 = layers.Concatenate()([distance_branch,distance_layer])
+distance_layer2 = layers.Dense(32, activation='relu')(concat_for_dist_layer2)
+signed_distance_output = layers.Dense(1, name='signed_distance_output')(distance_layer2)
 
 # Shared Layer for Classification and Regression
 shared_layer2 = layers.Dense(128, activation='relu')(shared_layer)
@@ -127,14 +162,33 @@ model.compile(optimizer='adam',
 # Verify that each output has the correct loss function
 model.summary()
 
-
 # Train the model
 history = model.fit(
     x_train, 
     # [y_distance, y_classification, y_projection],
     [y_distance, y_classification, y_projection_one_hot],
-    epochs=200, batch_size=32, validation_split=0.2
+    epochs=epochs, batch_size=32, validation_split=0.2
 )
+
+
+
+# Save the model in the .keras format
+model.save(os.path.join(output_dir, model_name + '.keras'))
+
+# Save the network architecture diagram
+plot_model(model, to_file=os.path.join(output_dir, 'model_architecture.png'), show_shapes=True, show_layer_names=True)
+
+# Save the model summary
+with open(os.path.join(output_dir, 'model_summary.txt'), 'w') as f:
+    model.summary(print_fn=lambda x: f.write(x + '\n'))
+
+# Save the achieved accuracies and losses
+history_df = pd.DataFrame(history.history)
+history_df.to_csv(os.path.join(output_dir, 'training_history.csv'), index=False)
+
+
+
+
 
 # Plot training and validation losses
 plt.figure(figsize=(12, 4))
@@ -163,11 +217,16 @@ plt.legend()
 plt.title('Projection Loss')
 
 plt.tight_layout()
+
+# Save the plot
+plt.savefig(os.path.join(output_dir, 'training_losses.png'))
+
 plt.show()
 
 
 
 import numpy as np
+import os
 
 # Define the number of samples to check
 num_samples_to_check = 20
@@ -223,11 +282,4 @@ for i, idx in enumerate(sample_indices):
     print(f"Predicted gn      -> {predicted_distance[i][0]:.3f}")
     print("-" * 30)
     
-
-# Save the model in the .keras format
-model_name = 'multitask_calib3_1000epochs_10percent'
-
-model.save(model_name+'.keras')
-
-
 
