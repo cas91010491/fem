@@ -46,7 +46,7 @@ class FEAssembly:
         self.plastic_param = plastic_param
         # self.plastic_param = [0.01,0.05,1.0]        # "Plastic"
         # self.plastic_param = [1e50,0.05,1.0]        # "Elastic"
-        self.max_bisect_RM = 2**20
+        self.max_bisect_RM = 2**25
 
         self.FPconv = np.zeros((len(self.hexas),8,3,3))
         self.FPtemp = np.zeros((len(self.hexas),8,3,3))
