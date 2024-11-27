@@ -1098,12 +1098,10 @@ class FEModel:
         while norm(f_new)>tol:
             self.COUNTS[4] += 1
 
-
             with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(self.COUNTS_NAMES)
                 csvwriter.writerow(self.COUNTS.tolist())
-
 
             iter += 1
             print("Iter:",iter)
@@ -1119,16 +1117,12 @@ class FEModel:
                 elif precond == "tril":
                     M = sparse.linalg.inv(sparse.csr_matrix(np.triu(K,k=0)))
                 elif precond == "icho":
-                    print("Starting preconditioning step")
                     cnt_precon=0
                     K0 = K.copy()
 
                     failed = True
                     while failed:
                         icho = icholt(sparse.csr_matrix(K), add_fill_in=0, threshold=0.0)
-                        # set_trace()
-                        # cond_icho = sparse.linalg.norm(icho, ord=2) * sparse.linalg.norm(sparse.linalg.inv(icho), ord=2)
-                        # print("Condition number of icho:", cond_icho)
                         cond_icho = np.linalg.cond(icho.todense())
                         print("Condition number of icho:",cond_icho)
                         if cond_icho<1e+10:
@@ -1143,10 +1137,6 @@ class FEModel:
                             continue
 
                         failed = False
-                    print("Finished preconditioning step")
-
-
-
 
                 elif precond == "same":
                     M = sparse.csr_matrix(np.linalg.inv(K))
@@ -1163,28 +1153,9 @@ class FEModel:
 
                 self.COUNTS[6] += 1
 
-
                 r_old = r_new.copy()
                 alpha = float(r_old@r_old/(p.T@M.T@K@M@p))
-                # if p.T@K@p < 0:
-                #     set_trace()
-                #     signal = 3
-                # elif norm(h+alpha*p)<TR_rad:
-                # if p.T@M.T@K@M@p<0:
 
-                #     import matplotlib.pyplot as plt
-
-                #     vals = []
-                #     for alpha in np.linspace(0, 1, 100):
-                #         vals.append(float((h + alpha * p) @ f_new + 1 / 2 * (h + alpha * p).T @ K @ (h + alpha * p)))
-
-                #     plt.plot(np.linspace(0, 1, 100), vals)
-                #     plt.xlabel('Alpha')
-                #     plt.ylabel('Value')
-                #     plt.title('Plot of vals')
-                #     plt.show()
-
-                #     set_trace()
                 if norm(M@(h+alpha*p))<TR_rad and p.T@M.T@K@M@p>0:            # In trust region AND convex direction
                     h += alpha*p
                     r_new = r_old - np.array(alpha*M.T@K@M@p).reshape(-1)
@@ -1198,31 +1169,7 @@ class FEModel:
                     c = h.T@M.T@M@h - TR_rad**2
                     alpha = 1e-2
                     eq = a*alpha**2 + b*alpha + c
-                    eq_cnt = 0
                     while abs(eq)>1e-10:
-                        eq_cnt += 1
-                        if eq_cnt>100:
-                            
-                            set_trace()
-
-                            import matplotlib.pyplot as plt
-                            alphas = np.linspace(-3.0, 1.0, 100)
-                            f_values = []
-                            for alpha in alphas:
-                                eq = a*alpha**2 + b*alpha + c
-                                f_values.append(eq)
-
-                            plt.figure(figsize=(8, 6))
-                            plt.plot(alphas, f_values, label="dmda(alpha)", color="blue", linestyle="-", marker="")
-                            plt.xlabel("Alpha")
-                            plt.ylabel("dmda(alpha)")
-                            plt.title("Line Search Plot between alpha_0 and alpha_1")
-                            plt.legend()
-                            plt.grid(True)
-                            plt.show()
-
-
-
                         stiff = 2*a*alpha + b
                         d_alpha = -eq/stiff
                         alpha += d_alpha
@@ -1251,7 +1198,6 @@ class FEModel:
             update_signal = 0
 
             if rho>0.25:
-                # print(h.reshape(1,-1))
                 u += h_full
                 m_new = m_h
                 f_new = f_h.copy()
@@ -1259,18 +1205,24 @@ class FEModel:
 
 
             self.write_list([norm(h),norm(f_new),condK],iter)
-            # if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
-            #     if self.transform_2d is None:
-            #         # 3D case
-            #         self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
-            #     else:
-            #         # for 2D case
-            #         Ns,Nt = self.transform_2d
-            #         self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
+            if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
+                if self.transform_2d is None:
+                    # 3D case
+                    self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
+                else:
+                    # for 2D case
+                    Ns,Nt = self.transform_2d
+                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
+
 
 
             # print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdm:",m_h-m_new)
             print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdmda:",f_new@h)
+            if TR_rad < 1e-50:
+                print("TR_rad is smaller than 1e-50. Stopping the simulation.")
+                sys.exit(1)
+
+
             for ctct in self.contacts:
                 print("actives:",ctct.actives)
 
