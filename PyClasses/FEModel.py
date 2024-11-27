@@ -25,8 +25,8 @@ class FEModel:
         self.transform_2d = transform_2d
 
         # main counter during the simulation
-        self.COUNTS_NAMES = ["incr_accptd", "incr_rjctd", "NR_iters", "incr_mnmzd", "mnmzn_iters", "mnmzn_fn_evals"]
-        self.COUNTS = np.zeros((6,),dtype = int)
+        self.COUNTS_NAMES = ["incr_accptd", "incr_rjctd", "NR_iters", "incr_mnmzd", "mnmzn_iters", "mnmzn_fn_evals","CG_iters"]
+        self.COUNTS = np.zeros((7,),dtype = int)
 
         self.SED = [[] for _ in range(len(bodies))]     # stores nodal Strain-energy density for every successful increment
         X , DoFs, n0 = [], [], 0
@@ -1109,23 +1109,45 @@ class FEModel:
             print("Iter:",iter)
 
             if update_signal==1:
+                # K = sparse.csr_matrix(HESS(u))
                 K = HESS(u)
                 K = K[np.ix_(free_ind,free_ind)]
                 if not precond:
                     M = np.eye(nfr)
                 elif precond == "diag":
-                    M = sparse.diags(np.asarray(K.diagonal())[0])
+                    M = sparse.linalg.inv(sparse.diags(np.asarray(K.diagonal())[0]))
                 elif precond == "tril":
-                    M = sparse.csr_matrix(np.tril(K,k=0))
+                    M = sparse.linalg.inv(sparse.csr_matrix(np.triu(K,k=0)))
                 elif precond == "icho":
+                    print("Starting preconditioning step")
                     cnt_precon=0
                     K0 = K.copy()
-                    while np.linalg.cond(np.asarray(K))>1e7:
-                        cnt_precon += 1
-                        print("Condition number of K is too high. Using diagonal preconditioner,(",np.linalg.cond(np.asarray(K)))
-                        Kdiag = sparse.diags(np.asarray(K0.diagonal())[0])*10**(-8+cnt_precon)
-                        K = K0 + Kdiag
-                    M = icholt(sparse.csr_matrix(K), add_fill_in=0, threshold=0.0)
+
+                    failed = True
+                    while failed:
+                        icho = icholt(sparse.csr_matrix(K), add_fill_in=0, threshold=0.0)
+                        # set_trace()
+                        # cond_icho = sparse.linalg.norm(icho, ord=2) * sparse.linalg.norm(sparse.linalg.inv(icho), ord=2)
+                        # print("Condition number of icho:", cond_icho)
+                        cond_icho = np.linalg.cond(icho.todense())
+                        print("Condition number of icho:",cond_icho)
+                        if cond_icho<1e+10:
+                            M = sparse.linalg.inv(icholt(sparse.csr_matrix(K), add_fill_in=0, threshold=0.0).T)
+                        else:
+                            cnt_precon += 1
+                            print("no invK. Using diagonal preconditioner,(",np.linalg.cond(np.asarray(K)),")")
+                            Kdiag = sparse.diags(np.asarray(K0.diagonal())[0])*10**(-8+cnt_precon)
+                            # Kdiag = sparse.identity(K.shape[0]) * 10**(-8 + cnt_precon)
+                            # K = K0 + sparse.identity(K0.shape[0]) * 10**(-8 + cnt_precon)
+                            K = K0 + Kdiag
+                            continue
+
+                        failed = False
+                    print("Finished preconditioning step")
+
+
+
+
                 elif precond == "same":
                     M = sparse.csr_matrix(np.linalg.inv(K))
 
@@ -1138,6 +1160,10 @@ class FEModel:
             signalx = 0
 
             while signal==1:
+
+                self.COUNTS[6] += 1
+
+
                 r_old = r_new.copy()
                 alpha = float(r_old@r_old/(p.T@M.T@K@M@p))
                 # if p.T@K@p < 0:
@@ -1159,7 +1185,7 @@ class FEModel:
                 #     plt.show()
 
                 #     set_trace()
-                if norm(h+alpha*p)<TR_rad and p.T@M.T@K@M@p>0:            # In trust region AND convex direction
+                if norm(M@(h+alpha*p))<TR_rad and p.T@M.T@K@M@p>0:            # In trust region AND convex direction
                     h += alpha*p
                     r_new = r_old - np.array(alpha*M.T@K@M@p).reshape(-1)
                     beta = (r_new@r_new)/(r_old@r_old)
@@ -1167,12 +1193,36 @@ class FEModel:
                     if norm(r_new)<max(tol2,1e-5*norm(f_new)):
                         signal = 0
                 else:
-                    a = p@p
-                    b = 2*p@h
-                    c = h@h - TR_rad**2
+                    a = p.T@M.T@M@p
+                    b = 2*p.T@M.T@M@h
+                    c = h.T@M.T@M@h - TR_rad**2
                     alpha = 1e-2
                     eq = a*alpha**2 + b*alpha + c
+                    eq_cnt = 0
                     while abs(eq)>1e-10:
+                        eq_cnt += 1
+                        if eq_cnt>100:
+                            
+                            set_trace()
+
+                            import matplotlib.pyplot as plt
+                            alphas = np.linspace(-3.0, 1.0, 100)
+                            f_values = []
+                            for alpha in alphas:
+                                eq = a*alpha**2 + b*alpha + c
+                                f_values.append(eq)
+
+                            plt.figure(figsize=(8, 6))
+                            plt.plot(alphas, f_values, label="dmda(alpha)", color="blue", linestyle="-", marker="")
+                            plt.xlabel("Alpha")
+                            plt.ylabel("dmda(alpha)")
+                            plt.title("Line Search Plot between alpha_0 and alpha_1")
+                            plt.legend()
+                            plt.grid(True)
+                            plt.show()
+
+
+
                         stiff = 2*a*alpha + b
                         d_alpha = -eq/stiff
                         alpha += d_alpha
@@ -1209,14 +1259,14 @@ class FEModel:
 
 
             self.write_list([norm(h),norm(f_new),condK],iter)
-            if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
-                if self.transform_2d is None:
-                    # 3D case
-                    self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
-                else:
-                    # for 2D case
-                    Ns,Nt = self.transform_2d
-                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
+            # if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
+            #     if self.transform_2d is None:
+            #         # 3D case
+            #         self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
+            #     else:
+            #         # for 2D case
+            #         Ns,Nt = self.transform_2d
+            #         self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
 
 
             # print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdm:",m_h-m_new)

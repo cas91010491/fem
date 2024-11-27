@@ -17,29 +17,29 @@ K.clear_session()
 # Define the path where your CSV files are located
 csv_files_path = '../csv_files/*.csv'
 
-# Uncomment this section if you need to recreate a random 1% sample
-data_frames = []
-for file in glob.glob(csv_files_path):
-    df = pd.read_csv(file, header=None)  # Load without headers
-    if df.shape[1] == 7:                 # Ensure it has exactly 7 columns
-        data_frames.append(df)           # Append if structure is correct
-    else:
-        print(f"Skipping file {file} due to unexpected number of columns: {df.shape[1]}")
+# # Uncomment this section if you need to recreate a random 1% sample
+# data_frames = []
+# for file in glob.glob(csv_files_path):
+#     df = pd.read_csv(file, header=None)  # Load without headers
+#     if df.shape[1] == 7:                 # Ensure it has exactly 7 columns
+#         data_frames.append(df)           # Append if structure is correct
+#     else:
+#         print(f"Skipping file {file} due to unexpected number of columns: {df.shape[1]}")
 
-# Concatenate all valid DataFrames
-all_data = pd.concat(data_frames, ignore_index=True)
+# # Concatenate all valid DataFrames
+# all_data = pd.concat(data_frames, ignore_index=True)
 
-# Assign column names
-all_data.columns = ['x', 'y', 'z', 'p_id', 'xi1', 'xi2', 'gn']
+# # Assign column names
+# all_data.columns = ['x', 'y', 'z', 'p_id', 'xi1', 'xi2', 'gn']
 
-# Drop any rows with NaN values
-all_data.dropna(inplace=True)
+# # Drop any rows with NaN values
+# all_data.dropna(inplace=True)
 
-# Randomly sample 1% of the data
-sampled_data = all_data.sample(frac=1.0, random_state=42)
+# # Randomly sample 1% of the data
+# sampled_data = all_data.sample(frac=1.0, random_state=42)
 
-# Save the sample
-sampled_data.to_csv('../sampled_data_100_percent.csv', index=False)
+# # Save the sample
+# sampled_data.to_csv('../sampled_data_100_percent.csv', index=False)
 
 
 
@@ -101,7 +101,7 @@ shared_layer = layers.Dense(64, activation='relu')(input_layer)
 
 
 # Branch for Signed Distance Regression
-distance_branch = layers.Dense(32, activation='relu')(shared_layer)
+distance_branch = layers.Dense(32, activation='relu')(input_layer)
 concat_for_dist_layer = layers.Concatenate()([input_layer,distance_branch])
 distance_layer = layers.Dense(64, activation='relu')(concat_for_dist_layer)
 concat_for_dist_layer2 = layers.Concatenate()([distance_branch,distance_layer])
@@ -162,6 +162,16 @@ model.compile(optimizer='adam',
 # Verify that each output has the correct loss function
 model.summary()
 
+# Save the network architecture diagram
+plot_model(model, to_file=os.path.join(output_dir, 'model_architecture.png'), show_shapes=True, show_layer_names=True)
+
+# Save the model summary
+with open(os.path.join(output_dir, 'model_summary.txt'), 'w') as f:
+    model.summary(print_fn=lambda x: f.write(x + '\n'))
+
+
+
+
 # Train the model
 history = model.fit(
     x_train, 
@@ -174,13 +184,6 @@ history = model.fit(
 
 # Save the model in the .keras format
 model.save(os.path.join(output_dir, model_name + '.keras'))
-
-# Save the network architecture diagram
-plot_model(model, to_file=os.path.join(output_dir, 'model_architecture.png'), show_shapes=True, show_layer_names=True)
-
-# Save the model summary
-with open(os.path.join(output_dir, 'model_summary.txt'), 'w') as f:
-    model.summary(print_fn=lambda x: f.write(x + '\n'))
 
 # Save the achieved accuracies and losses
 history_df = pd.DataFrame(history.history)
