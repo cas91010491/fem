@@ -1127,6 +1127,7 @@ class FEModel:
                         print("Condition number of icho:",cond_icho)
                         if cond_icho<1e+10:
                             M = sparse.linalg.inv(icholt(sparse.csr_matrix(K), add_fill_in=0, threshold=0.0).T)
+
                         else:
                             cnt_precon += 1
                             print("no invK. Using diagonal preconditioner,(",np.linalg.cond(np.asarray(K)),")")
@@ -1183,7 +1184,7 @@ class FEModel:
             ff , m_h = FUNJAC(u + h_full,unilateral=unilateral)
             f_h = ff[free_ind]
         
-            rho = (f_new+f_h)@h/(0.5*h.T@K@h + f_new.T@h)
+            rho = 0.5*(f_new+f_h)@h/(0.5*h.T@K@h + f_new.T@h)
             # rho = -(m_new-m_h)/(0.5*h.T@K@h + f_new.T@h)
             if np.isnan(rho):
                 rho = -1e5

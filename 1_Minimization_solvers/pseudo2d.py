@@ -155,8 +155,8 @@ base.surf.ComputeGrgPatches(np.zeros(ndofs),base_top,exactNodesGiven=True)
 
 t0 = time()
 
-recov = "OUTPUT_202411271320pseudo2d_plastic_TR-icho_10/"+"RecoveryData.dat"
-model.Solve(TimeSteps=100,max_iter=15, recover=False ,minimethod=minimization_method,plot=2)
+recov = "OUTPUT_202411281338pseudo2d_elastic_TR-icho_5/"+"RecoveryData.dat"
+model.Solve(TimeSteps=100,max_iter=15, recover=recov ,minimethod=minimization_method,plot=2)
 
 print("this took",time()-t0,"seconds to compute")
 
