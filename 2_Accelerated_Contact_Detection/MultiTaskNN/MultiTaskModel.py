@@ -44,21 +44,23 @@ csv_files_path = '../csv_files/*.csv'
 
 
 
-# Load the data
-data = pd.read_csv('../sampled_data_100_percent.csv')
+percent = 1
 epochs = 200
+Drop_factor = 0.2
+
+
+model_name = 'multitask_DropOut'+str(Drop_factor)+'_'+str(epochs)+'epochs_'+str(percent)+'percent_BatchNorm'
 
 
 
-model_name = 'multitask_'+str(epochs)+'epochs_100percent'
-
-
+# Load the data
+data = pd.read_csv('../sampled_data_'+str(percent)+'_percent.csv')
 # Filter rows where gn is within [-0.5, 1.5]
 filtered_data = data[(data['gn'] >= -0.5) & (data['gn'] <= 1.5)]
 n_data = filtered_data.shape[0]
 
 
-
+set_trace()
 
 # Get the current time
 current_time = datetime.now().strftime('%Y%m%d%H%M')
@@ -110,17 +112,21 @@ signed_distance_output = layers.Dense(1, name='signed_distance_output')(distance
 
 # Shared Layer for Classification and Regression
 shared_layer2 = layers.Dense(128, activation='relu')(shared_layer)
+shared_layer2 = layers.BatchNormalization()(shared_layer2)
 
 # Branch for Patch Classification
 concat_for_class_branch = layers.Concatenate()([shared_layer2,input_layer])
 classification_branch = layers.Dense(64, activation='relu')(concat_for_class_branch)
-classification_output = layers.Dense(96, activation='softmax', name='classification_output')(classification_branch)
+classification_branch = layers.Dropout(Drop_factor)(classification_branch)
+classification_layer = layers.Dense(128, activation='relu')(classification_branch)
+classification_output = layers.Dense(96, activation='softmax', name='classification_output')(classification_layer)
 
 # Branch for Projection Regression
 projection_branch = layers.Dense(256, activation='relu')(shared_layer2)
 concat_for_proj_layer = layers.Concatenate()([shared_layer,projection_branch,classification_branch])
 projection_layer = layers.Dense(128, activation='relu')(concat_for_proj_layer)
-concat_for_proj_layer2 = layers.Concatenate()([projection_layer,input_layer,classification_output])
+projection_layer = layers.Dropout(Drop_factor)(projection_layer)
+concat_for_proj_layer2 = layers.Concatenate()([projection_layer, input_layer, classification_output])
 projection_layer2 = layers.Dense(256, activation='relu')(concat_for_proj_layer2)
 projection_output = layers.Dense(2*96+1, name='projection_output')(projection_layer)
 
