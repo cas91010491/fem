@@ -570,19 +570,25 @@ class GrgPatch:
         tcandidate = t.copy()
         dist = norm(xs - self.Grg0(tcandidate))  # Initial guess for distance in case there is no convergence
 
+
+        xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
+        f = -2*(xs-xc)@dxcdt
         # opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
         opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
         while res>tol and (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
 
-            xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
+            
 
-            f = -2*(xs-xc)@dxcdt
+            #f = -2*(xs-xc)@dxcdt
             K =  2*(np.tensordot(-( xs-xc),d2xcd2t,axes=[[0],[0]]) + dxcdt.T @ dxcdt)
 
             dt=np.linalg.solve(-K,f)
             t+=dt
+            
+            xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
+            f = -2*(xs-xc)@dxcdt
 
-            res = np.linalg.norm(f)
+            res = np.linalg.norm(dt)
 
             # print("iter:",niter,"\tt:",t,"\tres:",res)
 
