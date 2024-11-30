@@ -44,9 +44,9 @@ csv_files_path = '../csv_files/*.csv'
 
 
 
-percent = 1
-epochs = 200
-Drop_factor = 0.2
+percent = 100
+epochs = 5
+Drop_factor = 0.0
 
 
 model_name = 'multitask_DropOut'+str(Drop_factor)+'_'+str(epochs)+'epochs_'+str(percent)+'percent_BatchNorm'
@@ -60,7 +60,7 @@ filtered_data = data[(data['gn'] >= -0.5) & (data['gn'] <= 1.5)]
 n_data = filtered_data.shape[0]
 
 
-set_trace()
+
 
 # Get the current time
 current_time = datetime.now().strftime('%Y%m%d%H%M')
@@ -160,7 +160,8 @@ def custom_loss(y_true, y_pred):
 
 
 # Compile the model with loss specified in order directly
-model.compile(optimizer='adam',
+opt = tf.keras.optimizers.Adadelta()
+model.compile(optimizer=opt,
             #   loss=['mse', 'sparse_categorical_crossentropy', 'mse'],
               loss=['mse', 'sparse_categorical_crossentropy', custom_loss],
               metrics={'classification_output': 'accuracy'})

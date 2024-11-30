@@ -382,10 +382,10 @@ class FEModel:
     def get_K(self, DispTime = False):
         t0_K = time.time()
         self.K = sparse.coo_matrix((self.ndof,self.ndof),dtype=float)
+
         for body in self.bodies:
             # body.get_K(self)    # uses model.u_temp
             self.K += body.compute_k_plastic(self.u_temp,self)
-
 
         printif(DispTime,"Getting K : ",time.time()-t0_K,"s")
 
@@ -1113,6 +1113,208 @@ class FEModel:
                 if not precond:
                     M = np.eye(nfr)
                 elif precond == "diag":
+                    M = sparse.linalg.inv(sparse.diags(K.diagonal()))
+                elif precond == "tril":
+                    M = sparse.linalg.inv(sparse.csr_matrix(np.triu(K,k=0)))
+                elif precond == "icho":
+                    cnt_precon=0
+                    K0 = K.copy()
+
+                    if np.any(K.diagonal() < 0):
+                        print("Negative diagonal component detected in K. Stopping the simulation.")
+                        sys.exit(1)
+
+                    failed = True
+                    while failed:
+                        M1 = icholt(K, add_fill_in=0, threshold=0.0)
+                        M = M1@M1.T
+                        cond_icho = np.linalg.cond(M.todense())
+                        print("Condition number of icho:",cond_icho)
+                        if cond_icho<1e+10:
+                            break
+                        else:
+                            cnt_precon += 1
+                            print("no invK. Using diagonal preconditioner,(",np.linalg.cond(K.todense()),")")
+                            Kdiag = sparse.diags(K0.diagonal())*10**(-8+cnt_precon)
+                            # Kdiag = sparse.identity(K.shape[0]) * 10**(-8 + cnt_precon)
+                            # K = K0 + sparse.identity(K0.shape[0]) * 10**(-8 + cnt_precon)
+                            K = K0 + Kdiag
+                            continue
+
+                        failed = False
+
+                elif precond == "same":
+                    M = sparse.linalg.inv(K)
+
+                condK = np.linalg.cond(K.todense())
+
+            r_new = -f_new.copy()
+
+            p = sparse.linalg.spsolve(M, r_new).reshape(-1)
+            h = np.zeros(nfr)
+            q = p.copy()
+
+            signal = 1
+            signalx = 0
+
+            while signal==1:
+
+                self.COUNTS[6] += 1
+
+
+                if p.T@K@p<=0:
+                    a = p.T@M@p
+                    b = 2*p.T@M@h
+                    c = h.T@M@h - TR_rad**2
+                    alpha = 1e-2
+                    eq = a*alpha**2 + b*alpha + c
+                    eq0 = eq
+                    while abs(eq)>1e-12*abs(eq0):
+                        stiff = 2*a*alpha + b
+                        d_alpha = -eq/stiff
+                        alpha += d_alpha
+                        eq = a*alpha**2 + b*alpha + c
+                    h += alpha*p
+                    if alpha < 0:
+                        print("Negative alpha1. Stopping the simulation.")
+                        sys.exit(1)
+
+                    signalx = 1
+                    signal = 2
+                    break
+
+                alpha = float(r_new@q/(p.T@K@p))
+                
+                if (h+alpha*p).T@M@(h+alpha*p) >= TR_rad**2:
+                    a = p.T@M@p
+                    b = 2*p.T@M@h
+                    c = h.T@M@h - TR_rad**2
+                    alpha = 1e-2
+                    eq = a*alpha**2 + b*alpha + c
+                    eq0 = eq
+                    while abs(eq)>1e-12*abs(eq0):
+                        stiff = 2*a*alpha + b
+                        d_alpha = -eq/stiff
+                        alpha += d_alpha
+                        eq = a*alpha**2 + b*alpha + c
+
+                    if alpha < 0:
+                        print("Negative alpha2. Stopping the simulation.")
+                        sys.exit(1)
+
+                    h += alpha*p
+                    signalx = 1
+                    signal = 2
+                    break
+
+                var_diego = r_new.T@q
+                h += alpha*p
+                r_new -= np.array(alpha*K@p).reshape(-1)
+                if not np.isfinite(norm(r_new)):
+                    print("|r_new| wrong. Stopping the simulation.")
+                    sys.exit(1)
+
+                if norm(r_new)<max(tol2,1e-5*norm(f_new)):
+                    signal = 0
+                    break
+
+                q = sparse.linalg.spsolve(M, r_new).reshape(-1)
+                beta = float(r_new@q/var_diego)
+                p = q + beta*p
+
+
+            h_full[free_ind] = h.copy()
+            ff , m_h = FUNJAC(u + h_full,unilateral=unilateral)
+            f_h = ff[free_ind]
+        
+            rho = 0.5*(f_new+f_h)@h/(0.5*h.T@K@h + f_new.T@h)
+            # rho = -(m_new-m_h)/(0.5*h.T@K@h + f_new.T@h)
+            if np.isnan(rho):
+                rho = -1e5
+
+            if rho<0.25:
+                TR_rad = max(0.25*TR_rad,TR_rad_min)
+            else:
+                
+                if (rho>0.75) and signalx==1:
+                    TR_rad = min(2*TR_rad,TR_rad_max)
+
+            update_signal = 0
+
+            if rho>0.25:
+                u += h_full
+                m_new = m_h
+                f_new = f_h.copy()
+                update_signal = 1
+
+
+            self.write_list([norm(h),norm(f_new),condK],iter)
+            if plot and iter%50==0:                 # Trust-region uses approx 1 eval per iter so we plot only every 10 iters
+                if self.transform_2d is None:
+                    # 3D case
+                    self.savefig(ti,iter,distance=[10,10],u = u,simm_time=simm_time)
+                else:
+                    # for 2D case
+                    Ns,Nt = self.transform_2d
+                    self.savefig(ti,iter,azimut=[-90, -90],elevation=[0,0],distance=[10,10],u = Ns@Nt@u,simm_time=simm_time)
+
+
+
+            # print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdm:",m_h-m_new)
+            print("\th:",norm(h), "\tf:",norm(f_new),"\trho:",rho,"\tTR:",TR_rad, "\tm_h:",m_h, "\tf_h:",norm(f_h), "\tdmda:",f_new@h)
+            if TR_rad < 1e-50:
+                print("TR_rad is smaller than 1e-50. Stopping the simulation.")
+                sys.exit(1)
+
+
+            for ctct in self.contacts:
+                print("actives:",ctct.actives)
+
+
+        return u, m_new, iter,norm(f_new)
+
+    def TR_backup20241129(self,FUNJAC,HESS, u0, free_ind = None, tol = 1e-10,tol2 = 1e-12,ti=None,simm_time=None,plot=False, unilateral=True,precond = False):
+        from ilupp import icholt
+
+        if free_ind is None:
+            free_ind = self.free
+
+        nfr = len(free_ind)
+
+        TR_rad = 0.0001*nfr
+        TR_rad_min = 0*nfr
+        TR_rad_max = 10000000*nfr
+
+        ff , m_new = FUNJAC(u0,unilateral=unilateral)
+        f_new = ff[free_ind]
+
+        rho = 1
+        iter = 0
+        update_signal = 1
+
+        h_full = np.zeros_like(u0)
+
+        u = u0.copy()
+
+
+        while norm(f_new)>tol:
+            self.COUNTS[4] += 1
+
+            with open(self.output_dir+"COUNTERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.COUNTS_NAMES)
+                csvwriter.writerow(self.COUNTS.tolist())
+
+            iter += 1
+            print("Iter:",iter)
+
+            if update_signal==1:
+                # K = sparse.csr_matrix(HESS(u))
+                K = HESS(u)
+                K = K[np.ix_(free_ind,free_ind)]
+                if not precond:
+                    M = np.eye(nfr)
+                elif precond == "diag":
                     M = sparse.linalg.inv(sparse.diags(np.asarray(K.diagonal())[0]))
                 elif precond == "tril":
                     M = sparse.linalg.inv(sparse.csr_matrix(np.triu(K,k=0)))
@@ -1158,6 +1360,7 @@ class FEModel:
                 alpha = float(r_old@r_old/(p.T@M.T@K@M@p))
 
                 if norm(M@(h+alpha*p))<TR_rad and p.T@M.T@K@M@p>0:            # In trust region AND convex direction
+                # if (h+alpha*p).T@M@(h+alpha*p) < TR_rad**2 and p.T@M.T@K@M@p>0:            # In trust region AND convex direction
                     h += alpha*p
                     r_new = r_old - np.array(alpha*M.T@K@M@p).reshape(-1)
                     beta = (r_new@r_new)/(r_old@r_old)
@@ -1412,8 +1615,8 @@ class FEModel:
             Ns,Nt = self.transform_2d
             u = (Ns@Nt@u)
 
-        # K = sparse.coo_matrix((self.ndof,self.ndof),dtype=float)
-        K = np.zeros((self.ndof,self.ndof),dtype=float)
+        K = sparse.coo_matrix((self.ndof,self.ndof),dtype=float)
+        # K = np.zeros((self.ndof,self.ndof),dtype=float)
 
         for body in self.bodies: 
             K += body.compute_k_plastic(u,self)    # uses model.u_temp

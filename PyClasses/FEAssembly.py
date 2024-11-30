@@ -377,23 +377,38 @@ class FEAssembly:
         if self.isRigid:
             return 0.0
 
-        K = np.zeros((Model.ndof,Model.ndof),dtype=float)
+        computeRC = False
+        if not hasattr(self,"SparseRow"):
+            self.SparseRow = np.empty(len(self.hexas)*576,dtype=int  )
+            self.SparseCol = np.empty(len(self.hexas)*576,dtype=int  )
+            computeRC = True
+
+        V = np.empty(len(self.hexas)*576,dtype=float)
         
         _,Hardening_modulus,Hardening_exponent = self.plastic_param
 
-        for hex_id,hexa in enumerate(self.hexas):
+        for i,hexa in enumerate(self.hexas):
             X_hex = self.X[hexa]
             u_hex = u[self.DoFs[hexa]]
             
-            k_el = fast_mfk.K_el_plastic(X_hex,u_hex,self.FPconv[hex_id],self.EPcum[hex_id],
+            V[i*576:(i+1)*576] = fast_mfk.K_el_plastic(X_hex,u_hex,self.FPconv[i],self.EPcum[i],
                                 self.Youngsmodulus,self.Poissonsratio,
                                 Hardening_modulus,Hardening_exponent,
-                                self.FPtemp[hex_id],self.DELTA_EPcum[hex_id])
+                                self.FPtemp[i],self.DELTA_EPcum[i]).ravel()
+            
+            if computeRC:
+                dofs = self.DoFs[hexa].ravel()
+                self.SparseRow[i*576:(i+1)*576] = np.repeat(dofs,len(dofs))
+                self.SparseCol[i*576:(i+1)*576] = np.  tile(dofs,len(dofs))
 
-            dofs = self.DoFs[hexa].ravel()
-            K[np.ix_(dofs,dofs)] += k_el
 
-        return K
+            # dofs = self.DoFs[hexa].ravel()
+            # K[np.ix_(dofs,dofs)] += k_el
+
+        return sparse.csr_matrix((V,(self.SparseRow,self.SparseCol)),shape=Model.K.shape)
+
+
+        # return K
 
     def m_el_extra(self, hexa, u):
         X = self.X[hexa]
