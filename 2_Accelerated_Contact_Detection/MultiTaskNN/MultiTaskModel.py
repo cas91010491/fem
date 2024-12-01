@@ -19,8 +19,8 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 # Clear any lingering session state
 K.clear_session()
 
-# Define the path where your CSV files are located
-csv_files_path = '../csv_files/*.csv'
+# # Define the path where your CSV files are located
+# csv_files_path = '../csv_files/*.csv'
 
 # # Uncomment this section if you need to recreate a random 1% sample
 # data_frames = []
@@ -41,10 +41,10 @@ csv_files_path = '../csv_files/*.csv'
 # all_data.dropna(inplace=True)
 
 # # Randomly sample 1% of the data
-# sampled_data = all_data.sample(frac=1.0, random_state=42)
+# sampled_data = all_data.sample(frac=0.5, random_state=42)
 
 # # Save the sample
-# sampled_data.to_csv('../sampled_data_100_percent.csv', index=False)
+# sampled_data.to_csv('../sampled_data_50_percent.csv', index=False)
 
 
 
@@ -112,11 +112,13 @@ class SaveModelAndConfusionMatrix(Callback):
             plt.savefig(cm_path)
             plt.close()
 
+        # Save the training history after every epoch
+        history_df = pd.DataFrame(self.model.history.history)
+        history_df.to_csv(os.path.join(self.save_dir, 'training_history.csv'), index=False)
 
 
-
-percent = 100
-epochs = 500
+percent = 50
+epochs = 200
 Drop_factor = 0.0
 
 
@@ -280,9 +282,10 @@ with open(os.path.join(output_dir, 'model_summary.txt'), 'w') as f:
 
 
 # Create the callback
-save_dir = 'path_to_save_directory'
 save_callback = SaveModelAndConfusionMatrix(validation_data=(x_test,
-                                                             [y_distance_test, y_classification_test, y_projection_test]),
+                                                             [y_distance_test,
+                                                              y_classification_test,
+                                                              y_projection_test]),
                                             save_dir=output_dir,save_freq=50)
 
 
