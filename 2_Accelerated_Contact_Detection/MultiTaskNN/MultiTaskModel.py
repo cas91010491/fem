@@ -115,8 +115,8 @@ class SaveModelAndConfusionMatrix(Callback):
 
 
 
-percent = 1
-epochs = 20
+percent = 100
+epochs = 500
 Drop_factor = 0.0
 
 
@@ -289,11 +289,11 @@ save_callback = SaveModelAndConfusionMatrix(validation_data=(x_test,
 # Train the model
 history = model.fit(
     x_train, 
-    # [y_distance, y_classification, y_projection],
     [y_distance_train, y_classification_train, y_projection_train],
     epochs=epochs, batch_size=32, 
     validation_data=(x_test, [y_distance_test, y_classification_test, y_projection_test]),
-    callbacks=[save_callback]
+    callbacks=[save_callback],
+    verbose = 0
 )
 
 
