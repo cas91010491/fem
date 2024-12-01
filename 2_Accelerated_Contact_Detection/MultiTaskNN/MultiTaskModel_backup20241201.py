@@ -1,19 +1,14 @@
 import pandas as pd
 import tensorflow as tf
-from tensorflow.keras.callbacks import Callback
 import glob
 from tensorflow.keras import layers, Model
 import matplotlib.pyplot as plt
 from tensorflow.keras import backend as K
 import numpy as np
-import seaborn as sns
 from pdb import set_trace
 import os
 from datetime import datetime
 from tensorflow.keras.utils import plot_model
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split
-
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Clear any lingering session state
@@ -49,74 +44,8 @@ csv_files_path = '../csv_files/*.csv'
 
 
 
-# Custom callback to save model and confusion matrix
-class SaveModelAndConfusionMatrix(Callback):
-    def __init__(self,validation_data, save_dir, save_freq=50):
-        super(SaveModelAndConfusionMatrix, self).__init__()
-        self.save_dir = save_dir
-        self.save_freq = save_freq
-        self.validation_data = validation_data
-
-    def on_train_begin(self, logs=None):
-        
-        os.makedirs(self.save_dir+"/ConfMtrx", exist_ok=True)
-
-        # Access the validation data
-        X_val, y_true = self.validation_data
-        y_true = y_true[1]  # Classification labels
-        _, predicted_classification, _ = self.model.predict(X_val)
-        y_pred = np.argmax(predicted_classification, axis=1)
-        # Compute confusion matrix
-        cm = confusion_matrix(y_true, y_pred)
-        cm_log = np.log1p(cm)  # Apply logarithmic scale
-        
-        classes = np.unique(y_true)
-        # Plot confusion matrix without numbers
-        plt.figure(figsize=(10, 8))
-        sns.heatmap(cm_log, annot=False, xticklabels=classes, yticklabels=classes, cmap='viridis')
-        plt.ylabel('Actual')
-        plt.xlabel('Predicted')
-        
-        # Save confusion matrix plot
-        cm_path = os.path.join(self.save_dir+"/ConfMtrx", f'confusion_matrix_epoch_0.png')
-        plt.savefig(cm_path)
-        plt.close()
-
-
-
-    def on_epoch_end(self, epoch, logs=None):
-        if (epoch + 1) % self.save_freq == 0:
-            # Save model
-            model_path = os.path.join(self.save_dir, f'model_epoch_{epoch + 1}.h5')
-            self.model.save(model_path)
-            
-        if (epoch + 1) % 10 == 0:
-            # Access the validation data
-            X_val, y_true = self.validation_data
-            y_true = y_true[1]  # Classification labels
-            _, predicted_classification, _ = self.model.predict(X_val)
-            y_pred = np.argmax(predicted_classification, axis=1)
-            # Compute confusion matrix
-            cm = confusion_matrix(y_true, y_pred)
-            cm_log = np.log1p(cm)  # Apply logarithmic scale
-            
-            classes = np.unique(y_true)
-            # Plot confusion matrix without numbers
-            plt.figure(figsize=(10, 8))
-            sns.heatmap(cm_log, annot=False, xticklabels=classes, yticklabels=classes, cmap='viridis')
-            plt.ylabel('Actual')
-            plt.xlabel('Predicted')
-            
-            # Save confusion matrix plot
-            cm_path = os.path.join(self.save_dir+"/ConfMtrx", f'confusion_matrix_epoch_{epoch + 1}.png')
-            plt.savefig(cm_path)
-            plt.close()
-
-
-
-
-percent = 1
-epochs = 20
+percent = 100
+epochs = 50
 Drop_factor = 0.0
 
 
@@ -166,34 +95,6 @@ y_projection_one_hot[:,2*96] = y_classification.ravel()
 for i in range(n_data):
     p_i = int(y_classification[i])
     y_projection_one_hot[i,[p_i,p_i+96]] = y_projection[i]
-
-
-
-
-
-# Combine features and labels
-x_train, x_test, y_distance_train, y_distance_test, \
-y_classification_train, y_classification_test, \
-y_projection_train, y_projection_test = train_test_split(
-    x_train,
-    y_distance,
-    y_classification,
-    y_projection_one_hot,
-    test_size=0.2,  # Use 20% for testing
-    random_state=42  # For reproducibility
-)
-
-
-
-# Pack outputs into tuples for Keras
-y_train = (y_distance_train, y_classification_train, y_projection_train)
-y_test = (y_distance_test, y_classification_test, y_projection_test)
-
-
-
-
-
-
 
 
 # Define the shared base model
@@ -278,26 +179,13 @@ with open(os.path.join(output_dir, 'model_summary.txt'), 'w') as f:
 
 
 
-
-# Create the callback
-save_dir = 'path_to_save_directory'
-save_callback = SaveModelAndConfusionMatrix(validation_data=(x_test,
-                                                             [y_distance_test, y_classification_test, y_projection_test]),
-                                            save_dir=output_dir,save_freq=50)
-
-
 # Train the model
 history = model.fit(
     x_train, 
     # [y_distance, y_classification, y_projection],
-    [y_distance_train, y_classification_train, y_projection_train],
-    epochs=epochs, batch_size=32, 
-    validation_data=(x_test, [y_distance_test, y_classification_test, y_projection_test]),
-    callbacks=[save_callback]
+    [y_distance, y_classification, y_projection_one_hot],
+    epochs=epochs, batch_size=32, validation_split=0.2
 )
-
-
-
 
 
 
@@ -353,27 +241,23 @@ import os
 # Define the number of samples to check
 num_samples_to_check = 20
 
-
-
-
-
 # Randomly select samples from the dataset
-sample_indices = np.random.choice(x_test.shape[0], num_samples_to_check, replace=False)
-sample_data = x_test[sample_indices]
-true_distance = y_distance_test[sample_indices]
-true_classification = y_classification_test[sample_indices].flatten()  # Flatten to make it easier to match with predictions
-true_projection = y_projection_test[sample_indices]
+sample_indices = np.random.choice(x_train.shape[0], num_samples_to_check, replace=False)
+sample_data = x_train[sample_indices]
+true_distance = y_distance[sample_indices]
+true_classification = y_classification[sample_indices].flatten()  # Flatten to make it easier to match with predictions
+true_projection = y_projection[sample_indices]
 
 # Predict outputs
 predicted_distance, predicted_classification, predicted_projection = model.predict(sample_data)
 
 
 
+
 for i, idx in enumerate(sample_indices):
     # Get the true values for this sample
     true_p_id = true_classification[i]
-    true_xi1 = true_projection[i,true_p_id]
-    true_xi2 = true_projection[i,true_p_id + 96]
+    true_xi1, true_xi2 = true_projection[i]
     true_gn = true_distance[i][0]
     
     # Classification: get top 4 highest probabilities
