@@ -76,6 +76,8 @@ class SaveModelAndConfusionMatrix(Callback):
         sns.heatmap(cm_log, annot=False, xticklabels=classes, yticklabels=classes, cmap='viridis')
         plt.ylabel('Actual')
         plt.xlabel('Predicted')
+        colorbar = plt.gca().collections[0].colorbar
+        colorbar.set_label(r'$\log(n_{samples})$')
         
         # Save confusion matrix plot
         cm_path = os.path.join(self.save_dir+"/ConfMtrx", f'confusion_matrix_epoch_0.png')
@@ -90,7 +92,7 @@ class SaveModelAndConfusionMatrix(Callback):
             model_path = os.path.join(self.save_dir, f'model_epoch_{epoch + 1}.h5')
             self.model.save(model_path)
             
-        if (epoch + 1) % 10 == 0:
+        if ((epoch + 1) % 50 == 0) or ((epoch+1) in [1,2,5,10,20]):
             # Access the validation data
             X_val, y_true = self.validation_data
             y_true = y_true[1]  # Classification labels
@@ -117,8 +119,8 @@ class SaveModelAndConfusionMatrix(Callback):
         history_df.to_csv(os.path.join(self.save_dir, 'training_history.csv'), index=False)
 
 
-percent = 50
-epochs = 200
+percent = 1
+epochs = 20
 Drop_factor = 0.0
 
 
