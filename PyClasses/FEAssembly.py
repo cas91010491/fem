@@ -534,9 +534,18 @@ class FEAssembly:
             for idx,x in enumerate(X):
                 if nodes=="all" or idx in nodes:
                     ax.scatter(x[0],x[1],x[2], c="blue", s = 0.2)
-        if plotWhat in ["surf","all"]:
+                    ax.text(x[0],x[1],x[2],str(idx),color="black")
+
+            plt.show()
+
+        if plotWhat in ["surf","all","wire"]:
             if u is None:
                 u = np.zeros_like(self.X)
+            if plotWhat == "wire":
+                sed = -1
+            else:
+                sed = sed
+
             surfObj = self.surf.plot(ax,u, sed=sed,ref=ref)
 
         return surfObj

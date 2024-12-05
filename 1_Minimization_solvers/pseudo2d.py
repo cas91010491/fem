@@ -81,6 +81,10 @@ lead_face = blk.SelectFlatSide("-y")
 front_face = blk.SelectFlatSide("+y")
 
 slave_nodes = list(set(blk_bottom).intersection(set(lead_face)))
+
+if mesh == 10 and "TR" in minimization_method:
+    slave_nodes = slave_nodes+[143,152]   # Adding internal nodes to the slave nodes for the TR method mesh 10. Avoids unwanted deformations
+
 blk_top     = list(set(blk_top   ).intersection(set(lead_face)))
 
 same_pairs = np.zeros((len(lead_face),2),dtype=int)
@@ -141,6 +145,8 @@ model = FEModel([blk, base], [contact1], BCs,transform_2d=N,subname =subname )  
 
 base.surf.ComputeGrgPatches(np.zeros(ndofs),base_top,exactNodesGiven=True)
 # model.plotNow(as2D=True,OnlyMasterSurf=True)       # Uncomment to see and verify geometry
+import pdb; pdb.set_trace()
+blk.plot(plotWhat='nodes')
 
 
 #############

@@ -164,7 +164,12 @@ class FEModel:
         ax.tick_params(axis='z', which='both', direction='out', length=0)
         ax.set_yticks([])
 
-        AlmostImportant = sorted(set(flatList(self.contacts[0].candids))-set(self.contacts[0].actives)) if len(self.contacts)!= 0 else []
+
+        if type(self.contacts[0].candids) == np.ndarray:
+            cands = [[] if cand[0]==-1 else cand.tolist() for cand in self.contacts[0].candids]
+        else:
+            cands = self.contacts[0].candids
+        AlmostImportant = sorted(set(flatList(cands))-set(self.contacts[0].actives)) if len(self.contacts)!= 0 else []
 
         if times!= None:
             t0,t,tf = times
@@ -370,13 +375,13 @@ class FEModel:
             sDoFs  = ctct.slaveBody.DoFs[ctct.slaveNodes]
             ctct.xs = np.array(ctct.slaveBody.X )[ctct.slaveNodes ] + np.array(u[sDoFs ])      # u_temp
             
-            if ctct.ANNmodel is not None:
-                ctct.get_fintCamilo(self,DispTime = False, tracing = False)
+            # if ctct.ANNmodel is not None:
+            #     ctct.get_fintCamilo(self,DispTime = False, tracing = False)
+            # else:
+            if self.IterUpdate:
+                ctct.getfintC_unilateral(self, DispTime=DispTime)      # uses xs
             else:
-                if self.IterUpdate:
-                    ctct.getfintC_unilateral(self, DispTime=DispTime,useANN=False)      # uses xs
-                else:
-                    ctct.getfintC(self, DispTime=DispTime,useANN=False)      # uses xs
+                ctct.getfintC(self, DispTime=DispTime)      # uses xs
 
 
     def get_K(self, DispTime = False):
@@ -390,14 +395,14 @@ class FEModel:
         printif(DispTime,"Getting K : ",time.time()-t0_K,"s")
 
         for contact in self.contacts:
-            if contact.ANNmodel is not None:
-                contact.get_KCamilo(self,DispTime = False, tracing = False)
-            else:
+            # if contact.ANNmodel is not None:
+            #     contact.get_KCamilo(self,DispTime = False, tracing = False)
+            # else:
 
-                if self.IterUpdate:
-                    contact.getKC_unilateral(self, DispTime=DispTime)     #uses model.u_temp
-                else:
-                    contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
+            if self.IterUpdate:
+                contact.getKC_unilateral(self, DispTime=DispTime)     #uses model.u_temp
+            else:
+                contact.getKC(self, DispTime=DispTime)     #uses model.u_temp
 
 
     def NR(self,tol=1e-10,maxiter=10,plotIters=False):
@@ -1641,6 +1646,7 @@ class FEModel:
 
         if split:
             return force_body,force_contact,force, En,EnC
+        # return force, En+EnC - self.fext[self.free]@self.u[self.free]
         return force, En+EnC
 
     def Hessian(self,u):

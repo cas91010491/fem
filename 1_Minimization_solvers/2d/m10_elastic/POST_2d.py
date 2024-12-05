@@ -2,7 +2,7 @@ import sys
 import os
 import pickle
 cwd = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(cwd+"/../..")      #this will actually refer to the good FEAssembly.py file
+sys.path.append(cwd+"/../../..")      #this will actually refer to the good FEAssembly.py file
 
 
 import numpy as np
@@ -11,9 +11,11 @@ from matplotlib.widgets import Slider, Button
 from pdb import set_trace
 from PyClasses import FEModel
 from PyClasses.Utilities import plot_coords
+from matplotlib.colors import LinearSegmentedColormap
 
 
-def plot4D(model,TIMES,UU,SED, ax=None, undef=False):
+
+def plot4D(model,TIMES,UU,SED, ax=None, undef=False,plastic=False):
     from matplotlib.colors import Normalize
 
     sed = np.array(SED)
@@ -54,11 +56,11 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False):
         ax.set_ylim3d(limits[1,0], limits[1,1])
         ax.set_zlim3d(limits[2,0], limits[2,1])
         ax.set_aspect("equal")
-        ax.text2D(-0.05, 0.7, "time: "+str(round(0.0,8)), transform=ax.transAxes,backgroundcolor=(1.0,1.0,1.0,0.7),zorder=1000000,fontsize='x-large')
+        ax.text2D(-0.05, 0.7, "time: "+str(round(0.0,8)), transform=ax.transAxes,backgroundcolor=(1.0,1.0,1.0,0.0),zorder=1000000,fontsize='x-large')
         ax.axis('off')
 
-        axin2 = ax.inset_axes([-.08, -.022, 0.02, 0.02], projection='3d',transform = ax.transData,zorder=1000000)
-        # axin2 = ax.inset_axes([-.08, 0.0, 0.02, 0.02], projection='3d',transform = ax.transData,zorder=1000000)
+        axin2 = ax.inset_axes([-.08, -.022, 0.02, 0.02], projection='3d', transform=ax.transData, zorder=1000000)
+        axin2.patch.set_alpha(0)  # Make the background transparent
         axin2.axis('off')
         axin2.set_xlim3d(0, 1)
         axin2.set_ylim3d(0, 1)
@@ -85,21 +87,35 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False):
     init_time = 0
     u = UU[0]
     sedi = sed[0]
-    # model.bodies[0].surf.plot(ax,u= u,sed = sedi,ref=1)
     model.bodies[0].plot(ax,u= u,sed = sedi,ref=10)
-    model.bodies[0].plot(ax,u= u,sed = None,ref=1)
+    model.bodies[0].plot(ax,u= u,sed = None,ref=1,plotWhat='wire')
 
     # coords_obj = plot_coords(ax,orig=(2.0,-3.0,-5.0))
     coords_obj = plot_coords(axin2)
 
-    cmap = cm.get_cmap('jet')
-    # cbar = fig.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm=Normalize(vmin=smin,vmax=smax/4)),
-    #                      ax=ax, shrink=0.5, aspect=15,extend='max')
+
+    # Create a custom colormap based on 'jet'
+    jet = cm.get_cmap('jet', 256)
+    new_colors = jet(np.linspace(0, 1, 256))
+
+    # Adjust the colors to be brighter at both ends
+    for i in range(256):
+        adjustment_factor = 1 + 0.8 * ((i - 128) / 128)**4  # 128 is the middle of the range
+        new_colors[i, :3] = np.clip(adjustment_factor * new_colors[i, :3], 0, 1)
+
+    cmap = LinearSegmentedColormap.from_list('shifted_jet', new_colors)
+
     cbar = fig.colorbar(plt.cm.ScalarMappable(cmap=cmap, norm=Normalize(vmin=smin,vmax=smax/4)),
-                         ax=ax, shrink=0.2, aspect=30,extend='max',orientation='horizontal',
-                          location='bottom',pad = 0.0, anchor = (0.5,3.4))
-    # cbar.set_label('Strain Energy Density')
-    cbar.set_label('Plastic Multiplier')
+                         ax=ax, shrink=0.2, aspect=30, extend='max', orientation='horizontal',
+                         location='bottom', pad=0.0, anchor=(0.5, 3.4))
+    ticks = np.linspace(smin, smax/4, 5)
+    cbar.set_ticks(ticks)
+    cbar.set_ticklabels([f"{tick:.4f}" for tick in ticks])
+
+    if plastic:
+        cbar.set_label('Plastic Multiplier')
+    else:
+        cbar.set_label('Strain Energy Density')
 
     axtime = fig.add_axes([0.25, 0.1, 0.65, 0.03])
 
@@ -126,11 +142,11 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False):
         idx = round(len(UU)*time_slider.val)
         # print("idx =",idx)
         time = TIMES[idx]
-        ax.text2D(-0.05, 0.7, "time: "+str(round(time,8)), transform=ax.transAxes,backgroundcolor=(1.0,1.0,1.0,0.7),zorder=1000000,fontsize='x-large')
+        ax.text2D(-0.05, 0.7, "time: "+str(round(time,8)), transform=ax.transAxes,backgroundcolor=(1.0,1.0,1.0,0.0),zorder=1000000,fontsize='x-large')
         u = UU[idx]
         sedi = sed[idx]
         model.bodies[0].plot(ax,u= u,sed = sedi,ref=10)
-        model.bodies[0].plot(ax,u= u,sed = None,ref=1)
+        model.bodies[0].plot(ax,u= u,sed = None,ref=1,plotWhat='wire')
 
         
         ax.set_xlim(xl)
@@ -164,13 +180,11 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False):
     plt.show()
 
 
-# Load the FEModel object
-# model = pickle.load(open(cwd + "/Model.dat", "rb"))
 
-# model = pickle.load(open(cwd + "/Model.dat", "rb"))
 
-def list_directories():
-    directories = [d for d in os.listdir(cwd) if os.path.isdir(os.path.join(cwd, d))]
+
+def list_directories(path):
+    directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
     for idx, directory in enumerate(directories):
         print(f"{idx}: {directory}")
     return directories
@@ -186,30 +200,62 @@ def choose_directory(directories):
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-directories = list_directories()
-chosen_directory = choose_directory(directories)
-print(f"You chose: {chosen_directory}")
+def find_model_dat(path):
+    while True:
+        directories = list_directories(path)
+        if not directories:
+            print("No subdirectories found.")
+            return None
+        chosen_directory = choose_directory(directories)
+        new_path = os.path.join(path, chosen_directory)
+        if os.path.exists(os.path.join(new_path, "Model.dat")):
+            return new_path
+        else:
+            print(f"No 'Model.dat' found in {chosen_directory}. Please choose another directory.")
 
 
-# with open(cwd + "/Model.dat", "rb") as file:
-with open(cwd+"/"+chosen_directory+"/Model.dat", "rb") as file:
+
+
+
+chosen_directory = find_model_dat(cwd)
+if chosen_directory:
+    print(f"'Model.dat' found in: {chosen_directory}")
+else:
+    print("No 'Model.dat' file found in any subdirectory.")
+
+    if not chosen_directory:
+        chosen_directory = find_model_dat(cwd)
+        if chosen_directory:
+            print(f"'Model.dat' found in: {chosen_directory}")
+        else:
+            print("No 'Model.dat' file found in any subdirectory.")
+
+with open(chosen_directory+"/Model.dat", "rb") as file:
     model = pickle.load(file)
 
 ptt = model.bodies[1]
 ndofs = 3*(len(model.bodies[0].X)+len(ptt.X))
 ptt.surf.ComputeGrgPatches(np.zeros(ndofs),model.contacts[0].masterNodes,exactNodesGiven=True)
 
-data = np.loadtxt(cwd+'/data_u.csv', delimiter=',')
+data = np.loadtxt(chosen_directory+'/data_u.csv', delimiter=',')
 TIMES = data[:,0]
 UU = data[:,1:]
 
-SED = []
-EPCUM = []
-# epcum_gauss = np.loadtxt(cwd+'/EPcum.csv', delimiter=',').reshape(len(UU),-1,8)
-for incr,u in enumerate(UU):
-    SED.append(model.bodies[0].get_nodal_SED(u))
-    # EPCUM.append(model.bodies[0].get_nodal_EPCUM(epcum_gauss[incr]))
+plotData = []
 
-plot4D(model,TIMES,UU,SED, ax=None, undef=False)
-# plot4D(model,TIMES,UU,EPCUM, ax=None, undef=False)
+for incr,u in enumerate(UU):
+
+    if 'elastic' in chosen_directory:
+        plotData.append(model.bodies[0].get_nodal_SED(u))
+        plastic = False
+    elif 'plastic' in chosen_directory:
+        epcum_gauss = np.loadtxt(chosen_directory+'/EPcum.csv', delimiter=',').reshape(len(UU),-1,8)
+        plotData.append(model.bodies[0].get_nodal_EPCUM(epcum_gauss[incr]))
+        plastic = True
+    else:
+        raise ValueError("Unknown model subname. Please check the model's subname.")
+
+plotData = [np.maximum(0.0, data) for data in plotData]
+
+plot4D(model,TIMES,UU,plotData, ax=None, undef=False, plastic = plastic)
 

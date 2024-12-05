@@ -169,8 +169,11 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False):
 
 # model = pickle.load(open(cwd + "/Model.dat", "rb"))
 
-def list_directories():
-    directories = [d for d in os.listdir(cwd) if os.path.isdir(os.path.join(cwd, d))]
+
+
+
+def list_directories(path):
+    directories = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
     for idx, directory in enumerate(directories):
         print(f"{idx}: {directory}")
     return directories
@@ -186,10 +189,31 @@ def choose_directory(directories):
         except ValueError:
             print("Invalid input. Please enter a number.")
 
-directories = list_directories()
-chosen_directory = choose_directory(directories)
-print(f"You chose: {chosen_directory}")
+def find_model_dat(path):
+    while True:
+        directories = list_directories(path)
+        if not directories:
+            print("No subdirectories found.")
+            return None
+        chosen_directory = choose_directory(directories)
+        new_path = os.path.join(path, chosen_directory)
+        if os.path.exists(os.path.join(new_path, "Model.dat")):
+            return new_path
+        else:
+            print(f"No 'Model.dat' found in {chosen_directory}. Please choose another directory.")
 
+chosen_directory = find_model_dat(cwd)
+if chosen_directory:
+    print(f"'Model.dat' found in: {chosen_directory}")
+else:
+    print("No 'Model.dat' file found in any subdirectory.")
+
+    if not chosen_directory:
+        chosen_directory = find_model_dat(cwd)
+        if chosen_directory:
+            print(f"'Model.dat' found in: {chosen_directory}")
+        else:
+            print("No 'Model.dat' file found in any subdirectory.")
 
 # with open(cwd + "/Model.dat", "rb") as file:
 with open(cwd+"/"+chosen_directory+"/Model.dat", "rb") as file:
@@ -203,13 +227,20 @@ data = np.loadtxt(cwd+'/data_u.csv', delimiter=',')
 TIMES = data[:,0]
 UU = data[:,1:]
 
-SED = []
-EPCUM = []
+plotData = []
 # epcum_gauss = np.loadtxt(cwd+'/EPcum.csv', delimiter=',').reshape(len(UU),-1,8)
 for incr,u in enumerate(UU):
-    SED.append(model.bodies[0].get_nodal_SED(u))
-    # EPCUM.append(model.bodies[0].get_nodal_EPCUM(epcum_gauss[incr]))
 
-plot4D(model,TIMES,UU,SED, ax=None, undef=False)
+    if 'elastic' in model.subname:
+        plotData.append(model.bodies[0].get_nodal_SED(u))
+    elif 'plastic' in model.subname:
+        plotData.append(model.bodies[0].get_nodal_EPCUM(u))
+    else:
+        raise ValueError("Unknown model subname. Please check the model's subname.")
+
+    # plotData.append(model.bodies[0].get_nodal_SED(u))
+    # # EPCUM.append(model.bodies[0].get_nodal_EPCUM(epcum_gauss[incr]))
+
+plot4D(model,TIMES,UU,plotData, ax=None, undef=False)
 # plot4D(model,TIMES,UU,EPCUM, ax=None, undef=False)
 

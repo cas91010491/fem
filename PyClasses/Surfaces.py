@@ -172,8 +172,17 @@ class Surface:
                     quadsurf = patch.plot(axis, color = (.5,.5,.5,0.3), ref=ref,wire=wire)           # Inactive part of master
             elif not onlyMaster:
                 # color = (.5,.5,.5,0.6) if sed is None else sed[self.body.hexas[ipatch]]
+
+                # set_trace()
+                wire = False
                 quad = self.quads[ipatch]
-                color = (.5,.5,.5,1.0) if sed is None else sed[quad]
+                if sed is None:
+                    color = (.5,.5,.5,1.0)
+                elif isinstance(sed, (list, np.ndarray)):
+                    color = sed[quad]
+                elif sed ==-1:
+                    color = (.5,.5,.5,0.0)
+                    wire = True
                 # color = "gray" if sed is None else sed[quad]     # superposed plots: before
                 # color = "lime" if sed is None else sed[quad]     # superposed plots: after
                 
@@ -181,7 +190,7 @@ class Surface:
                 
                 # color = (.5,.5,.5,0.0) if sed is None else sed[quad]
 
-                quadsurf = self.plotQuad(axis, u, ipatch, color=color,ref=ref,wire=(sed is None))   #Slave Body
+                quadsurf = self.plotQuad(axis, u, ipatch, color=color,ref=ref,wire=wire)   #Slave Body
 
             else:
                 quadsurf = []
@@ -198,6 +207,8 @@ class Surface:
 
     def plotQuad(self, axis, u, iquad, color = (.5,.5,.5,1.0), surf=True,wire=False,ref=10):     #full of redundancy. FIX!!
         from matplotlib import cm
+        from matplotlib.colors import LinearSegmentedColormap
+
 
         x = np.zeros((ref+1,ref+1),dtype = float)
         y = np.zeros((ref+1,ref+1),dtype = float)
@@ -224,7 +235,22 @@ class Surface:
         edgecolor = 'k' if wire else None
                 
         if type(color) in [list, np.ndarray]:
-            cmap = cm.get_cmap('jet')
+            # cmap = cm.get_cmap('jet')
+
+            # Create a custom colormap based on 'jet'
+            jet = cm.get_cmap('jet', 256)
+            new_colors = jet(np.linspace(0, 1, 256))
+
+            # Adjust the colors to be brighter at both ends
+            for i in range(256):
+                # Let's make the ends brighter
+                adjustment_factor = 1 + 0.8 * ((i - 128) / 128)**4  # 128 is the middle of the range
+                new_colors[i, :3] = np.clip(adjustment_factor * new_colors[i, :3], 0, 1)
+
+            cmap = LinearSegmentedColormap.from_list('shifted_jet', new_colors)
+
+
+
             face_colors = cmap(color)
             face_colors[:,:,3] = 1.0           
             quadsurf = axis.plot_surface(x, y, z, facecolors=face_colors,

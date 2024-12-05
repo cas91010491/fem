@@ -1,0 +1,79 @@
+[33m962e84bb[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m created Mutitask reloader and neighbourhood matrix
+[33m7bd976e0[m added retraiing script and neighbourhood matrix
+[33mb838e858[m training history saves after every epoch
+[33m5796ec3c[m training history saves after every epoch
+[33m271c84c3[m[33m ([m[1;31morigin/main[m[33m)[m TR-icho exact quadr
+[33m57f684ae[m no patch_labels in surf
+[33meb62ef5d[m changed MultiTaskModel script to work on the cluster in cpu
+[33mc94fee9a[m split train/test and added confusion matrix
+[33mb23a016c[m TR exact zeros of quadratic eq(alpha)
+[33mee4761fd[m Corrected TR and TR-icho. Corrected projection_newton
+[33me74ec172[m Corrected TR and TR-icho. Corrected projection_newton
+[33md7ca105f[m Trust region fixed for TR and TR-icho
+[33m4c699c7a[m fixed TR. that '0.5' matters...
+[33m241dec5c[m reorganized and improved multitask script
+[33m669b1177[m "TR part neater"
+[33m8402ce19[m "Corrected TR and TR-icho"
+[33md3981461[m increased max_bisect for plasticity 2**20-->2**25
+[33m1a2bffc5[m "Updated multitask script: creates output directory and saves results"
+[33m171c4d0c[m fixed: added exit to quadratic secant when f0=nan. It goes to linear secant with a_pos, f_pos
+[33mef9e8bf3[m Trust region corrected. No precond yet
+[33m860cc3da[m Trust Region implemented with 'diag' and 'tril' as preconditioners
+[33m4acf09bf[m Trust Region implemented with 'diag' and 'tril' as preconditioners
+[33m0d87f892[m commit before first CamiCas checkout
+[33ma1132748[m added fintCamilo and KCamilo to model. NR only
+[33m321f67fd[m added fintCamilo and KCamilo in Contacts class
+[33m46f1b4f3[m fixed bug mfk FEAssembly. changed solve_NR to NR
+[33m9c46a1fa[m ignoring .sh files
+[33m0d29ca54[m several changes, including MFK accelatarion and FEAssembly class prunning. ignoring pycaches
+[33m4f7b5b5e[m bug to generate 8mill points solved (?)
+[33m14dc31c9[m some more tidying and path to PyClasses updated in Part2
+[33mee39b5ff[m directories re organized, new path to PyClasses added to script
+[33mee2bb649[m changed training scripts to cpu only
+[33mdffbad68[m ignoring OUTPUT_, ANN include OUTPUT prefix, changed classif_model
+[33mff6dab7b[m scripts to train signed distance and patch classif
+[33m268ab1bb[m added directory print in output
+[33m7e46e35f[m corrected linesearch, when moving right a0 must be greater than a3
+[33m4c25e6e4[m changed COUNTS_NAMES order
+[33mda15a240[m linesearch: corrected bisection and improved linear sectant. counter changed orders
+[33md67ff1a5[m changed names of 2d potatos scripts for easier names
+[33m98020a63[m updates COUNTERS file after each minimization iteration. END_COUNTERS is stored at end of simulation
+[33m8bbce6dc[m corrected linesearch. Always keep a positive dmda for secatn and bisections
+[33m9f2a5850[m Fixed list of entering and exiting nodes after RedoAct
+[33m34eee684[m fixed ctct_details.csv file: now prints local slave id and details ar mnmztn iters
+[33mdca18e4a[m updated scripts for Ex2 and Ex3
+[33me0b77be9[m TR saving data. pics every 50 iters
+[33m5c897c76[m Added fewture of ActSet as part of the parser string
+[33m8a0754fd[m uncomment color for 2d plots
+[33m4c2b7e14[m TR implemented. Contact check after increment corrected -> now boolean
+[33m50268d8e[m changed way to recover/resume simulation in FEModel and scripts
+[33m135dd827[m deleted unnecessary folder
+[33m1e2fa29c[m free dofs L-BFGS bug in 3d case fixed
+[33mb02dda9e[m bug settrace bfgs
+[33m2ca46fd9[m bug printing a0 in linesearch fixed
+[33me0309e50[m trying to delete so and pyc
+[33md17ee960[m LBFGS bug fixed
+[33m38ccd0a1[m adapted scripts to generate plots on 2d and 3d case automatically
+[33m11da2b94[m adapted potato scrip for argsparsing
+[33m01432131[m update ctct on min_iter
+[33m6de9e7cb[m Merged local and remote changes in pseudo2d.py
+[33mfc54d77c[m changed input data type for plastic arg
+[33mfd539bc5[m Add compiled files to .gitignore
+[33md48ad76c[m added argparse and subname for Model
+[33m8dd58a85[m linesearch method and tidying minimization routines
+[33m1df894e8[m linesearch method and tidying minimization routines
+[33mdda50b29[m linesearch params adjusted. Plasticity defined at script
+[33m0c31fa57[m bisection added as last resource to linesearch
+[33m86cee0c8[m Cycle criterion fixed and linesearch intermadiate cases fixed
+[33m815e0994[m Fixed bugs parabolic linesearch
+[33m1bed8d6d[m Merge branch 'main' of gitlab.com:diego.hurtado1/fem
+[33md4404ba8[m Update environment.yml with new dependencies from cluster
+[33m3572d0fc[m Update environment.yml with cluster environment details
+[33mb59bf6c2[m New minimization and plots for 2D Examples
+[33mfb357b7a[m New linesearch methods implemented
+[33m4b7fa60c[m 2d frictionless minimization implemented
+[33m7dd380ce[m Remove virtual environment and add to .gitignore
+[33mebc98c8f[m Removed virtual environment from repository and added to .gitignore
+[33m18f8da84[m 2D case implemented still need to check elastic case
+[33m1b18be3c[m Add OUTPUT_2024 directories to .gitignore
+[33mab7403e8[m Plastic part added

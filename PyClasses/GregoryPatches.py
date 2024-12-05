@@ -231,19 +231,19 @@ class GrgPatch:
 
     def Grg(self, t, deriv = 0):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
         u,v = t
-        p       = np.array([0.0 , 0.0 , 0.0])
+        p       = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
         if deriv > 0:
-            D1p     = np.array([0.0 , 0.0 , 0.0])
-            D2p     = np.array([0.0 , 0.0 , 0.0])
+            D1p     = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
+            D2p     = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
         if deriv > 1:
-            D1D1p   = np.array([0.0 , 0.0 , 0.0])
-            D1D2p   = np.array([0.0 , 0.0 , 0.0])
-            D2D2p   = np.array([0.0 , 0.0 , 0.0])
+            D1D1p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
+            D1D2p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
+            D2D2p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
         if deriv > 2:
-            D1D1D1p = np.array([0.0 , 0.0 , 0.0])
-            D1D1D2p = np.array([0.0 , 0.0 , 0.0])
-            D1D2D2p = np.array([0.0 , 0.0 , 0.0])
-            D2D2D2p = np.array([0.0 , 0.0 , 0.0])
+            D1D1D1p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
+            D1D1D2p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
+            D1D2D2p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
+            D2D2D2p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
         n, m = len(self.CtrlPts)-1, len(self.CtrlPts[0])-1
 
         for i  in range(n+1):
@@ -355,11 +355,16 @@ class GrgPatch:
         if deriv==0:
             return p
         if deriv==1:
-            return p, np.array([D1p, D2p]).T
+            return p, np.array([D1p, D2p],dtype=np.float64).T
         elif deriv == 2:
-            return p, np.array([D1p, D2p]).T, np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]]).T
+            return p, \
+                    np.array([D1p, D2p],dtype=np.float64).T, \
+                    np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]],dtype=np.float64).T
         elif deriv == 3:
-            return p, np.array([D1p, D2p]).T, np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]]).T, np.array([[[D1D1D1p,D1D1D2p],[D1D1D2p,D1D2D2p]], [[D1D1D2p,D1D2D2p],[D1D2D2p,D2D2D2p]]]).T
+            return p, \
+                    np.array([D1p, D2p],dtype=np.float64).T, \
+                    np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]],dtype=np.float64).T, \
+                    np.array([[[D1D1D1p,D1D1D2p],[D1D1D2p,D1D2D2p]], [[D1D1D2p,D1D2D2p],[D1D2D2p,D2D2D2p]]],dtype=np.float64).T
         else:
             print("Derivative order not (yet) implemented")
             set_trace()
@@ -560,21 +565,24 @@ class GrgPatch:
         if not ANNapprox:
             t = np.array(self.MinDist(xs, seeding=seeding,recursive=recursive))
         elif t0 is not None:
-            t = t0
+            t = t0.copy()
         else:
             t = self.MinDistANN( np.array([xs + np.array([-6.0, 0.0, 0.0],dtype=np.float64)]) , verbose=0 )[0]
 
-        tol = 1e-16
+        # tol = 1e-16
+        tol = 1e-15
         res = 1+tol
         niter = 0
         tcandidate = t.copy()
         dist = norm(xs - self.Grg0(tcandidate))  # Initial guess for distance in case there is no convergence
 
 
+        # import pdb; pdb.set_trace()
+
         xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
         f = -2*(xs-xc)@dxcdt
-        # opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
-        opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
+        opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
+        # opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
         while res>tol and (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
 
             

@@ -169,7 +169,8 @@ def factorial(n):
 
 @njit
 def comb(n, k):
-    return factorial(n) // (factorial(k) * factorial(n - k))
+    # return factorial(n) // (factorial(k) * factorial(n - k))
+    return factorial(n) / (factorial(k) * factorial(n - k))
 
 @njit
 def Bernstein(n,k,x):

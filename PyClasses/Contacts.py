@@ -104,111 +104,43 @@ class Contact:
         return ipatches
 
     def getCandidatesANN(self, u,CheckActive = False,TimeDisp = False,tracing = False):
-       
-        if tracing:
-            set_trace()
+        n_candids = 10
+        predictions = self.ANNmodel.predict(self.xs+ np.array([-6.0, 0.0, 0.0],dtype=np.float64),verbose=0)
+        possible_actives = np.where(predictions[0]<0.1)[0]   # Slave nodes close to the master surface
+        previous_actives = np.where(np.array(self.actives) != None)[0]  # Ensures candidates for active set for iters where gn>0
+        possible_actives = np.unique(np.concatenate((possible_actives, previous_actives)))
+        self.candids = -1*np.ones((self.nsn,n_candids),dtype=int)
+        self.candids[possible_actives] = np.argsort(predictions[1][possible_actives], axis=1)[:, ::-1][:, :n_candids]
+        # self.candids[possible_actives] = np.argsort(predictions[1][possible_actives], axis=1)[:, ::-1][:, :n_candids]
+        self.t1t2 = np.array(predictions[2][:,:-1].reshape(-1,96,2,order='F'),dtype=np.float64)
 
-        t0 = time.time()
-
-        self.candids = [[] for _ in range(self.nsn)]
         if CheckActive:
-            self.actives = [None]*self.nsn
+            self.actives = [None for _ in range(self.nsn)]
+            for i in range(self.nsn):
+                if self.candids[i,0]!=-1:
+                    for candid in self.candids[i]:
+                        if self.IsActive(i,candid,useANN=True,t0=self.t1t2[i,candid]):
+                            self.actives[i] = candid
+                            break
 
+        return
 
+    def getCandidates(self, u, method = 'avgXmaxR', CheckActive = False, TimeDisp=False,tracing=False):
+        # updated positions of all slave nodes
         sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
         xs = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
         self.xs = xs
-        xs_forANN = xs + np.array([-6,0,0])
-
-        # 1. get posibble active nodes using signed_distance_model
-        signed_distance_regressor = SignedDistanceModel(name="testing_second_sd_model-shape-512-512-bs-64")
-        predicted_signed_distance = signed_distance_regressor.predict(points=xs_forANN)
-        proximal_candidates = np.where(predicted_signed_distance<0.05)[0]   # Slave nodes close to the master surface
-
-        all_patches_obj = self.masterBody.surf.patches
-        # self.candids_sparse = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
-        # self.actives_sparse = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
-        # self.candids_sparse.data.fill(0)
-        # self.candids_sparse.eliminate_zeros()
-        # self.actives_sparse.data.fill(0)
-        # self.actives_sparse.eliminate_zeros()
-        self.candids_sparse[:,:]=False
-        self.actives_sparse[:,:]=False
-
-        # 2. from possible active nodes get their candidates using model_predictions
-        min_num_cands = 2       # 3 caused problems in a specific increment. So better 4 to cover corner cases (structured mesh)
-        max_num_cands = 9
-        min_categorization_output = 1e-6
-        if len(proximal_candidates) > 0:
-            model_predictions = self.patch_classifier.Predict(points=xs_forANN[proximal_candidates], n=max_num_cands)
-            
-            # Iterate through each node's predictions
-            count = 0
-            for ii, idx in enumerate(proximal_candidates):
-
-                # Extract predictions for the current node
-                node_predictions = model_predictions[ii]
-                selected_patches = node_predictions[node_predictions[:, 1]>min_categorization_output]
-                n_patches = max(min(len(selected_patches),max_num_cands),min_num_cands)
-                if len(selected_patches) < min_num_cands:
-                    selected_patches = node_predictions[:min_num_cands]       # this guarantees a minimum ammount of candidates
-
-                # # Extend the candidates list with the selected patches
-                # candidates[idx].extend(selected_patches[:, 0].astype(int).tolist())
-                CandPatches_idx = selected_patches[:,0].astype(int).tolist()
-                self.candids_sparse[idx,CandPatches_idx] = True
-                # self.candidpairs[count:count+n_patches] = [[idx]*n_patches,CandPatches_idx]
-                self.candids[idx] = CandPatches_idx
 
 
-        # # T1 = sparse.csr_matrix((self.nsn,len(self.masterBody.surf.patches)))
-        # # T2 = sparse.csr_matrix((self.nsn,len(self.masterBody.surf.patches)))
-        T1 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
-        T2 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
+        if self.ANNmodel is not None:
+            return self.getCandidatesANN(u,CheckActive=CheckActive,TimeDisp=TimeDisp,tracing=tracing)
 
-        for i_patch, patch in enumerate(all_patches_obj):
-            nodes_in_patch = self.candids_sparse[:,i_patch].nonzero()[0]
-            if len(nodes_in_patch)>0:
-                predictions_for_t1t2 = patch.MinDistANN( xs_forANN[nodes_in_patch] , verbose=0 )
-                T1[nodes_in_patch,i_patch] = predictions_for_t1t2[:,0]
-                T2[nodes_in_patch,i_patch] = predictions_for_t1t2[:,1]
-
-
-
-            if CheckActive:
-                for ii in nodes_in_patch:
-                        # self.candids[ii].append(i_patch)      # Unnecessary. Already done some lines above
-                        t1 = T1[ii,i_patch]
-                        t2 = T2[ii,i_patch]
-                        active = self.IsActive(ii,i_patch,useANN=True,t0=None)
-                        # active = self.IsActive(ii,i_patch,useANN=True,t0=None)
-                        if active and self.actives[ii] is not None:
-                            set_trace()
-                            # If this ever happens, it means this node 'ii' seems to be
-                            # active from the point of view of more than one patch.
-                            # TODO:Make sure it chooses the one with significantly 
-                            # higher prob. according to model_predictions[ii,1]
-                            pass
-                        elif active:
-                            self.actives[ii]=i_patch
-                            self.actives_sparse[ii,i_patch] = True
-
-
-        printif(TimeDisp,"collisions checked in "+str(time.time()-t0)+ " s")
-
-    def getCandidates(self, u, method = 'avgXmaxR', CheckActive = False, TimeDisp=False,tracing=False):
-        # if tracing:
-        #     set_trace()
         t0 = time.time()
         all_patches = self.masterSurf.patches
         self.candids = [[] for _ in range(self.nsn)]     # each node can have several candidates, hence we need DIFFERENT/UNIQUE empty lists
         if CheckActive:
             self.actives = [None]*self.nsn
 
-        # updated positions of all slave nodes
-        sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
-        xs = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
-        self.xs = xs
 
         # Initiallizing GrgPatches if needed
         if all(element is None for element in all_patches):
@@ -236,7 +168,6 @@ class Contact:
                         if CheckActive:
                             if self.IsActive(ii,ipatch):
                                 self.actives[ii]=ipatch
-
 
         for ii in range(self.nsn):
             if self.actives[ii] is None:
@@ -395,7 +326,17 @@ class Contact:
 
         return m,force
     
+    def compute_mf_unilateral_ANN(self, u, Model):
+        set_trace()
+        return None,None
+
+
+
     def compute_mf_unilateral(self, u, Model):
+        if self.ANNmodel is not None:
+            return self.compute_mf_ANN(u,Model)
+
+
         surf = self.masterSurf
 
         m=0
@@ -405,7 +346,7 @@ class Contact:
         sDoFs  = self.slaveBody.DoFs[self.slaveNodes]
         # xs_all = np.array(self.slaveBody.X )[self.slaveNodes ] + np.array(u[sDoFs ])
 
-        self.getCandidates(u)   # this updates self.xs
+        self.getCandidates(u)   # this updates self.xs and candidates. We don't use 'actives' here
 
 
         opa = self.OPA
@@ -671,9 +612,18 @@ class Contact:
 
 
 
-    def getfintC(self, Model, DispTime = False, useANN = False,tracing = False):
+    def getfintC(self, Model, DispTime = False,tracing = False):
 
         # rct1t2 = np.zeros((10000,4))        # Here, I will store node, patch, t1,t2. To create the sparse matrices fast
+        useANN = self.ANNmodel is not None
+
+        if useANN:
+            self.getCandidates(Model.u)            # n_candids = 9
+            # predictions = self.ANNmodel.predict(self.xs+ np.array([-6.0, 0.0, 0.0],dtype=np.float64),verbose=0)
+            # possible_actives = np.where(predictions[0]<0.05)[0]   # Slave nodes close to the master surface
+            # self.t1t2 = predictions[2][:,:-1].reshape(-1,96,2,order='F')
+            # self.candids = -1*np.ones((self.nsn,n_candids),dtype=int)
+            # self.candids[possible_actives] = np.argsort(predictions[1][possible_actives], axis=1)[:, ::-1][:, :n_candids]
 
 
         if tracing:
@@ -684,34 +634,34 @@ class Contact:
         sBody = self.slaveBody
         self.t1t2cache = -1*np.ones((self.nsn,2))
 
-        if useANN:
-            xs_forANN = self.xs + np.array([-6,0,0])
-            all_patches_obj = surf.patches
+        # if useANN:
+        #     xs_forANN = self.xs + np.array([-6,0,0])
+        #     all_patches_obj = surf.patches
 
-            #  Get (fast) the initial guesses for t1t2 according to each patch
-            # T1 = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
-            # T2 = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
-            # T1 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
-            # T2 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
+        #     set_trace()
 
-            rct_count = 0
-            for i_patch, patch in enumerate(all_patches_obj):
-                nodes_in_patch = self.candids_sparse[:,i_patch].nonzero()[0]
-                num_nodes_in_patch = len(nodes_in_patch)
-                if num_nodes_in_patch>0:
-                    predictions_for_t1t2 = patch.MinDistANN( xs_forANN[nodes_in_patch] , verbose=0 )
-                    # set_trace()
-                    # T1[nodes_in_patch,i_patch] = predictions_for_t1t2[:,0]
-                    # T2[nodes_in_patch,i_patch] = predictions_for_t1t2[:,1]
-                    # rct1t2[rct_count:rct_count+num_nodes_in_patch]=np.array([nodes_in_patch,[i_patch]*num_nodes_in_patch])
+        #     #  Get (fast) the initial guesses for t1t2 according to each patch
+        #     # T1 = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
+        #     # T2 = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
+        #     # T1 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
+        #     # T2 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
+
+        #     rct_count = 0
+        #     for i_patch, patch in enumerate(all_patches_obj):
+        #         nodes_in_patch = self.candids_sparse[:,i_patch].nonzero()[0]
+        #         num_nodes_in_patch = len(nodes_in_patch)
+        #         if num_nodes_in_patch>0:
+        #             predictions_for_t1t2 = patch.MinDistANN( xs_forANN[nodes_in_patch] , verbose=0 )
+        #             # set_trace()
+        #             # T1[nodes_in_patch,i_patch] = predictions_for_t1t2[:,0]
+        #             # T2[nodes_in_patch,i_patch] = predictions_for_t1t2[:,1]
+        #             # rct1t2[rct_count:rct_count+num_nodes_in_patch]=np.array([nodes_in_patch,[i_patch]*num_nodes_in_patch])
 
 
         eventList_iter = []
         opa = self.OPA
-        opaANN = 1e-2
+        opaANN = 5e-2           # THIS NUMBER IS DETERMINANT!!! It depends on the ANN model's precision
         
-        # print("Active Pairs:",end="")
-
         for idx in range(self.nsn):
             if self.actives[idx] is not None:
                 xs = self.xs[idx]
@@ -728,18 +678,28 @@ class Contact:
                     patch = surf.patches[patch_id]
 
                     if useANN:
-                        t0 = [T1[idx,patch_id],T2[idx,patch_id]]
+                        
+                        t0 = np.array(self.t1t2[idx,patch_id],dtype=np.float64)
+                        
+                        # import pdb; pdb.set_trace()
+
                         # If it's a decent candidate, evaluate
                         if (0-opaANN<t0[0]<1+opaANN and 0-opaANN<t0[1]<1+opaANN):
                             fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=useANN,t0=t0)
                             is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
 
                     else:
+
+                        # import pdb; pdb.set_trace()
+
                         fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=False,t0=None)
                         is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
 
                     # If not correct, try next candidate
                     if not is_patch_correct:
+
+                        # import pdb; pdb.set_trace()
+                        
                         if looper==len(self.candids[idx]):  # No candidate is projecting well...
                             if tried_updating_candidates:
                                 fintC = np.nan                      # <- this will force RedoHalf
@@ -764,6 +724,10 @@ class Contact:
                         looper += 1
                         changed = True
 
+                        # import pdb; pdb.set_trace()
+
+
+
                 if is_patch_correct:        # if patch changed
                     node_id = self.slaveNodes[idx]
                     if changed:
@@ -780,6 +744,7 @@ class Contact:
 
 
                 else:
+                    # set_trace()
                     print("Not correct patch found!!!")
                     return
 
