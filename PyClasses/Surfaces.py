@@ -178,9 +178,11 @@ class Surface:
                 quad = self.quads[ipatch]
                 if sed is None:
                     color = (.5,.5,.5,1.0)
+                    wire = True
                 elif isinstance(sed, (list, np.ndarray)):
                     color = sed[quad]
                 elif sed ==-1:
+                    # color = (.5,.5,.5,1.0)
                     color = (.5,.5,.5,0.0)
                     wire = True
                 # color = "gray" if sed is None else sed[quad]     # superposed plots: before
@@ -189,7 +191,6 @@ class Surface:
                 
                 
                 # color = (.5,.5,.5,0.0) if sed is None else sed[quad]
-
                 quadsurf = self.plotQuad(axis, u, ipatch, color=color,ref=ref,wire=wire)   #Slave Body
 
             else:
@@ -205,7 +206,7 @@ class Surface:
         return flatList(surfObj)
 
 
-    def plotQuad(self, axis, u, iquad, color = (.5,.5,.5,1.0), surf=True,wire=False,ref=10):     #full of redundancy. FIX!!
+    def plotQuad(self, axis, u, iquad, color = (.5,.5,.5,1.0), surf=True,wire=True,ref=10):     #full of redundancy. FIX!!
         from matplotlib import cm
         from matplotlib.colors import LinearSegmentedColormap
 
