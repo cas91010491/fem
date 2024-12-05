@@ -145,8 +145,6 @@ model = FEModel([blk, base], [contact1], BCs,transform_2d=N,subname =subname )  
 
 base.surf.ComputeGrgPatches(np.zeros(ndofs),base_top,exactNodesGiven=True)
 # model.plotNow(as2D=True,OnlyMasterSurf=True)       # Uncomment to see and verify geometry
-import pdb; pdb.set_trace()
-blk.plot(plotWhat='nodes')
 
 
 #############
