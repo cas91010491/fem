@@ -18,30 +18,28 @@ from tensorflow.keras.losses import MeanSquaredError
 from tensorflow.keras.models import load_model
 
 
-# import pdb; pdb.set_trace()
-
 # Load the neural network model
-model_path = 'MultiTaskNN/OUTPUT_202412011950_multitask_DropOut0.0_200epochs_50percent_BatchNorm_SUCCESS_ContinueTraining/model_epoch_500_cluster_100percent.h5'
+model_path = 'model_epoch_850.h5'
 MT_model = load_model(model_path, custom_objects={'mse': MeanSquaredError()})
 
-# # Argument parsing
+# Argument parsing
 parser = argparse.ArgumentParser(description='Process a data for the 2d contact model.')
-# parser.add_argument('--min_method', type=str, required=True, help='minimization method: BFGS, LBFGSNN')
-# parser.add_argument('--mesh', type=int, required=True, help='choose mesh 5, 10 or 15')
-# parser.add_argument('--plastic', type=int, required=True, help='boolean for plastic')
-parser.add_argument('--ann', type=int, required=True, help='boolean for plastic')
+parser.add_argument('--min_method', type=str, required=True, help='minimization method: BFGS, LBFGSNN')
+parser.add_argument('--mesh', type=int, required=True, help='choose mesh 5, 10 or 15')
+parser.add_argument('--plastic', type=int, required=True, help='boolean for plastic')
+parser.add_argument('--ann', type=int, required=True, help='boolean for ANN')
 
 args = parser.parse_args()
 
-# # Calculate subspace bounds
-# minimization_method = args.min_method
-# mesh = args.mesh
-# plastic = args.plastic
+# Calculate subspace bounds
+minimization_method = args.min_method
+mesh = args.mesh
+plastic = args.plastic
 useANN = args.ann
 
-minimization_method = "BFGS"
-mesh = 15
-plastic = 0
+# minimization_method = "BFGS"
+# mesh = 10
+# plastic = 0
 
 
 ####################
@@ -100,7 +98,7 @@ master = [ptt,ptt_highernodes]
 contact1 = Contact(slave, master, kn=1e2, C1Edges = False, maxGN = 0.001,ANNmodel=MT_model if useANN else None)       # (slave, master) inputs can be surfaces as well
 
 ### MODEL ###
-subname = "_"+("plastic" if plastic else "elastic")+"_"+minimization_method+"_"+str(mesh)
+subname = "_"+("plastic" if plastic else "elastic")+"_"+minimization_method+"_"+str(mesh)+("_ANN" if useANN else "")
 model = FEModel([blk, ptt], [contact1], BCs, subname=subname)           # [bodies, contacts, BCs, opts*]
 
 ndofs = 3*(len(X_blk)+len(ptt.X))
@@ -114,15 +112,15 @@ ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
 # import cProfile
 # import pstats
 # import io
-# pr.enable(# pr = cProfile.Profile())
+# pr = cProfile.Profile()
+# pr.enable()
 
 t0 = time()
 
 
-recov = "OUTPUT_202410290908ContactPotato_slideX_elastic_BFGS_10/"+"RecoveryData.dat"
+recov = "OUTPUT_202412060907ContactPotato_Ex1_elastic_BFGS_10/"+"RecoveryData.dat"
 model.Solve(TimeSteps=100,max_iter=20, recover=False ,minimethod=minimization_method,plot=0)
 # model.Solve(TimeSteps=100,max_iter=20, recover=False ,minimethod=minimization_method,plot=1)
-
 
 
 print("this took",time()-t0,"seconds to compute")

@@ -28,6 +28,11 @@ class FEModel:
         self.COUNTS_NAMES = ["incr_accptd", "incr_rjctd", "NR_iters", "incr_mnmzd", "mnmzn_iters", "mnmzn_fn_evals","CG_iters"]
         self.COUNTS = np.zeros((7,),dtype = int)
 
+        # main timer during the simulation
+        # self.TIMERS_NAMES = ["Total", "ActSet_Updt", "fcon","fint","Ktot+NRlinsolv","Ktot+MINsolv"]
+        self.TIMERS_NAMES = ["Total", "Ktot+NRlinsolv", "Ktot+MINsolv", "fint", "fcon","ActSet_Updt"]
+        self.TIMERS = np.zeros((6,),dtype = float)
+
         self.SED = [[] for _ in range(len(bodies))]     # stores nodal Strain-energy density for every successful increment
         X , DoFs, n0 = [], [], 0
         for bid, body in enumerate(bodies):
@@ -365,11 +370,15 @@ class FEModel:
         # for body in self.bodies: body.get_fint_fast(self, temp = temp)
         # for body in self.bodies: body.get_fint(self, temp = temp)
         u = self.u if temp==False else self.u_temp
+        fint_t0 = time.time()
         for body in self.bodies: 
             self.fint += body.compute_mf_plastic(u,self)[0]
         if DispTime: print("Getting fint : ",time.time()-t0_fint,"s")
+        self.TIMERS[3] += time.time()-fint_t0
 
         u = self.u if temp==False else self.u_temp
+
+        fcon_t0 = time.time()
         for ctct in self.contacts:
             if temp: ctct.patch_changes = []                 # to keep track of the changes during iterations
             sDoFs  = ctct.slaveBody.DoFs[ctct.slaveNodes]
@@ -382,7 +391,7 @@ class FEModel:
                 ctct.getfintC_unilateral(self, DispTime=DispTime)      # uses xs
             else:
                 ctct.getfintC(self, DispTime=DispTime)      # uses xs
-
+        self.TIMERS[4] += time.time()-fcon_t0
 
     def get_K(self, DispTime = False):
         t0_K = time.time()
@@ -393,6 +402,7 @@ class FEModel:
             self.K += body.compute_k_plastic(self.u_temp,self)
 
         printif(DispTime,"Getting K : ",time.time()-t0_K,"s")
+
 
         for contact in self.contacts:
             # if contact.ANNmodel is not None:
@@ -432,9 +442,16 @@ class FEModel:
                 csvwriter.writerow(self.COUNTS_NAMES)
                 csvwriter.writerow(self.COUNTS.tolist())
 
+            self.TIMERS[0] = time.time()-self.solve_timer_0
+            with open(self.output_dir+"TIMERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.TIMERS_NAMES)
+                csvwriter.writerow([round(timer, 3) for timer in self.TIMERS])
+
             RES_prev = RES
 
             # getting K and KC
+            NR_solver_t0 = time.time()
             self.get_K(DispTime=TimeDisp)  # <-- uses self.u_temp           (no dirichlet)
 
             # Linear System
@@ -449,6 +466,8 @@ class FEModel:
             fexb=self.fext[fr]      # always zero (?)
 
             dub =spsolve(Kbb,(fexb-finb-Kba.dot(dua)).T)     # Uses all available processors
+            self.TIMERS[1] += time.time()-NR_solver_t0
+
             self.fext[di] = fina + Kaa.dot(dua) + Kab.dot(dub)
 
             dua = np.zeros_like(self.u[di])
@@ -534,7 +553,15 @@ class FEModel:
                 csvwriter.writerow(self.COUNTS_NAMES)
                 csvwriter.writerow(self.COUNTS.tolist())
 
+            self.TIMERS[0] = time.time()-self.solve_timer_0
+            with open(self.output_dir+"TIMERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.TIMERS_NAMES)
+                csvwriter.writerow([round(timer, 3) for timer in self.TIMERS])
 
+
+
+            NR_solver_t0 = time.time()
             # getting K and KC
             self.get_K(DispTime=TimeDisp)  # <-- uses self.u_temp           (no dirichlet)
             Kr = Nt.T@Ns.T@self.K@Ns@Nt
@@ -549,9 +576,10 @@ class FEModel:
             finb=fint_r[fr]
             fexb=fext_r[fr]     # always zero (?)
 
-
             # dub =spsolve(Kbb,fexb-finb-Kba.dot(dua))     # Uses all available processors
             dub =spsolve(Kbb,(fexb-finb-Kba.dot(dua)).T)     # Uses all available processors
+            self.TIMERS[1] += time.time()-NR_solver_t0
+
             fext_r[di] = (fina + Kaa.dot(dua) + Kab.dot(dub))
             # self.fext = Ns@self.fext
 
@@ -597,6 +625,17 @@ class FEModel:
 
     def  BFGS(self,FUNJAC, u0, tol = 1e-10, free_ind = None,ti = None,simm_time = None, plot = False,unilateral=True):
         
+
+        # # Profiling
+        # import cProfile
+        # import pstats
+        # import io
+        # pr = cProfile.Profile()
+        # pr.enable()
+
+
+
+
         if free_ind is None:
             free_ind = self.free
         
@@ -621,6 +660,13 @@ class FEModel:
                 csvwriter.writerow(self.COUNTS_NAMES)
                 csvwriter.writerow(self.COUNTS.tolist())
 
+            self.TIMERS[0] = time.time()-self.solve_timer_0
+            with open(self.output_dir+"TIMERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.TIMERS_NAMES)
+                csvwriter.writerow([round(timer, 3) for timer in self.TIMERS])
+
+
             iter += 1
             print("ITER:",iter)
             f_old = f_new.copy()
@@ -628,6 +674,7 @@ class FEModel:
             K_old_inv = K_new_inv.copy()
             delta_f = f_new - f_old
 
+            min_t0 = time.time()
             if iter == 1:
                 h_new = -np.dot(K_old_inv, f_new)
             else:
@@ -636,6 +683,8 @@ class FEModel:
 
             if not np.isfinite(norm(h_new)):
                 set_trace()
+            
+            self.TIMERS[2] += time.time()-min_t0
 
             a2,f2,f_2,ux = self.linesearch(FUNJAC, u, h_new, f_new, free_ind, alpha_init=1, c_par2=0.9,unilateral=unilateral)
 
@@ -655,12 +704,16 @@ class FEModel:
     
             print("\talpha:",a2,"\tf2:",f2,"\t\t|f_2|:",norm(f_2))
 
-            # # a little experiment: Impose active set but update it every now an then
-            # for ctct in self.contacts:
-            #     print("actives     :",ctct.actives)
-            #     if iter%10==0:
-            #         ctct.getCandidates(Ns@Nt@ux, CheckActive = True, TimeDisp=False)
-            #         print("actives_now :",ctct.actives)
+
+            # if iter>10:
+            #     pr.disable()
+            #     s = io.StringIO()
+            #     ps = pstats.Stats(pr, stream=s).sort_stats('cumulative')
+            #     ps.print_stats()
+
+            #     print("\n".join(s.getvalue().split("\n")[:100]))
+            #     set_trace()
+
 
         return u, m0, iter , norm(f_2)
 
@@ -695,9 +748,14 @@ class FEModel:
                 csvwriter = csv.writer(csvfile)
                 csvwriter.writerow(self.COUNTS_NAMES)
                 csvwriter.writerow(self.COUNTS.tolist())
+            
+            self.TIMERS[0] = time.time()-self.solve_timer_0
+            with open(self.output_dir+"TIMERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.TIMERS_NAMES)
+                csvwriter.writerow([round(timer, 3) for timer in self.TIMERS])
 
-
-
+            min_t0 = time.time()
             iter += 1
             print("ITER:",iter)
 
@@ -727,6 +785,7 @@ class FEModel:
                     h_new += (gamma_j - eta)*delta_u
 
                 h_new = -h_new
+            self.TIMERS[2] += time.time()-min_t0
 
             if not np.isfinite(norm(h_new)):
                 set_trace()
@@ -1087,6 +1146,7 @@ class FEModel:
         TR_rad = 0.0001*nfr
         TR_rad_min = 0*nfr
         TR_rad_max = 10000000*nfr
+        # TR_rad_max = 0.0001
 
         ff , m_new = FUNJAC(u0,unilateral=unilateral)
         f_new = ff[free_ind]
@@ -1108,9 +1168,17 @@ class FEModel:
                 csvwriter.writerow(self.COUNTS_NAMES)
                 csvwriter.writerow(self.COUNTS.tolist())
 
+            self.TIMERS[0] = time.time()-self.solve_timer_0
+            with open(self.output_dir+"TIMERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+                csvwriter = csv.writer(csvfile)
+                csvwriter.writerow(self.TIMERS_NAMES)
+                csvwriter.writerow([round(timer, 3) for timer in self.TIMERS])
+
+
             iter += 1
             print("Iter:",iter)
 
+            min_t0 = time.time()
             if update_signal==1:
                 # K = sparse.csr_matrix(HESS(u))
                 K = HESS(u)
@@ -1261,6 +1329,7 @@ class FEModel:
                 beta = float(r_new@q/var_diego)
                 p = q + beta*p
 
+            self.TIMERS[2] += time.time()-min_t0
 
             h_full[free_ind] = h.copy()
             ff , m_h = FUNJAC(u + h_full,unilateral=unilateral)
@@ -1615,6 +1684,7 @@ class FEModel:
         force_body = np.zeros_like(self.fint)
         force_contact = np.zeros_like(self.fint)
 
+        fint_t0 = time.time()
         for body in self.bodies: 
 
             # force_bi, Ebi = body.compute_mf_plastic(u,self)
@@ -1623,6 +1693,9 @@ class FEModel:
             force_body+=force_bi
 
             # En+=body.compute_m(u)
+        self.TIMERS[3] += time.time()-fint_t0
+        
+        fcon_t0 = time.time()
         for ctct in self.contacts:
 
             if unilateral:
@@ -1631,7 +1704,7 @@ class FEModel:
                 mCi,fCi = ctct.compute_mf(u,self)     # Bilateral constraint (active set)
             EnC+=mCi
             force_contact+=fCi
-
+        self.TIMERS[4] += time.time()-fcon_t0
 
         force = force_body + force_contact
 
@@ -1658,8 +1731,10 @@ class FEModel:
         K = sparse.coo_matrix((self.ndof,self.ndof),dtype=float)
         # K = np.zeros((self.ndof,self.ndof),dtype=float)
 
+        Kint_t0 = time.time()
         for body in self.bodies: 
             K += body.compute_k_plastic(u,self)    # uses model.u_temp
+        self.TIMERS[5] += time.time()-Kint_t0
 
         for ctct in self.contacts:
             K += ctct.compute_k(u)     #uses model.u_temp
@@ -1762,7 +1837,7 @@ class FEModel:
         tracing = False
 
         if recover:
-            self.REF,t, dt, ti,[num,den],self.COUNTS = pickle.load(open(recover,"rb"))
+            self.REF,t, dt, ti,[num,den],self.COUNTS,self.TIMERS = pickle.load(open(recover,"rb"))
             self.bisect = int(np.log2(den))
             
             self.getReferences(actives=True)
@@ -1781,6 +1856,8 @@ class FEModel:
         redo_count = 0
         
         print("\ndirectory:\n"+self.output_dir)
+
+        self.solve_timer_0 = time.time()
 
         while t+dt < tf+1e-4:
 
@@ -1820,10 +1897,12 @@ class FEModel:
 
             if DoMinimization:
                 self.COUNTS[3] += 1
-                converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=plot-1)
+                converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=bool(plot>1))
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
             else:
-                # converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=plot-1)
+                # if abs(t-0.75)<1e-10:
+                #     import pdb; pdb.set_trace()
+
                 converged, res = self.NR(tol=tolerance,maxiter=max_iter)
             actives_after_solving = list(self.contacts[0].actives)
 
@@ -1879,7 +1958,11 @@ class FEModel:
 
                     actives_prev = list(ctct.actives)    # Actives after solving, before checking
                     acts_bool_prev = [True if el is not None else False for el in actives_prev]
+                    
+                    ActSet_Updt_t0 = time.time()
                     ctct.getCandidates(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
+                    self.TIMERS[5] += time.time()-ActSet_Updt_t0
+                    
                     # ctct.getCandidatesANN(self.u, CheckActive = True, TimeDisp=False,tracing=tracing)    # updates Patches->BSs (always) -> candidatePairs (on choice)
                     print("After checking :",list(ctct.actives))
 
@@ -2048,9 +2131,12 @@ class FEModel:
                     dt = dt_base/den
 
                 # saving:
-                pickle.dump([self.REF,t, dt, ti,[num,den],self.COUNTS],open(self.output_dir+"RecoveryData.dat","wb"))
+                pickle.dump([self.REF,t, dt, ti,[num,den],self.COUNTS,self.TIMERS],open(self.output_dir+"RecoveryData.dat","wb"))
 
         else:
+
+            self.TIMERS[0] = time.time()-self.solve_timer_0
+
             print("\n\n############################")
             print("### SIMULATION COMPLETED ###")
             print("############################\n")
@@ -2070,6 +2156,16 @@ class FEModel:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(self.COUNTS_NAMES)
             csvwriter.writerow(self.COUNTS.tolist())
+
+
+        with open(self.output_dir+"A_END_TIMERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(self.TIMERS_NAMES)
+            csvwriter.writerow([round(timer, 3) for timer in self.TIMERS])
+        with open(self.output_dir+"TIMERS.csv",'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+            csvwriter = csv.writer(csvfile)
+            csvwriter.writerow(self.TIMERS_NAMES)
+            csvwriter.writerow([round(timer, 3) for timer in self.TIMERS])
 
 
 

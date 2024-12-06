@@ -13,12 +13,21 @@ from PyClasses.FEModel import *
 from time import time
 import argparse
 
+from tensorflow.keras.models import load_model
+from tensorflow.keras.losses import MeanSquaredError
+from tensorflow.keras.models import load_model
 
-# Argument parsing
-parser = argparse.ArgumentParser(description='Process a data for the 2d contact model.')
+
+
+# Load the neural network model
+model_path = 'model_epoch_850.h5'
+MT_model = load_model(model_path, custom_objects={'mse': MeanSquaredError()})
+
+parser = argparse.ArgumentParser(description='Process a data for the 3d contact model.')
 parser.add_argument('--min_method', type=str, required=True, help='minimization method: BFGS, LBFGSNN')
 parser.add_argument('--mesh', type=int, required=True, help='choose mesh 5, 10 or 15')
 parser.add_argument('--plastic', type=int, required=True, help='boolean for plastic')
+parser.add_argument('--ann', type=int, required=True, help='boolean for ANN')
 
 args = parser.parse_args()
 
@@ -26,6 +35,7 @@ args = parser.parse_args()
 minimization_method = args.min_method
 mesh = args.mesh
 plastic = args.plastic
+useANN = args.ann
 
 # minimization_method = "BFGS"
 # mesh = 15
@@ -49,7 +59,6 @@ else:
 blk.Youngsmodulus = 0.05
 blk.Translate([6.0,0.0,4.5])
 
-
 # # POTATO
 [ptt] = pickle.load(open("PotatoAssembly.dat","rb"))
 ## OR ##
@@ -64,7 +73,6 @@ blk.Translate([6.0,0.0,4.5])
 # ptt.RandDistort(0.5)
 # # pickle.dump([ptt],open("PotatoAssembly.dat","wb"))
 ptt.isRigid = True     # faster solving when True
-
 
 ######################
 ### BUILDING MODEL ###
@@ -87,10 +95,10 @@ BCs = [cond_bd1, cond_bd2,cond_bd3]
 slave   = [blk , blk_bottom]
 master = [ptt,ptt_highernodes]
 
-contact1 = Contact(slave, master, kn=1e2, C1Edges = False, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
+contact1 = Contact(slave, master, kn=1e2, C1Edges = False, maxGN = 0.001,ANNmodel=MT_model if useANN else None)       # (slave, master) inputs can be surfaces as well
 
 ### MODEL ###
-subname = "_"+("plastic" if plastic else "elastic")+"_"+minimization_method+"_"+str(mesh)
+subname = "_"+("plastic" if plastic else "elastic")+"_"+minimization_method+"_"+str(mesh)+("_ANN" if useANN else "")
 model = FEModel([blk, ptt], [contact1], BCs, subname=subname)           # [bodies, contacts, BCs, opts*]
 
 ndofs = 3*(len(X_blk)+len(ptt.X))
@@ -104,13 +112,14 @@ ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
 # import cProfile
 # import pstats
 # import io
-# pr.enable(# pr = cProfile.Profile())
+# pr = cProfile.Profile()
+# pr.enable()
 
 t0 = time()
 
 
-recov = "OUTPUT_202411211007ContactPotato_Ex2_plastic_BFGS_5/"+"RecoveryData.dat"
-model.Solve(TimeSteps=100,max_iter=20, recover=recov ,minimethod=minimization_method,plot=1)
+recov = "OUTPUT_202412061508ContactPotato_Ex2_elastic_BFGS_10_ANN/"+"RecoveryData.dat"
+model.Solve(TimeSteps=100,max_iter=20, recover=False ,minimethod=minimization_method,plot=0)
 
 
 

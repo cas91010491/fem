@@ -326,18 +326,11 @@ class Contact:
 
         return m,force
     
-    def compute_mf_unilateral_ANN(self, u, Model):
-        set_trace()
-        return None,None
-
-
 
     def compute_mf_unilateral(self, u, Model):
-        if self.ANNmodel is not None:
-            return self.compute_mf_ANN(u,Model)
-
-
         surf = self.masterSurf
+        useANN = self.ANNmodel is not None
+
 
         m=0
         eventList_iter = []
@@ -348,10 +341,12 @@ class Contact:
 
         self.getCandidates(u)   # this updates self.xs and candidates. We don't use 'actives' here
 
-
         opa = self.OPA
         for idx in range(self.nsn):
-            # set_trace()
+
+            if useANN and self.candids[idx,0] ==-1:
+                    continue
+            
             changed = False
             xs = self.xs[idx]
             kn  = self.alpha_p[idx]*self.kn
@@ -619,12 +614,6 @@ class Contact:
 
         if useANN:
             self.getCandidates(Model.u)            # n_candids = 9
-            # predictions = self.ANNmodel.predict(self.xs+ np.array([-6.0, 0.0, 0.0],dtype=np.float64),verbose=0)
-            # possible_actives = np.where(predictions[0]<0.05)[0]   # Slave nodes close to the master surface
-            # self.t1t2 = predictions[2][:,:-1].reshape(-1,96,2,order='F')
-            # self.candids = -1*np.ones((self.nsn,n_candids),dtype=int)
-            # self.candids[possible_actives] = np.argsort(predictions[1][possible_actives], axis=1)[:, ::-1][:, :n_candids]
-
 
         if tracing:
             set_trace()
@@ -633,30 +622,6 @@ class Contact:
         surf = self.masterSurf
         sBody = self.slaveBody
         self.t1t2cache = -1*np.ones((self.nsn,2))
-
-        # if useANN:
-        #     xs_forANN = self.xs + np.array([-6,0,0])
-        #     all_patches_obj = surf.patches
-
-        #     set_trace()
-
-        #     #  Get (fast) the initial guesses for t1t2 according to each patch
-        #     # T1 = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
-        #     # T2 = sparse.csr_matrix((self.nsn,len(all_patches_obj)))
-        #     # T1 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
-        #     # T2 = -1*np.ones((self.nsn,len(self.masterBody.surf.patches)),dtype=np.float64)
-
-        #     rct_count = 0
-        #     for i_patch, patch in enumerate(all_patches_obj):
-        #         nodes_in_patch = self.candids_sparse[:,i_patch].nonzero()[0]
-        #         num_nodes_in_patch = len(nodes_in_patch)
-        #         if num_nodes_in_patch>0:
-        #             predictions_for_t1t2 = patch.MinDistANN( xs_forANN[nodes_in_patch] , verbose=0 )
-        #             # set_trace()
-        #             # T1[nodes_in_patch,i_patch] = predictions_for_t1t2[:,0]
-        #             # T2[nodes_in_patch,i_patch] = predictions_for_t1t2[:,1]
-        #             # rct1t2[rct_count:rct_count+num_nodes_in_patch]=np.array([nodes_in_patch,[i_patch]*num_nodes_in_patch])
-
 
         eventList_iter = []
         opa = self.OPA
@@ -669,8 +634,6 @@ class Contact:
                 
                 patch_id = self.actives[idx]    # Current active patch
 
-                tried_updating_candidates = False
-
                 looper = 0      # To be used if the first candidate (self.candids[0] == self.active) is not correct
                 is_patch_correct = False        # measures ONLY tangential correspondance
                 changed = False
@@ -681,8 +644,6 @@ class Contact:
                         
                         t0 = np.array(self.t1t2[idx,patch_id],dtype=np.float64)
                         
-                        # import pdb; pdb.set_trace()
-
                         # If it's a decent candidate, evaluate
                         if (0-opaANN<t0[0]<1+opaANN and 0-opaANN<t0[1]<1+opaANN):
                             fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=useANN,t0=t0)
@@ -701,31 +662,15 @@ class Contact:
                         # import pdb; pdb.set_trace()
                         
                         if looper==len(self.candids[idx]):  # No candidate is projecting well...
-                            if tried_updating_candidates:
-                                fintC = np.nan                      # <- this will force RedoHalf
-                                break
-                            #     self.actives[idx] = None
-                            #     is_patch_correct = True # Just to stop search and accept node out
-                            #     changed = False
-                            #     gn = 1
-                            #     patch_id = self.candids[0]
-                            #                                     # this means structure is distorted
 
                             # for the 2D-case only!!
                             fintC = np.nan                      # <- this will force RedoHalf
                             break
 
-                            self.candids[idx] = self.patch_classifier.Predict(points=[xs+ np.array([-6,0,0])], n=9)[0,:,0].astype(int).tolist()
-                            tried_updating_candidates = True
-                            looper = 0
-                            # continue
 
                         patch_id = self.candids[idx][looper]    # this calls the next candidate patch
                         looper += 1
                         changed = True
-
-                        # import pdb; pdb.set_trace()
-
 
 
                 if is_patch_correct:        # if patch changed
