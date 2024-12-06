@@ -19,7 +19,7 @@ from tensorflow.keras.models import load_model
 
 
 # Load the neural network model
-model_path = 'model_epoch_850.h5'
+model_path = 'model_epoch_1000.h5'
 MT_model = load_model(model_path, custom_objects={'mse': MeanSquaredError()})
 
 # Argument parsing
