@@ -64,15 +64,31 @@ neighbourhood_matrix_df = pd.DataFrame(neighbourhood_matrix, index=patch_ids, co
 # Print the neighborhood matrix
 # print(neighbourhood_matrix_df)
 
-# Plot the neighborhood matrix in gray scale
+# Plot the neighborhood matrix with custom colors
 plt.figure(figsize=(10, 8))
-sns.heatmap(neighbourhood_matrix_df, cmap='gray', cbar=False, linewidths=.5, linecolor='black')
+cmap = sns.color_palette(['k', 'orange', 'lime'])
+sns.heatmap(neighbourhood_matrix_df, cmap=cmap, cbar=False, linewidths=0.000, linecolor='gray')
 plt.gca().set_aspect('equal', adjustable='box')
 plt.xticks(ticks=np.arange(0, len(patch_ids), 2) + 0.5, labels=np.array(patch_ids[::2], dtype=int), rotation=90)
 plt.yticks(ticks=np.arange(0, len(patch_ids), 2) + 0.5, labels=np.array(patch_ids[::2], dtype=int), rotation=0)
 plt.title('Neighbourhood Matrix')
 plt.xlabel('Patch ID')
 plt.ylabel('Patch ID')
+
+# Create a custom legend with border on patches
+import matplotlib.patches as mpatches
+legend_labels = ['No neighbours', 'Corner neighbours', 'Edge neighbours']
+legend_colors = ['k', 'orange', 'lime']
+patches = [mpatches.Patch(color=color, label=label, edgecolor='black') for color, label in zip(legend_colors, legend_labels)]
+legend = plt.legend(handles=patches, loc='center left', bbox_to_anchor=(1.0, 0.92))
+
+# Set the legend box's background color to gray and add a black border
+legend.get_frame().set_facecolor('gray')
+legend.get_frame().set_edgecolor('black')
+
+# Add border to each cell in the heatmap
+for _, spine in plt.gca().spines.items():
+    spine.set_visible(True)
+    spine.set_edgecolor('black')
+
 plt.show()
-
-

@@ -22,6 +22,13 @@ from tensorflow.keras.models import load_model
 model_path = 'model_epoch_1000.h5'
 MT_model = load_model(model_path, custom_objects={'mse': MeanSquaredError()})
 
+
+# Save the neural network model in .keras format
+model_keras_path = 'model_epoch_1000.keras'
+MT_model.save(model_keras_path)
+
+set_trace()
+
 # Argument parsing
 parser = argparse.ArgumentParser(description='Process a data for the 2d contact model.')
 parser.add_argument('--min_method', type=str, required=True, help='minimization method: BFGS, LBFGSNN')

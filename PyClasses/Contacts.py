@@ -104,7 +104,7 @@ class Contact:
         return ipatches
 
     def getCandidatesANN(self, u,CheckActive = False,TimeDisp = False,tracing = False):
-        n_candids = 10
+        n_candids = 9
         predictions = self.ANNmodel.predict(self.xs+ np.array([-6.0, 0.0, 0.0],dtype=np.float64),verbose=0)
         possible_actives = np.where(predictions[0]<0.1)[0]   # Slave nodes close to the master surface
         previous_actives = np.where(np.array(self.actives) != None)[0]  # Ensures candidates for active set for iters where gn>0
@@ -156,7 +156,7 @@ class Contact:
                         self.masterSurf.patches[ip] = GrgPatch(self.masterSurf,ip)  # Performs C1 smoothing at all edges
         else:
             for ipatch in self.ipatches:
-                if all_patches[ipatch] is None:
+                if all_patches[ipatch] is None:     # we skip patches that are not initialized
                     continue
                 patch_obj = all_patches[ipatch]
                 if not self.masterSurf.body.isRigid:
@@ -612,8 +612,9 @@ class Contact:
         # rct1t2 = np.zeros((10000,4))        # Here, I will store node, patch, t1,t2. To create the sparse matrices fast
         useANN = self.ANNmodel is not None
 
-        if useANN:
-            self.getCandidates(Model.u)            # n_candids = 9
+        # if useANN:
+        #     self.getCandidates(Model.u)            # n_candids = 9
+        self.getCandidates(Model.u)            # n_candids = 9
 
         if tracing:
             set_trace()
@@ -625,80 +626,127 @@ class Contact:
 
         eventList_iter = []
         opa = self.OPA
-        opaANN = 5e-2           # THIS NUMBER IS DETERMINANT!!! It depends on the ANN model's precision
+        # opaANN = 5e-2           # THIS NUMBER IS DETERMINANT!!! It depends on the ANN model's precision
         
+        # set_trace()
+
         for idx in range(self.nsn):
             if self.actives[idx] is not None:
                 xs = self.xs[idx]
                 kn  = self.alpha_p[idx]*self.kn
                 
-                patch_id = self.actives[idx]    # Current active patch
+                # patch_id = self.actives[idx]    # Current active patch
 
-                looper = 0      # To be used if the first candidate (self.candids[0] == self.active) is not correct
+                # looper = 0      # To be used if the first candidate (self.candids[0] == self.active) is not correct
                 is_patch_correct = False        # measures ONLY tangential correspondance
-                changed = False
-                while not is_patch_correct:
-                    patch = surf.patches[patch_id]
+                # changed = False
 
+                # set_trace()
+                at_least_one = 0
+                more_than_one = 0
+
+                nodedata = 100*np.ones((len(self.candids[idx]),6))
+                for ican,candid in enumerate(self.candids[idx]):
+                    patch = surf.patches[candid]
                     if useANN:
-                        
-                        t0 = np.array(self.t1t2[idx,patch_id],dtype=np.float64)
-                        
-                        # If it's a decent candidate, evaluate
-                        if (0-opaANN<t0[0]<1+opaANN and 0-opaANN<t0[1]<1+opaANN):
-                            fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=useANN,t0=t0)
-                            is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
-
+                        t0 = self.t1t2[idx,candid].copy()
                     else:
+                        t0 = None
+                    fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=useANN,t0=t0)
+                    is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
+                    if is_patch_correct:
+                        at_least_one = 1
+                        more_than_one += 1
+                        nodedata[ican] = [gn,t[0],t[1],fintC[0],fintC[1],fintC[2]]
+                
 
-                        # import pdb; pdb.set_trace()
+                if at_least_one>0:
+                    # set_trace()
 
-                        fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=False,t0=None)
-                        is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
+                    right_cand = np.argmin(np.abs(nodedata[:,0]))
 
-                    # If not correct, try next candidate
-                    if not is_patch_correct:
+                    # if more_than_one>1 and right_cand>0:
+                    #     set_trace()
 
-                        # import pdb; pdb.set_trace()
-                        
-                        if looper==len(self.candids[idx]):  # No candidate is projecting well...
-
-                            # for the 2D-case only!!
-                            fintC = np.nan                      # <- this will force RedoHalf
-                            break
-
-
-                        patch_id = self.candids[idx][looper]    # this calls the next candidate patch
-                        looper += 1
-                        changed = True
-
-
-                if is_patch_correct:        # if patch changed
-                    node_id = self.slaveNodes[idx]
-                    if changed:
-                        eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->"+str(patch_id))
-                    if gn>0:
-                        if changed:
-                            eventList_iter[-1]+=("out")     # ... if also changed patch ...
-                        else:
-                            eventList_iter.append(str(idx)+": out")     # ... or if only went out
+                    gn,t[0],t[1],fintC[0],fintC[1],fintC[2] = nodedata[right_cand]
+                    patch_id = self.candids[idx][right_cand]
+                    patch = surf.patches[patch_id] 
 
                     self.actives[idx] = patch_id
                     self.t1t2cache[idx] = t
-                    # print("["+str(idx)+","+str(patch_id)+"],",end="")
+
+                    node_id = self.slaveNodes[idx]
+                    # dofPatch = surf.body.DoFs[patch.squad]
+                    dofSlave = sBody.DoFs[node_id]
+                    # dofC = np.append(dofSlave,dofPatch)
+
+                
+                    Model.fint[np.ix_(dofSlave)] += fintC[:3]
 
 
-                else:
-                    # set_trace()
-                    print("Not correct patch found!!!")
-                    return
+                # while not is_patch_correct:
+                #     patch = surf.patches[patch_id]
 
-                dofPatch = surf.body.DoFs[patch.squad]
-                dofSlave = sBody.DoFs[node_id]
-                dofC = np.append(dofSlave,dofPatch)
+                #     if useANN:
+                        
+                #         t0 = np.array(self.t1t2[idx,patch_id],dtype=np.float64)
+                        
+                #         # If it's a decent candidate, evaluate
+                #         if (0-opaANN<t0[0]<1+opaANN and 0-opaANN<t0[1]<1+opaANN):
+                #             fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=useANN,t0=t0)
+                #             is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
+
+                #     else:
+
+                #         # import pdb; pdb.set_trace()
+
+                #         fintC,gn,t = patch.fintC_fless_rigidMaster(xs,kn,cubicT=self.cubicT, ANNapprox=False,t0=None)
+                #         is_patch_correct = 0-opa<t[0]<1+opa and 0-opa<t[1]<1+opa    #boolean
+
+                #     # If not correct, try next candidate
+                #     if not is_patch_correct:
+
+                #         # import pdb; pdb.set_trace()
+                        
+                #         if looper==len(self.candids[idx]):  # No candidate is projecting well...
+
+                #             # for the 2D-case only!!
+                #             fintC = np.nan                      # <- this will force RedoHalf
+                #             break
+
+
+                #         patch_id = self.candids[idx][looper]    # this calls the next candidate patch
+                #         looper += 1
+                #         changed = True
+
+
+                # if is_patch_correct:        # if patch changed
+                #     node_id = self.slaveNodes[idx]
+                #     if changed:
+                #         eventList_iter.append(str(idx)+": "+str(self.actives[idx])+"-->"+str(patch_id))
+                #     if gn>0:
+                #         if changed:
+                #             eventList_iter[-1]+=("out")     # ... if also changed patch ...
+                #         else:
+                #             eventList_iter.append(str(idx)+": out")     # ... or if only went out
+
+                #     self.actives[idx] = patch_id
+                #     self.t1t2cache[idx] = t
+                #     # print("["+str(idx)+","+str(patch_id)+"],",end="")
+
+
+                # else:
+                #     # set_trace()
+                #     print("Not correct patch found!!!")
+                #     return
+
+                # node_id = self.slaveNodes[idx]
+                # dofPatch = surf.body.DoFs[patch.squad]
+                # dofSlave = sBody.DoFs[node_id]
+                # dofC = np.append(dofSlave,dofPatch)
 
                
-                Model.fint[np.ix_(dofC)] += fintC
+                # Model.fint[np.ix_(dofC)] += fintC
         self.patch_changes=eventList_iter
 
         # print("")

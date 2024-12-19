@@ -8,6 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from PyClasses.FEAssembly import *
 from PyClasses.Contacts import *
 from PyClasses.FEModel import *
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 #####################
 ### Setting model ###
@@ -24,7 +25,7 @@ model = FEModel([ptt], [],[])           # [bodies, contacts, BCs, opts*]
 ptt.Translate([-6.0, 0.0, 0.0])
 model.X = ptt.X.ravel()
 ptt.surf.ComputeGrgPatches(np.zeros(ndofs),range(len(ptt.surf.nodes)))
-model.plotNow()       # Uncomment to see and verify geometry
+# model.plotNow()       # Uncomment to see and verify geometry
 
 
 # Argument parsing
@@ -44,50 +45,51 @@ i, j, k = args.i, args.j, args.k
 
 
 
-# points_per_side = 200
-# chunks_per_side = 1
-# i, j, k = 0,0,0
+# # points_per_side = 200
+# # chunks_per_side = 1
+# # i, j, k = 0,0,0
 
 
-chunksize = int(points_per_side/chunks_per_side)+1
+# chunksize = int(points_per_side/chunks_per_side)+1
 
-if i == chunks_per_side - 1:
-    chunksizeX = points_per_side - i*chunksize
-else:
-    chunksizeX = chunksize
-if j == chunks_per_side - 1:
-    chunksizeY = points_per_side - j*chunksize
-else:
-    chunksizeY = chunksize
-if k == chunks_per_side - 1:
-    chunksizeZ = points_per_side - k*chunksize
-else:
-    chunksizeZ = chunksize
-
-
-offset = 0.1
-# n_per_side = 200 
+# if i == chunks_per_side - 1:
+#     chunksizeX = points_per_side - i*chunksize
+# else:
+#     chunksizeX = chunksize
+# if j == chunks_per_side - 1:
+#     chunksizeY = points_per_side - j*chunksize
+# else:
+#     chunksizeY = chunksize
+# if k == chunks_per_side - 1:
+#     chunksizeZ = points_per_side - k*chunksize
+# else:
+#     chunksizeZ = chunksize
 
 
-model_X = model.X.reshape(-1,3)
-xa,xb = min(model_X[:,0]), max(model_X[:,0])
-ya,yb = min(model_X[:,1]), max(model_X[:,1])
-za,zb = min(model_X[:,2]), max(model_X[:,2])
+# offset = 0.1
+# # n_per_side = 200 
 
-dx, dy, dz = offset*np.array([xb-xa,yb-ya,zb-za])
-xmin, xmax = xa-dx, xb+dx
-ymin, ymax = ya-dy, yb+dy
-zmin, zmax = za-dz, zb+dz
 
-xs = np.zeros((chunksizeX*chunksizeY*chunksizeZ , 3))
+# model_X = model.X.reshape(-1,3)
+# xa,xb = min(model_X[:,0]), max(model_X[:,0])
+# ya,yb = min(model_X[:,1]), max(model_X[:,1])
+# za,zb = min(model_X[:,2]), max(model_X[:,2])
 
-# Generate set of points in space
-locator_index = 0
-for x in np.linspace(xmin,xmax, points_per_side)[chunksize*i:chunksize*i+chunksizeX]:
-    for y in np.linspace(ymin,ymax, points_per_side)[chunksize*j:chunksize*j+chunksizeY]:
-        for z in np.linspace(zmin,zmax, points_per_side)[chunksize*k:chunksize*k+chunksizeZ]:
-            xs[locator_index] = np.array([x,y,z])
-            locator_index += 1
+# dx, dy, dz = offset*np.array([xb-xa,yb-ya,zb-za])
+# xmin, xmax = xa-dx, xb+dx
+# ymin, ymax = ya-dy, yb+dy
+# zmin, zmax = za-dz, zb+dz
+
+
+# xs = np.zeros((chunksizeX*chunksizeY*chunksizeZ , 3))
+
+# # Generate set of points in space
+# locator_index = 0
+# for x in np.linspace(xmin,xmax, points_per_side)[chunksize*i:chunksize*i+chunksizeX]:
+#     for y in np.linspace(ymin,ymax, points_per_side)[chunksize*j:chunksize*j+chunksizeY]:
+#         for z in np.linspace(zmin,zmax, points_per_side)[chunksize*k:chunksize*k+chunksizeZ]:
+#             xs[locator_index] = np.array([x,y,z])
+#             locator_index += 1
 
 # import cProfile
 # import pstats
@@ -110,7 +112,7 @@ set_trace()
 
 # t0 = time()
 
-with open("Points_"+str(i)+'_'+str(j)+'_'+str(k)+".csv", 'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
+with open("Points_"+str(i)+'_'+str(j)+'_'+str(k)+'.csv', 'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
 # with open("Points_chacking.csv", 'w') as csvfile:        #'a' is for "append". If the file doesn't exists, cretes a new one
     # creating a csv writer object
     csvwriter = csv.writer(csvfile)

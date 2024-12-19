@@ -573,7 +573,9 @@ class GrgPatch:
         tol = 1e-15
         res = 1+tol
         niter = 0
-        tcandidate = t.copy()
+        tcandidate = t.copy()   # Is this a good candidate? It could happen that is it wrongly entering
+                                # with 0<t<1 in case of ANN and actually should be slightly out of bounds.
+                                # That would iterate 13 times and return the wrong value (this value).
         dist = norm(xs - self.Grg0(tcandidate))  # Initial guess for distance in case there is no convergence
 
 
@@ -581,8 +583,8 @@ class GrgPatch:
 
         xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
         f = -2*(xs-xc)@dxcdt
-        opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
-        # opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
+        # opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
+        opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
         while res>tol and (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
 
             
@@ -597,6 +599,9 @@ class GrgPatch:
             f = -2*(xs-xc)@dxcdt
 
             res = np.linalg.norm(dt)
+
+            if res<np.sqrt(tol) and not (0<t[0]<1 and 0<t[1]<1):  # if it is converging outside the patch
+                return np.array([-1.0,-1.0])
 
             # print("iter:",niter,"\tt:",t,"\tres:",res)
 
@@ -1354,7 +1359,7 @@ class GrgPatch:
             return kn/(2*cubicT)*gn**2*dgndu, gn, t
         
 
-    def fintC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, xs_check=None, ANNapprox = False,t0=None,recursive_seeding=1):       #Chain rule by hand
+    def fintC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8, xs_check=None, ANNapprox = False,t0=None,recursive_seeding=1,test_gns=False):       #Chain rule by hand
         """Frictionless contact force"""
         Ne = len(self.squad)
 
@@ -1375,6 +1380,11 @@ class GrgPatch:
 
         dgndu    = np.zeros(  3*(Ne+1) )
         dgndu[:3] = normal         # only the terms related to the slave node. Also dgndxc@dxcdxs = dgndn@dndxs = 0
+
+
+        if test_gns:
+            return t, gn ,dgndu
+
 
         if  cubicT is None:
             fintCN = kn*gn*dgndu
@@ -2149,7 +2159,7 @@ class GrgPatch:
         else:
             return kn/(2*cubicT)*gn**2*dgndu, gn
 
-    def KC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8,t=None):       #Chain rule by hand
+    def KC_fless_rigidMaster(self, xs, kn, seeding=10, cubicT=None, OPA=1e-8,t=None, test_gns = False):       #Chain rule by hand
         Ne = len(self.squad)
 
         t = self.findProjection(xs) if t is None else t
@@ -2160,7 +2170,7 @@ class GrgPatch:
         gn = (xs-xc)@normal
 
         opa = 1e-3
-        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+        if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa) and not test_gns:
             return np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
 
         dgdxs =  normal
@@ -2179,6 +2189,16 @@ class GrgPatch:
         #########################
         dgdu    = np.zeros(  3*(Ne+1) )
         d2gd2u  = np.zeros( (3*(Ne+1) , 3*(Ne+1)) )
+
+
+
+
+        if test_gns:
+            if not (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+                return np.array([-1,-1]),10000,dgdxs,dndxs
+            return t, gn, dgdxs, dndxs
+
+
 
         # fintC Slave :
         dgdu[:3] = dgdxs
@@ -3599,7 +3619,7 @@ class GrgPatch:
             surfObj = axis.plot_surface(x, y, z, color=color,edgecolors=None)
             plotObj.append(surfObj)
         if wire:
-            wireObj = axis.plot_wireframe(x, y, z, color="black",lw=0.4)
+            wireObj = axis.plot_wireframe(x, y, z, color="gray",lw=0.2)
             plotObj.append(wireObj)
 
         if label:

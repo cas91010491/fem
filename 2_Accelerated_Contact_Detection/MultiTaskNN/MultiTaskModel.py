@@ -119,8 +119,8 @@ class SaveModelAndConfusionMatrix(Callback):
         history_df.to_csv(os.path.join(self.save_dir, 'training_history.csv'), index=False)
 
 
-percent = 1
-epochs = 20
+percent = 100
+epochs = 200
 Drop_factor = 0.0
 
 
@@ -136,6 +136,7 @@ n_data = filtered_data.shape[0]
 
 
 
+import pdb; pdb.set_trace()
 
 # Get the current time
 current_time = datetime.now().strftime('%Y%m%d%H%M')
@@ -145,7 +146,6 @@ output_dir = f'OUTPUT_{current_time}_{model_name}'
 
 # Create the directory if it doesn't exist
 os.makedirs(output_dir, exist_ok=True)
-
 
 
 
@@ -185,6 +185,7 @@ y_projection_train, y_projection_test = train_test_split(
     y_projection_one_hot,
     test_size=0.2,  # Use 20% for testing
     random_state=42  # For reproducibility
+    # random_state=123  # For reproducibility
 )
 
 

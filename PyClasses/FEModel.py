@@ -455,7 +455,6 @@ class FEModel:
             self.get_K(DispTime=TimeDisp)  # <-- uses self.u_temp           (no dirichlet)
 
             # Linear System
-
             Kaa=self.K[np.ix_(di,di)]
             Kab=self.K[np.ix_(di,fr)]
             Kba=self.K[np.ix_(fr,di)]
@@ -478,11 +477,6 @@ class FEModel:
 
             RES = self.residual(printRes=True)
 
-            # if RES>10:
-            #     set_trace()
-
-
-
             if RES<minRES:
                 minRES = float(RES)
             
@@ -496,11 +490,6 @@ class FEModel:
 
             niter += 1
             self.u_temp = np.array(self.u)
-
-            # # if (niter == maxiter and RES>tol) or np.isnan(RES) or RES>1e+15:
-            # if (niter == maxiter and RES>tol) or np.isnan(RES) or RES>1e+15:
-            #     print('Increment failed to converge !!!!! Redoing half')
-            #     return False
 
         return RES<tol, RES
 
@@ -1808,7 +1797,12 @@ class FEModel:
 
 
     def residual(self, printRes = False):
+        # if norm(self.fext) > 1e-14 :
+        #     RES = np.linalg.norm(self.fint - self.fext)/norm(self.fext)
+        # else:
+        #     RES = np.linalg.norm(self.fint - self.fext)
         RES = np.linalg.norm(self.fint - self.fext)
+        # print("fext: ",norm(self.fext))
         if printRes: print("resid :",RES)
         return RES
 
@@ -1900,15 +1894,15 @@ class FEModel:
                 converged, res = self.minimize(tol=tolerance,ti=ti,simm_time=t,method=minimethod,plot=bool(plot>1))
                 self.u_temp = np.array(self.u)  # copy of 'u' so that solution is directly used in NR
             else:
-                # if abs(t-0.75)<1e-10:
+                # if abs(t-0.08)<1e-10:
                 #     import pdb; pdb.set_trace()
 
                 converged, res = self.NR(tol=tolerance,maxiter=max_iter)
             actives_after_solving = list(self.contacts[0].actives)
 
-            print("ACTIVE NODES:")
-            print("Before solving:",actives_before_solving)
-            print("After solving :",actives_after_solving)
+            # print("ACTIVE NODES:")
+            # print("Before solving:",actives_before_solving)
+            # print("After solving :",actives_after_solving)
 
 
             print("delta_epcum:",norm(self.bodies[0].DELTA_EPcum))
