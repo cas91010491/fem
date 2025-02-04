@@ -169,7 +169,8 @@ class Surface:
                 elif almostSpecialPatches!= None and ipatch in almostSpecialPatches[1]:
                     quadsurf = patch.plot(axis, color = almostSpecialPatches[0], ref=ref,wire = wire)
                 else:
-                    quadsurf = patch.plot(axis, color = (.5,.5,.5,0.3), ref=ref,wire=wire)           # Inactive part of master
+                    # quadsurf = patch.plot(axis, color = (.5,.5,.5,0.3), ref=ref,wire=wire)           # Inactive part of master
+                    quadsurf = patch.plot(axis, color = (.5,.5,.5,0.2), ref=ref,wire=wire)           # Inactive part of master
                     # quadsurf = patch.plot(axis, color = (.5,.5,.5,1.0), ref=ref,wire=wire)           # Inactive part of master
             elif not onlyMaster:
                 # color = (.5,.5,.5,0.6) if sed is None else sed[self.body.hexas[ipatch]]
@@ -178,7 +179,8 @@ class Surface:
                 wire = False
                 quad = self.quads[ipatch]
                 if sed is None:
-                    color = (.5,.5,.5,1.0)
+                    # color = (.5,.5,.5,1.0)
+                    color = (.5,.5,.5,0.0)
                     wire = True
                 elif isinstance(sed, (list, np.ndarray)):
                     color = sed[quad]

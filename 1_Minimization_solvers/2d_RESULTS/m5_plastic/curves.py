@@ -2,6 +2,12 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Use LaTeX fonts
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "serif"
+})
+
 # Set the main directory as the current working directory
 main_directory = os.path.dirname(os.path.abspath(__file__))
 os.chdir(main_directory)
@@ -59,14 +65,14 @@ case = os.path.basename(main_directory)
 plt.figure(figsize=(10, 5))
 for method, (t, Fx) in data_fx.items():
     style = minimization_methods[method]
-    plt.plot(t, Fx, label=method, linestyle=style["linestyle"], marker=style["marker"], linewidth=style["linewidth"], markerfacecolor=style.get("markerfacecolor", None))
+    plt.plot(t, Fx, label=f'\\texttt{{{method}}}', linestyle=style["linestyle"], marker=style["marker"], linewidth=style["linewidth"], markerfacecolor=style.get("markerfacecolor", None))
 if vertical_lines:
     for x in vertical_lines:
         plt.axvline(x=x, color='gray', linestyle='--', linewidth=0.5)
     plt.axvline(x=vertical_lines[0], color='gray', linestyle='--', linewidth=0.5, label='minimization')
-plt.xlabel('t')
-plt.ylabel('Fx')
-plt.title(f'Fx vs t - {case}')
+plt.xlabel('$t$')
+plt.ylabel('$F_x$')
+plt.title('Horizontal force')
 plt.legend()
 plt.savefig(os.path.join(main_directory, case+"_Fx.png"))
 
@@ -74,13 +80,13 @@ plt.savefig(os.path.join(main_directory, case+"_Fx.png"))
 plt.figure(figsize=(10, 5))
 for method, (t, Fz) in data_fz.items():
     style = minimization_methods[method]
-    plt.plot(t, Fz, label=method, linestyle=style["linestyle"], marker=style["marker"], linewidth=style["linewidth"], markerfacecolor=style.get("markerfacecolor", None))
+    plt.plot(t, Fz, label=f'\\texttt{{{method}}}', linestyle=style["linestyle"], marker=style["marker"], linewidth=style["linewidth"], markerfacecolor=style.get("markerfacecolor", None))
 if vertical_lines:
     for x in vertical_lines:
         plt.axvline(x=x, color='gray', linestyle='--', linewidth=0.5)
     plt.axvline(x=vertical_lines[0], color='gray', linestyle='--', linewidth=0.5, label='minimization')
-plt.xlabel('t')
-plt.ylabel('Fz')
-plt.title(f'Fz vs t - {case}')
+plt.xlabel('$t$')
+plt.ylabel('$F_z$')
+plt.title('Vertical force')
 plt.legend()
 plt.savefig(os.path.join(main_directory, case+"_Fz.png"))

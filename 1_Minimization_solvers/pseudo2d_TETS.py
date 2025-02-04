@@ -38,15 +38,65 @@ plastic = args.plastic
 ####################
 os.chdir(sys.path[0])
 
-# BLOCK
-mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_"+str(mesh)+".msh")
-X_blk     = mesh_blk.points
-hexas_blk = mesh_blk.cells_dict['hexahedron']
+# # BLOCK
+# mesh_blk   = meshio.read("../Meshes/Block_pseudo2d_"+str(mesh)+".msh")
+# X_blk     = mesh_blk.points
+# hexas_blk = mesh_blk.cells_dict['hexahedron']
+nx=6
+ny=2
+nz=6
+clx=0.4
+cly=1.0
+clz=0.4
+
+
+LEN_node=nx*ny*nz
+X_blk=np.zeros((LEN_node,3))
+LEN_el=(nx-1)*(ny-1)*(nz-1)*6
+hexas_blk=np.zeros((LEN_el,4))
+cnt=0
+cnt2=0
+cntlb=-1
+for k in range(nz):
+    for j in range(ny):
+        for i in range(nx):
+            X_blk[cnt]=[i*clx, j*cly, k*clz]
+            cnt=cnt+1
+            cntlb=cntlb+1
+            if i==nx-1 or j==ny-1 or k==nz-1:
+                pass
+            else:
+                cn1=cntlb
+                cn2=cntlb+1
+                cn3=cntlb+1+nx
+                cn4=cntlb+nx
+                cn5=cntlb+nx*ny
+                cn6=cntlb+nx*ny+1
+                cn7=cntlb+nx*ny+nx+1
+                cn8=cntlb+nx*ny+nx
+
+                hexas_blk[cnt2:cnt2+6,:]=np.array([[cn4, cn1, cn6, cn5],
+                                          [cn4, cn6, cn7, cn8],
+                                          [cn4, cn5, cn6, cn8],
+                                          [cn1, cn2, cn4, cn6],
+                                          [cn4, cn6, cn3, cn7],
+                                          [cn2, cn3, cn4, cn6]])
+                print(cnt2)
+                cnt2=cnt2+6
+
+
+
+
+
+
+
 
 if plastic:
     blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False,plastic_param=[0.01,0.05,1.0])
 else:
     blk = FEAssembly(X_blk,hexas_blk, name= "BLOCK",recOuters=False)
+
+import pdb; pdb.set_trace()
 
 blk.Youngsmodulus = 0.05
 blk.Translate([-3,0.0,2.6])

@@ -53,8 +53,8 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False,plastic=False):
         # limits[2][0] = 1.0
 
         ax.set_xlim3d(4,12)
-        ax.set_ylim3d(-4,4)
-        ax.set_zlim3d(-2,5)
+        ax.set_ylim3d(-3.5,4.5)
+        ax.set_zlim3d(-1.5,5.5)
         ax.set_aspect("equal")
         ax.text2D(-0.05, 0.7, "time: "+str(round(0.0,8)), transform=ax.transAxes,backgroundcolor=(1.0,1.0,1.0,0.0),zorder=1000000,fontsize='x-large')
         ax.axis('off')
@@ -73,7 +73,7 @@ def plot4D(model,TIMES,UU,SED, ax=None, undef=False,plastic=False):
 
 
         else:
-            ax.view_init(elev=-25, azim=-55)
+            ax.view_init(elev=-25, azim=-150)
 
         axin2.view_init(elev=ax.elev, azim=ax.azim)
 

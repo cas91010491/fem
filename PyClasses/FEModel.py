@@ -1225,35 +1225,13 @@ class FEModel:
                 self.COUNTS[6] += 1
 
 
-                if p.T@K@p<=0:
+                if p.T@K@p<=0: 
                     a = p.T@M@p
                     b = 2*p.T@M@h
                     c = h.T@M@h - TR_rad**2
 
                     alpha=(-b+np.sqrt(b**2-4*a*c))/(2*a)
                     
-
-                    # eq0 = c
-                    # eq1 = a + b + c
-                    # alpha = 1e-2
-                    # eq = a*alpha**2 + b*alpha + c
-                    # while abs(eq)>1e-12*(abs(eq0)+abs(eq1)):
-                    #     stiff = 2*a*alpha + b
-                    #     d_alpha = -eq/stiff
-                    #     alpha += d_alpha
-                    #     eq = a*alpha**2 + b*alpha + c
-                    # a = p.T@p
-                    # b = 2*p.T@h
-                    # c = h.T@h - TR_rad**2
-                    # alpha = 1e-2
-                    # eq = a*alpha**2 + b*alpha + c
-                    # eq0 = eq
-                    # while abs(eq)>1e-12*abs(eq0):
-                    #     stiff = 2*a*alpha + b
-                    #     d_alpha = -eq/stiff
-                    #     alpha += d_alpha
-                    #     eq = a*alpha**2 + b*alpha + c
-
                     h += alpha*p
                     if alpha < 0:
                         print("Negative alpha1. Stopping the simulation.")
@@ -1266,33 +1244,11 @@ class FEModel:
                 alpha = float(r_new@q/(p.T@K@p))
                 
                 if (h+alpha*p).T@M@(h+alpha*p) >= TR_rad**2:
-                # if (h+alpha*p).T@(h+alpha*p) >= TR_rad**2:
                     a = p.T@M@p
                     b = 2*p.T@M@h
                     c = h.T@M@h - TR_rad**2
 
                     alpha=(-b+np.sqrt(b**2-4*a*c))/(2*a)
-
-                    # eq0 = c
-                    # eq1 = a + b + c
-                    # alpha = 1e-2
-                    # eq = a*alpha**2 + b*alpha + c
-                    # while abs(eq)>1e-12*(abs(eq0)+abs(eq1)):
-                    #     stiff = 2*a*alpha + b
-                    #     d_alpha = -eq/stiff
-                    #     alpha += d_alpha
-                    #     eq = a*alpha**2 + b*alpha + c
-                    # a = p.T@M@p
-                    # b = 2*p.T@M@h
-                    # c = h.T@M@h - TR_rad**2
-                    # alpha = 1e-2
-                    # eq = a*alpha**2 + b*alpha + c
-                    # eq0 = eq
-                    # while abs(eq)>1e-12*abs(eq0):
-                    #     stiff = 2*a*alpha + b
-                    #     d_alpha = -eq/stiff
-                    #     alpha += d_alpha
-                    #     eq = a*alpha**2 + b*alpha + c
 
                     if alpha < 0:
                         print("Negative alpha2. Stopping the simulation.")
