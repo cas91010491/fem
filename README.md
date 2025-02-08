@@ -73,9 +73,5 @@ The material solver in `PyClasses/FEAssembly.py` uses compiled functions to comp
 - Improving documentation with detailed explanations of models and methods.
 
 ## License
-TBD (You can specify if you want it to be open-source or restricted).
-
----
-
-This is a general README to get started. Let me know if you'd like to add more details! 🚀
+TBD
 
