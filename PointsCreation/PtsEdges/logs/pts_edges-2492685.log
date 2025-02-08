@@ -1,0 +1,66 @@
+SLURM_JOBID=2492685
+SLURM_JOB_NODELIST=aion-0203
+SLURM_NNODES=1
+SLURMTMPDIR=
+working directory = /mnt/irisgpfs/users/dihurtado/PointsCreation
+incorrect projections for patch 84 ,edge 0 : 26 .
+incorrect projections for patch 84 ,edge 1 : 65 .
+incorrect projections for patch 84 ,edge 2 : 34 .
+incorrect projections for patch 84 ,edge 3 : 40 .
+time taken by patch 84 : 1299.7266783714294 [s]
+incorrect projections for patch 85 ,edge 0 : 25 .
+incorrect projections for patch 85 ,edge 1 : 47 .
+incorrect projections for patch 85 ,edge 2 : 3 .
+incorrect projections for patch 85 ,edge 3 : 74 .
+time taken by patch 85 : 1284.9798784255981 [s]
+incorrect projections for patch 86 ,edge 0 : 137 .
+incorrect projections for patch 86 ,edge 1 : 115 .
+incorrect projections for patch 86 ,edge 2 : 217 .
+incorrect projections for patch 86 ,edge 3 : 88 .
+time taken by patch 86 : 1212.044323682785 [s]
+incorrect projections for patch 87 ,edge 0 : 2 .
+incorrect projections for patch 87 ,edge 1 : 45 .
+incorrect projections for patch 87 ,edge 2 : 591 .
+incorrect projections for patch 87 ,edge 3 : 71 .
+time taken by patch 87 : 1734.62433552742 [s]
+incorrect projections for patch 88 ,edge 0 : 31 .
+incorrect projections for patch 88 ,edge 1 : 35 .
+incorrect projections for patch 88 ,edge 2 : 60 .
+incorrect projections for patch 88 ,edge 3 : 18 .
+time taken by patch 88 : 1011.4076426029205 [s]
+incorrect projections for patch 89 ,edge 0 : 129 .
+incorrect projections for patch 89 ,edge 1 : 63 .
+incorrect projections for patch 89 ,edge 2 : 31 .
+incorrect projections for patch 89 ,edge 3 : 81 .
+time taken by patch 89 : 2025.8046996593475 [s]
+incorrect projections for patch 90 ,edge 0 : 49 .
+incorrect projections for patch 90 ,edge 1 : 35 .
+incorrect projections for patch 90 ,edge 2 : 43 .
+incorrect projections for patch 90 ,edge 3 : 22 .
+time taken by patch 90 : 1126.817636013031 [s]
+incorrect projections for patch 91 ,edge 0 : 44 .
+incorrect projections for patch 91 ,edge 1 : 102 .
+incorrect projections for patch 91 ,edge 2 : 43 .
+incorrect projections for patch 91 ,edge 3 : 1 .
+time taken by patch 91 : 1150.634171962738 [s]
+incorrect projections for patch 92 ,edge 0 : 10 .
+incorrect projections for patch 92 ,edge 1 : 11 .
+incorrect projections for patch 92 ,edge 2 : 38 .
+incorrect projections for patch 92 ,edge 3 : 32 .
+time taken by patch 92 : 1147.0212552547455 [s]
+incorrect projections for patch 93 ,edge 0 : 29 .
+incorrect projections for patch 93 ,edge 1 : 32 .
+incorrect projections for patch 93 ,edge 2 : 170 .
+incorrect projections for patch 93 ,edge 3 : 147 .
+time taken by patch 93 : 812.3328177928925 [s]
+incorrect projections for patch 94 ,edge 0 : 51 .
+incorrect projections for patch 94 ,edge 1 : 90 .
+incorrect projections for patch 94 ,edge 2 : 67 .
+incorrect projections for patch 94 ,edge 3 : 148 .
+time taken by patch 94 : 846.9243376255035 [s]
+incorrect projections for patch 95 ,edge 0 : 106 .
+incorrect projections for patch 95 ,edge 1 : 170 .
+incorrect projections for patch 95 ,edge 2 : 68 .
+incorrect projections for patch 95 ,edge 3 : 260 .
+time taken by patch 95 : 1080.549038887024 [s]
+==Ending run at Wed 24 Apr 23:47:55 CEST 2024
