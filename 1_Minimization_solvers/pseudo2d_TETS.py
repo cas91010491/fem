@@ -75,6 +75,8 @@ for k in range(nz):
                 cn7=cntlb+nx*ny+nx+1
                 cn8=cntlb+nx*ny+nx
 
+                set_trace()
+
                 hexas_blk[cnt2:cnt2+6,:]=np.array([[cn4, cn1, cn6, cn5],
                                           [cn4, cn6, cn7, cn8],
                                           [cn4, cn5, cn6, cn8],
