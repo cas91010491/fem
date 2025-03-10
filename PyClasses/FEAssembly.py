@@ -17,6 +17,9 @@ try:
     from PyClasses import fast_mfk
 except ImportError:
     print("Compiled module 'fast_mfk' not found. Attempting to compile...")
+    import sys
+    print("Current working directory:", os.getcwd())
+    sys.stdout.flush()
     compilation_script = os.path.join("../PyClasses", "fast_mfk_compilation.py")
     try:
         subprocess.run(["python", compilation_script], check=True)
@@ -94,7 +97,7 @@ class FEAssembly:
 
     def redundantNodes(self):
         reds = []
-        nodesinhexas = list(set(flatList(self.hexas)))
+        nodesinhexas = list(set(flatList(self.elements)))
         for i in range(len(self.X)):
             if i not in nodesinhexas:
                 reds.append(i)
@@ -103,7 +106,7 @@ class FEAssembly:
     def ReduceHexaOrders(self,idxs):
         sortedIdxs = sorted(idxs, reverse = True)
         new_hexas = []
-        for hexa in self.hexas:
+        for hexa in self.elements:
             new_hexa = []
             for node in hexa:
                 for idx in sortedIdxs:
@@ -112,7 +115,7 @@ class FEAssembly:
                 new_hexa.append(node)
             new_hexas.append(new_hexa)
         
-        self.hexas = new_hexas
+        self.elements = new_hexas
 
     # TRANSFORMATIONS
     def Translate(self, disp):
@@ -325,7 +328,7 @@ class FEAssembly:
     def SelectHexasByNodes(self,nodes):
         hexas = []
         nodeset = set(nodes)  # no surface needed. Hexas will be taken anyway
-        for hid, hexa in enumerate(self.hexas):
+        for hid, hexa in enumerate(self.elements):
             common = set(hexa).intersection(nodeset)
             if len(common)>0:
                 hexas.append(hid)
@@ -398,7 +401,7 @@ class FEAssembly:
 
 
 
-        hexass = np.array(self.hexas, dtype=np.int64)
+        hexass = np.array(self.elements, dtype=np.int64)
         m, force, self.FPtemp,self.DELTA_EPcum = process_hexas(hexass,self.DoFs,self.X, u, u_ref, self.FPconv, self.EPcum, self.Youngsmodulus, self.Poissonsratio, My0, Hardening_modulus, Hardening_exponent, self.max_bisect_RM)
 
         return force, m
@@ -409,15 +412,15 @@ class FEAssembly:
 
         computeRC = False
         if not hasattr(self,"SparseRow"):
-            self.SparseRow = np.empty(len(self.hexas)*576,dtype=int  )
-            self.SparseCol = np.empty(len(self.hexas)*576,dtype=int  )
+            self.SparseRow = np.empty(len(self.elements)*576,dtype=int  )
+            self.SparseCol = np.empty(len(self.elements)*576,dtype=int  )
             computeRC = True
 
-        V = np.empty(len(self.hexas)*576,dtype=float)
+        V = np.empty(len(self.elements)*576,dtype=float)
         
         _,Hardening_modulus,Hardening_exponent = self.plastic_param
 
-        for i,hexa in enumerate(self.hexas):
+        for i,hexa in enumerate(self.elements):
             X_hex = self.X[hexa]
             u_hex = u[self.DoFs[hexa]]
             
@@ -496,7 +499,7 @@ class FEAssembly:
         if self.isRigid: return None
         sed_tot = np.zeros((len(self.X),2)) # the second number counts in how many hexas a given node has appeared. Based on that we un-average it, add the new energy and then average it back
 
-        for hexa in self.hexas:
+        for hexa in self.elements:
             sed_tot[hexa,0] *= sed_tot[hexa,1]              # Getting the sum of energies of hexas for those nodes (un-averageing)
             sed_tot[hexa,1] += 1                            # count new hexa for those nodes
             sed_tot[hexa,0] += self.m_el_extra(hexa, u)     # add the hexa energy to the total node energy
@@ -536,7 +539,7 @@ class FEAssembly:
         # epcum_gauss_array is an array of shape (125, 8) with EPCUM at each Gauss point for each element
         epcum_tot = np.zeros((len(self.X), 2))  # Second dimension counts how many hexas share the node
 
-        for el, hexa in enumerate(self.hexas):
+        for el, hexa in enumerate(self.elements):
             epcum_tot[hexa, 0] *= epcum_tot[hexa, 1]              # Un-average previous values
             epcum_tot[hexa, 1] += 1                               # Count how many hexas contribute to this node
             epcum_tot[hexa, 0] += self.epcum_el_extra(hexa, epcum_gauss_array[el])  # Extrapolate and add EPCUM from this element
@@ -3729,12 +3732,12 @@ def compute_Kgp_tet(PdF, dNdx):
             return None
 
         if not hasattr(self,"SparseRow"):
-            RC = eigen_backend.K_global_cr(Model.X,Model.u_temp,self.hexas,self.DoFs,self.Youngsmodulus,self.Poissonsratio)
-            vals = eigen_backend.K_global_cr(Model.X,Model.u_temp,self.hexas,self.DoFs,self.Youngsmodulus,self.Poissonsratio)
+            RC = eigen_backend.K_global_cr(Model.X,Model.u_temp,self.elements,self.DoFs,self.Youngsmodulus,self.Poissonsratio)
+            vals = eigen_backend.K_global_cr(Model.X,Model.u_temp,self.elements,self.DoFs,self.Youngsmodulus,self.Poissonsratio)
             self.SparseRow = RC.rows
             self.SparseCol = RC.cols
 
-        vals = eigen_backend.K_global_val(Model.X,Model.u_temp,self.hexas,self.DoFs,self.Youngsmodulus,self.Poissonsratio)
+        vals = eigen_backend.K_global_val(Model.X,Model.u_temp,self.elements,self.DoFs,self.Youngsmodulus,self.Poissonsratio)
         Ksparse = sparse.csr_matrix((vals,(self.SparseRow,self.SparseCol)),shape=Model.K.shape)
 
         Model.K += Ksparse
@@ -3746,12 +3749,12 @@ def compute_Kgp_tet(PdF, dNdx):
 
         computeRC = False
         if not hasattr(self,"SparseRow"):
-            self.SparseRow = np.empty(len(self.hexas)*576,dtype=int  )
-            self.SparseCol = np.empty(len(self.hexas)*576,dtype=int  )
+            self.SparseRow = np.empty(len(self.elements)*576,dtype=int  )
+            self.SparseCol = np.empty(len(self.elements)*576,dtype=int  )
             computeRC = True
 
-        V = np.empty(len(self.hexas)*576,dtype=float)
-        for i,hexa in enumerate(self.hexas):
+        V = np.empty(len(self.elements)*576,dtype=float)
+        for i,hexa in enumerate(self.elements):
             # V[i*576:(i+1)*576] = self.K_el_plastic(hexa, Model.u_temp,self.FPconv[i],self.EPcum[i],i).ravel()
 
             X_hex = self.X[hexa]
@@ -4878,7 +4881,7 @@ def compute_Kgp_tet(PdF, dNdx):
         
         My0,Hardening_modulus,Hardening_exponent = self.plastic_param
         
-        for hex_id,hexa in enumerate(self.hexas):
+        for hex_id,hexa in enumerate(self.elements):
             # fint_el = self.fint_el(hexa,u)
 
             # if norm(self.EPcum)>0 and hex_id==4:
@@ -4914,7 +4917,7 @@ def compute_Kgp_tet(PdF, dNdx):
             return None
 
         u = Model.u_temp if temp else Model.u
-        # for hex_id,hexa in enumerate(self.hexas):
+        # for hex_id,hexa in enumerate(self.elements):
         #     # fint_el = self.fint_el(hexa,u)
         #     u_ref = Model.REF[0]
         #     fint_el = self.fint_el_plastic(hexa,u,self.FPconv[hex_id],self.EPcum[hex_id],hex_id,u_ref)
@@ -4936,7 +4939,7 @@ def compute_Kgp_tet(PdF, dNdx):
             return 0
 
         m = 0
-        for hexa in self.hexas:
+        for hexa in self.elements:
             m += self.m_el(hexa,u)
 
         return m
@@ -4946,7 +4949,7 @@ def compute_Kgp_tet(PdF, dNdx):
         if self.isRigid:
             return 0
 
-        for hexa in self.hexas:
+        for hexa in self.elements:
             fint_el = self.fint_el(hexa,u)
             dofs = self.DoFs[hexa].ravel()
             force[dofs] += fint_el
@@ -4965,7 +4968,7 @@ def compute_Kgp_tet(PdF, dNdx):
         force=np.zeros(Model.fint.shape)
 
         u_ref = Model.REF[0]
-        for hex_id,hexa in enumerate(self.hexas):
+        for hex_id,hexa in enumerate(self.elements):
             # m_el,fint_el = self.mf_el_plastic(hexa,u,self.FPconv[hex_id],self.EPcum[hex_id],hex_id,u_ref)
             m_el,fint_el = self.mf_el_plastic(hexa,u,self.FPconv[hex_id],self.EPcum[hex_id],hex_id,u_ref)
             dofs = self.DoFs[hexa].ravel()

@@ -1828,7 +1828,7 @@ class FEModel:
             print("("+str(num-1)+"/"+str(den)+" --> "+str(num)+"/"+str(den)+" in the increment)")
 
             for body in self.bodies:
-                body.DELTA_EPcum = np.zeros((len(body.hexas),8))
+                body.DELTA_EPcum = np.zeros((len(body.elements),8))
 
 
             self.u_temp = np.array(self.u)  # copy of 'u' wihout dirichlet (to be used in Newton ONLY)

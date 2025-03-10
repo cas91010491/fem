@@ -12,16 +12,16 @@ from time import time
 script_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(script_dir)
 
-# Load points from Points_on_surf.ft
-def load_points(filename):
-    points = []
-    with open(filename, 'r') as ftfile:
-        for line in ftfile:
-            points.append([float(x) for x in line.split()])
-    return np.array(points)
+# # Load points from Points_on_surf.ft
+# def load_points(filename):
+#     points = []
+#     with open(filename, 'r') as ftfile:
+#         for line in ftfile:
+#             points.append([float(x) for x in line.split()])
+#     return np.array(points)
 
-points = load_points("Points_on_surf.ft")
-import pdb; pdb.set_trace()
+# points = load_points("Points_on_surf.ft")
+# import pdb; pdb.set_trace()
 
 #####################
 ### Setting model ###
@@ -59,12 +59,14 @@ points = np.zeros((96*n_per_side*n_per_side,6))
 patches = model.bodies[0].surf.patches
 npatches = len(patches)
 
+eps_t = 1e-9
+
 for i_p,patch in enumerate(patches):
     # nested loop to iterate over surface coordinates 0<(t1,t2)<1
     print(f"Processing patch {i_p+1} of {npatches}")
     points_in_patch = np.zeros((n_per_side*n_per_side,6))
-    for n1,t1 in enumerate(np.linspace(0,1,n_per_side)):
-        for n2,t2 in enumerate(np.linspace(0,1,n_per_side)):
+    for n1,t1 in enumerate(np.linspace(0+eps_t,1-eps_t,n_per_side)):
+        for n2,t2 in enumerate(np.linspace(0+eps_t,1-eps_t,n_per_side)):
             x = patch.Grg0([t1,t2])
             # csvwriter.writerow([x[0],x[1],x[2],patch.iquad,t1,t2])
             points_in_patch[n1*n_per_side+n2]=[x[0],x[1],x[2],patch.iquad,t1,t2]

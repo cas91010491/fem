@@ -491,7 +491,7 @@ class GrgPatch:
         else:
             raise ValueError("In dndt: Only first and second order derivatives are implemented")
 
-    def MinDist(self, x, seeding = 10,x0x1y0y1 = [0.0,1.0,0.0,1.0],recursive = False,recursionLevel=0,prev_t=None):
+    def MinDist_old_24022025(self, x, seeding = 10,x0x1y0y1 = [0.0,1.0,0.0,1.0],recursive = False,recursionLevel=0,prev_t=None):
         
         umin = 0.0
         vmin = 0.0
@@ -537,10 +537,57 @@ class GrgPatch:
 
         return umin , vmin      # Temporarily returning UV from the rough approximation on the grid. TODO: implement exact calculus
 
+    def MinDist(self, x, seeding = 10,x0x1y0y1 = [0.0,1.0,0.0,1.0],recursive = False,recursionLevel=0,prev_t=None):
+        
+        umin = 0.0
+        vmin = 0.0
+        dmin = norm(x-self.CtrlPts[0][0])   # Starting point
+
+        if recursive:
+            x0,x1,y0,y1 = x0x1y0y1
+            if recursive>1:
+                seeding = recursive
+            else:
+                seeding = 4
+            dx, dy = x1-x0, y1-y0   # they might change once the borders (0.0/1.0) have been considered
+        else:
+            x0,x1,y0,y1 = x0x1y0y1
+
+        for u in np.linspace(x0,x1,seeding+1):
+            for v in np.linspace(y0,y1,seeding+1):
+                d = norm(x - self.Grg((u,v)))
+                if d < dmin:
+                    dmin, umin, vmin = d, u, v
+        
+        # if recursive and recursionLevel<8:
+        if recursive and recursionLevel<8:
+            # if prev_t is None or (abs(prev_t[0]-umin)>5e-3 and abs(prev_t[1]-vmin)>5e-3):
+            if prev_t is None or (abs(prev_t[0]-umin)>5e-3 or abs(prev_t[1]-vmin)>5e-3):    # OR!
+                    # x0 = max(0.0,umin-dx*3/16)      # 3/16 is a bit less than 1/4
+                    # x1 = min(1.0,umin+dx*3/16)      # ... and this is useful 
+                    # y0 = max(0.0,vmin-dy*3/16)      # ... to increase variance 
+                    # y1 = min(1.0,vmin+dy*3/16)      # ... and reduce redundance.
+
+                    # x0 = max(0.0,umin-3*dx/(8*seeding))      # 3/4*(dx/(2*seeding))...
+                    # x1 = min(1.0,umin+3*dx/(8*seeding))      # ... and this is useful 
+                    # y0 = max(0.0,vmin-3*dy/(8*seeding))      # ... to increase variance 
+                    # y1 = min(1.0,vmin+3*dy/(8*seeding))      # ... and reduce redundance.
+
+                    x0 = max(0.0,umin-7*dx/(16*seeding))      # 7/8*(dx/(2*seeding))...
+                    x1 = min(1.0,umin+7*dx/(16*seeding))      # ... and this is useful 
+                    y0 = max(0.0,vmin-7*dy/(16*seeding))      # ... to increase variance 
+                    y1 = min(1.0,vmin+7*dy/(16*seeding))      # ... and reduce redundance.
+            
+                    return self.MinDist(x,seeding = seeding, x0x1y0y1=[x0,x1,y0,y1],recursive=recursive,recursionLevel=recursionLevel+1,prev_t=[umin,vmin])
+
+
+        return umin , vmin      # Temporarily returning UV from the rough approximation on the grid. TODO: implement exact calculus
+
+
     def MinDistANN(self,x,verbose='auto'):
         return np.array(self.ANN_projection_model.predict(x,verbose=verbose),dtype=np.float64)
 
-    def findProjection(self,xs, seeding=10, recursive=1, decimals = None,tracing =False, ANNapprox = False,t0 = None):
+    def findProjection_old_24022025(self,xs, seeding=10, recursive=1, decimals = None,tracing =False, ANNapprox = False,t0 = None):
 
         def proj_final_check(self,xs,t):
             # final check (for points at/beyond edges)
@@ -598,6 +645,83 @@ class GrgPatch:
         t = proj_final_check(self,xs,t)
                 
         return t if decimals is None else t.round(decimals)
+
+    def findProjection(self,xs, seeding=10, recursive=1, decimals = None,tracing =False, ANNapprox = False,t0 = None):
+
+        def proj_final_check(self,xs,t):
+            # final check (for points at/beyond edges)
+            # if not (0<=t[0]<=1 and 0<=t[1]<=1):
+            if not (0<t[0]<1 and 0<t[1]<1):         # Camilo
+                t1 = min(max(0.0,t[0]),1.0)     # trimming values
+                t2 = min(max(0.0,t[1]),1.0)     # trimming values
+                xc0= self.Grg0([t1,t2])
+                nor0=self.D3Grg([t1,t2])
+                x_tang = (xs-xc0)-(xs-xc0)@nor0
+                if norm(x_tang)>2*self.BS.r/100:         # some considerable order of magnitude with respect to the patch 'size'
+                    return np.array([-1.0,-1.0])
+            return t
+
+
+
+        if not ANNapprox:
+            t = np.array(self.MinDist(xs, seeding=seeding,recursive=recursive))
+        elif t0 is not None:
+            t = t0.copy()
+        else:
+            t = self.MinDistANN( np.array([xs + np.array([-6.0, 0.0, 0.0],dtype=np.float64)]) , verbose=0 )[0]
+
+        # tol = 1e-16
+        tol = 1e-15
+        res = 1+tol
+        niter = 0
+        tcandidate = t.copy()   # Is this a good candidate? It could happen that is it wrongly entering
+                                # with 0<t<1 in case of ANN and actually should be slightly out of bounds.
+                                # That would iterate 13 times and return the wrong value (this value).
+        dist = norm(xs - self.Grg0(tcandidate))  # Initial guess for distance in case there is no convergence
+
+
+        # import pdb; pdb.set_trace()
+
+        xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
+        f = -2*(xs-xc)@dxcdt
+        # opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
+        opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
+        while res>tol and (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
+
+            
+
+            #f = -2*(xs-xc)@dxcdt
+            K =  2*(np.tensordot(-( xs-xc),d2xcd2t,axes=[[0],[0]]) + dxcdt.T @ dxcdt)
+
+            dt=np.linalg.solve(-K,f)
+            t+=dt
+            
+            xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
+            f = -2*(xs-xc)@dxcdt
+
+            res = np.linalg.norm(dt)
+
+            if res<np.sqrt(tol) and not (0<t[0]<1 and 0<t[1]<1):  # if it is converging outside the patch
+                return np.array([-1.0,-1.0])
+
+            # print("iter:",niter,"\tt:",t,"\tres:",res)
+
+            niter +=1
+            if niter > 10:
+                dist_new = norm(xs - xc )
+                if dist_new < dist:
+                    dist = dist_new
+                    tcandidate = t.copy()
+                if niter> 13:
+                    # return tcandidate
+                    return proj_final_check(self,xs,tcandidate)
+                
+        t = proj_final_check(self,xs,t)
+                
+        return t if decimals is None else t.round(decimals)
+
+
+
 
     # xc derivs
     def dxcdxi(self,t):     # 20 scalars to be converted into diagonal matrices each

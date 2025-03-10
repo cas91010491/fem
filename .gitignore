@@ -22,3 +22,4 @@ PyClasses/__pycache__/
 *.sh
 2_Accelerated_Contact_Detection/sampled_data_50_percent.csv
 *.csv
+*.ft

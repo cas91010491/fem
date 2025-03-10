@@ -46,7 +46,7 @@ class Surface:
 
         track = dict()
         lookup = defaultdict(bool)
-        for node in self.body.hexas:#<-remove # and it should work as a method 
+        for node in self.body.elements:#<-remove # and it should work as a method 
             bottom = node[:4]; bottom.sort()
             top   = node[4:]; top.sort()
             side1 = [*node[:2],*node[4:6]]; side1.sort()
@@ -173,7 +173,7 @@ class Surface:
                     quadsurf = patch.plot(axis, color = (.5,.5,.5,0.2), ref=ref,wire=wire)           # Inactive part of master
                     # quadsurf = patch.plot(axis, color = (.5,.5,.5,1.0), ref=ref,wire=wire)           # Inactive part of master
             elif not onlyMaster:
-                # color = (.5,.5,.5,0.6) if sed is None else sed[self.body.hexas[ipatch]]
+                # color = (.5,.5,.5,0.6) if sed is None else sed[self.body.elements[ipatch]]
 
                 # set_trace()
                 wire = False
