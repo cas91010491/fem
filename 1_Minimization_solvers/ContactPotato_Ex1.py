@@ -51,7 +51,10 @@ blk.Translate([0.0,0.0,3.5])
 
 
 # # POTATO
-[ptt] = pickle.load(open("PotatoAssembly.dat","rb"))
+[ptt] = pickle.load(open("Dat/PotatoAssembly.dat","rb"))
+# Fix compatibility issue from hexas->elements rename
+if hasattr(ptt, 'hexas') and not hasattr(ptt, 'elements'):
+    ptt.elements = ptt.hexas
 ## OR ##
 # mesh_ptt = meshio.read("../Meshes/QuadSpheres/QuadSphere4.msh")
 # # mesh_ptt = meshio.read("Meshes/Cubes/cube843.msh")
@@ -62,7 +65,7 @@ blk.Translate([0.0,0.0,3.5])
 # ptt.Resize(3.0,dir='y')
 # ptt.Resize(2.0,dir='z')
 # ptt.RandDistort(0.5)
-# pickle.dump([ptt],open("PotatoAssembly.dat","wb"))
+# pickle.dump([ptt],open("Dat/PotatoAssembly.dat","wb"))
 ptt.isRigid = True     # faster solving when True
 
 ######################
@@ -108,8 +111,8 @@ model.plotNow()       # Uncomment to see and verify geometry
 t0 = time()
 
 
-recov = "OUTPUT_202410290908ContactPotato_slideX_elastic_BFGS_10/"+"RecoveryData.dat"
-model.Solve(TimeSteps=100,max_iter=20, recover=False ,minimethod=minimization_method,plot=1)
+# recov = "OUTPUT_202410290908ContactPotato_slideX_elastic_BFGS_10/"+"RecoveryData.dat"
+model.Solve(TimeSteps=100,max_iter=20, recover=False ,minimethod=minimization_method,plot=0)
 
 
 
