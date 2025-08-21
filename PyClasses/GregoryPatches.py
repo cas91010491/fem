@@ -5,6 +5,7 @@ from PyClasses.Utilities import Bernstein, dnBernstein, Unchain, printif, flatLi
 import numpy as np
 from numpy.linalg import norm
 import time,csv
+from . import gregory_patch_backend
 
 
 from pdb import set_trace
@@ -229,7 +230,16 @@ class GrgPatch:
         ctrls = [row0,row1,row2,row3]
         self.CtrlPts = ctrls
 
+    def Grg_vectorized(self, t, deriv=0):
+        if deriv == 0:
+            return gregory_patch_backend.Grg(np.array(self.flatCtrlPts()), t[0], t[1], self.eps)
+        else:
+            return self.Grg(t, deriv=deriv)
+
     def Grg(self, t, deriv = 0):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
+        if deriv == 0:
+            return gregory_patch_backend.Grg(np.array(self.flatCtrlPts()), t[0], t[1], self.eps)
+        
         u,v = t
         p       = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
         if deriv > 0:
@@ -253,7 +263,7 @@ class GrgPatch:
                     if i==1 and j ==1:
                         x110, x111 = self.CtrlPts[1][1]
                         den = max(self.eps,u+v)  
-                        xij = (u*x110+v*x111)/(den)
+                        xij = (u*x110+v*x111)/(den)  
                         if deriv > 0:
                             D1xij = x110/(den) - (u*x110 + v*x111)/((den)**2)
                             D2xij = x111/(den) - (u*x110 + v*x111)/((den)**2)
@@ -514,7 +524,7 @@ class GrgPatch:
 
         for u in np.linspace(x0,x1,seeding+1):
             for v in np.linspace(y0,y1,seeding+1):
-                d = norm(x - self.Grg((u,v)))
+                d = norm(x - self.Grg_vectorized((u,v)))
                 if d < dmin:
                     dmin, umin, vmin = d, u, v
         
@@ -553,7 +563,7 @@ class GrgPatch:
             if not (0<t[0]<1 and 0<t[1]<1):         # Camilo
                 t1 = min(max(0.0,t[0]),1.0)     # trimming values
                 t2 = min(max(0.0,t[1]),1.0)     # trimming values
-                xc0= self.Grg0([t1,t2])
+                xc0= self.Grg_vectorized([t1,t2])
                 nor0=self.D3Grg([t1,t2])
                 x_tang = (xs-xc0)-(xs-xc0)@nor0
                 if norm(x_tang)>2*self.BS.r/100:         # some considerable order of magnitude with respect to the patch 'size'
@@ -576,7 +586,7 @@ class GrgPatch:
         tcandidate = t.copy()   # Is this a good candidate? It could happen that is it wrongly entering
                                 # with 0<t<1 in case of ANN and actually should be slightly out of bounds.
                                 # That would iterate 13 times and return the wrong value (this value).
-        dist = norm(xs - self.Grg0(tcandidate))  # Initial guess for distance in case there is no convergence
+        dist = norm(xs - self.Grg_vectorized(tcandidate))  # Initial guess for distance in case there is no convergence
 
 
         # import pdb; pdb.set_trace()
