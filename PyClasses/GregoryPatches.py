@@ -239,12 +239,14 @@ class GrgPatch:
     def Grg(self, t, deriv = 0):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
         if deriv == 0:
             return gregory_patch_backend.Grg(np.array(self.flatCtrlPts()), t[0], t[1], self.eps)
-        
-        u,v = t
-        p       = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
-        if deriv > 0:
-            D1p     = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
-            D2p     = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
+        elif deriv == 1:
+            p, D1p, D2p = gregory_patch_backend.Grg_derivs(np.array(self.flatCtrlPts()), t[0], t[1], self.eps)
+            return p, np.array([D1p, D2p],dtype=np.float64).T
+        elif deriv == 2:
+            p, D1p, D2p, D1D1p, D1D2p, D2D2p = gregory_patch_backend.Grg_derivs2(np.array(self.flatCtrlPts()), t[0], t[1], self.eps)
+            return p, \
+                    np.array([D1p, D2p],dtype=np.float64).T, \
+                    np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]],dtype=np.float64).T
         if deriv > 1:
             D1D1p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
             D1D2p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
