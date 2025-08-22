@@ -162,12 +162,22 @@ class Contact:
                 if not self.masterSurf.body.isRigid:
                     patch_obj.getCtrlPts(u)
 
-                for ii in range(self.nsn):
-                    if patch_obj.BS.ContainsNode(xs[ii]):
-                        self.candids[ii].append(ipatch)
-                        if CheckActive:
-                            if self.IsActive(ii,ipatch):
-                                self.actives[ii]=ipatch
+                # Vectorized check for node containment
+                sphere_center = patch_obj.BS.x
+                sphere_radius = patch_obj.BS.r
+                
+                # Calculate distances from all nodes to the sphere center at once
+                distances = np.linalg.norm(xs - sphere_center, axis=1)
+                
+                # Find indices of nodes within the sphere
+                candidate_indices = np.where(distances <= sphere_radius)[0]
+                
+                # Add the identified candidates to the list
+                for ii in candidate_indices:
+                    self.candids[ii].append(ipatch)
+                    if CheckActive:
+                        if self.IsActive(ii, ipatch):
+                            self.actives[ii] = ipatch
 
         for ii in range(self.nsn):
             if self.actives[ii] is None:
