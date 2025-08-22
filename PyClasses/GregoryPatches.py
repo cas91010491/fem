@@ -538,76 +538,16 @@ class GrgPatch:
 
     def findProjection(self,xs, seeding=10, recursive=1, decimals = None,tracing =False, ANNapprox = False,t0 = None):
 
-        def proj_final_check(self,xs,t):
-            # final check (for points at/beyond edges)
-            # if not (0<=t[0]<=1 and 0<=t[1]<=1):
-            if not (0<t[0]<1 and 0<t[1]<1):         # Camilo
-                t1 = min(max(0.0,t[0]),1.0)     # trimming values
-                t2 = min(max(0.0,t[1]),1.0)     # trimming values
-                xc0= self.Grg_vectorized([t1,t2])
-                nor0=self.D3Grg([t1,t2])
-                x_tang = (xs-xc0)-(xs-xc0)@nor0
-                if norm(x_tang)>2*self.BS.r/100:         # some considerable order of magnitude with respect to the patch 'size'
-                    return np.array([-1.0,-1.0])
-            return t
-
-
-
         if not ANNapprox:
-            t = np.array(self.MinDist(xs, seeding=seeding,recursive=recursive))
+            t_initial = np.array(self.MinDist(xs, seeding=seeding,recursive=recursive))
         elif t0 is not None:
-            t = t0.copy()
+            t_initial = t0.copy()
         else:
-            t = self.MinDistANN( np.array([xs + np.array([-6.0, 0.0, 0.0],dtype=np.float64)]) , verbose=0 )[0]
+            t_initial = self.MinDistANN( np.array([xs + np.array([-6.0, 0.0, 0.0],dtype=np.float64)]) , verbose=0 )[0]
 
-        # tol = 1e-16
-        tol = 1e-15
-        res = 1+tol
-        niter = 0
-        tcandidate = t.copy()   # Is this a good candidate? It could happen that is it wrongly entering
-                                # with 0<t<1 in case of ANN and actually should be slightly out of bounds.
-                                # That would iterate 13 times and return the wrong value (this value).
-        dist = norm(xs - self.Grg_vectorized(tcandidate))  # Initial guess for distance in case there is no convergence
+        u, v = gregory_patch_backend.find_projection(np.array(self.flatCtrlPts()), xs, tuple(t_initial), self.BS.r, self.eps)
+        t = np.array([u, v])
 
-
-        # import pdb; pdb.set_trace()
-
-        xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
-        f = -2*(xs-xc)@dxcdt
-        # opa = 5e-2  # this allows for a certain percentage of out-patch-allowance for NR to iterate in.
-        opa = 1e-2  # 5e-2 was giving problems for 3rd potato example with getCandidsANN
-        while res>tol and (0-opa<=t[0]<=1+opa and 0-opa<=t[1]<=1+opa):
-
-            
-
-            #f = -2*(xs-xc)@dxcdt
-            K =  2*(np.tensordot(-( xs-xc),d2xcd2t,axes=[[0],[0]]) + dxcdt.T @ dxcdt)
-
-            dt=np.linalg.solve(-K,f)
-            t+=dt
-            
-            xc, dxcdt, d2xcd2t = self.Grg(t, deriv = 2)
-            f = -2*(xs-xc)@dxcdt
-
-            res = np.linalg.norm(dt)
-
-            if res<np.sqrt(tol) and not (0<t[0]<1 and 0<t[1]<1):  # if it is converging outside the patch
-                return np.array([-1.0,-1.0])
-
-            # print("iter:",niter,"\tt:",t,"\tres:",res)
-
-            niter +=1
-            if niter > 10:
-                dist_new = norm(xs - xc )
-                if dist_new < dist:
-                    dist = dist_new
-                    tcandidate = t.copy()
-                if niter> 13:
-                    # return tcandidate
-                    return proj_final_check(self,xs,tcandidate)
-                
-        t = proj_final_check(self,xs,t)
-                
         return t if decimals is None else t.round(decimals)
 
     # xc derivs

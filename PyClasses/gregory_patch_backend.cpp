@@ -1,6 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/eigen.h>
 #include <Eigen/Dense>
+#include <Eigen/LU>
 #include <cmath>
 
 namespace py = pybind11;
@@ -282,10 +283,111 @@ py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int 
     return py::make_tuple(umin, vmin);
 }
 
+// Helper function for D3Grg
+Eigen::Vector3d D3Grg_helper(const Eigen::MatrixXd &CtrlPts, double u, double v, double eps, bool normalize) {
+    py::tuple derivs = Grg_derivs(CtrlPts, u, v, eps);
+    Eigen::Vector3d D1p = derivs[1].cast<Eigen::Vector3d>();
+    Eigen::Vector3d D2p = derivs[2].cast<Eigen::Vector3d>();
+    Eigen::Vector3d D3p = D1p.cross(D2p);
+    if (normalize) {
+        double norm_D3p = D3p.norm();
+        if (norm_D3p > 1e-12) { // Avoid division by zero
+            D3p /= norm_D3p;
+        }
+    }
+    return D3p;
+}
+
+// find_projection function
+py::tuple find_projection(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &xs, py::tuple t_py, double bs_r, double eps) {
+    Eigen::Vector2d t(t_py[0].cast<double>(), t_py[1].cast<double>());
+
+    double tol = 1e-15;
+    double res = 1.0 + tol;
+    int niter = 0;
+    Eigen::Vector2d tcandidate = t;
+
+    Eigen::Vector3d xc_candidate = Grg(CtrlPts, tcandidate.x(), tcandidate.y(), eps);
+    double dist = (xs - xc_candidate).norm();
+
+    double opa = 1e-2;
+
+    while (res > tol && (t.x() >= -opa && t.x() <= 1.0 + opa) && (t.y() >= -opa && t.y() <= 1.0 + opa)) {
+        py::tuple derivs2 = Grg_derivs2(CtrlPts, t.x(), t.y(), eps);
+        Eigen::Vector3d xc = derivs2[0].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D1p = derivs2[1].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D2p = derivs2[2].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D1D1p = derivs2[3].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D1D2p = derivs2[4].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D2D2p = derivs2[5].cast<Eigen::Vector3d>();
+
+        Eigen::Matrix<double, 3, 2> dxcdt;
+        dxcdt.col(0) = D1p;
+        dxcdt.col(1) = D2p;
+
+        Eigen::Vector2d f = -2 * dxcdt.transpose() * (xs - xc);
+
+        Eigen::Matrix2d K;
+        K(0,0) = 2.0 * (-(xs - xc).dot(D1D1p) + D1p.dot(D1p));
+        K(0,1) = 2.0 * (-(xs - xc).dot(D1D2p) + D1p.dot(D2p));
+        K(1,0) = K(0,1);
+        K(1,1) = 2.0 * (-(xs - xc).dot(D2D2p) + D2p.dot(D2p));
+
+        Eigen::Vector2d dt = -K.inverse() * f;
+        t += dt;
+
+        res = dt.norm();
+
+        if (res < std::sqrt(tol) && !(t.x() > 0 && t.x() < 1 && t.y() > 0 && t.y() < 1)) {
+            return py::make_tuple(-1.0, -1.0);
+        }
+
+        niter++;
+        if (niter > 10) {
+            Eigen::Vector3d xc_new = Grg(CtrlPts, t.x(), t.y(), eps);
+            double dist_new = (xs - xc_new).norm();
+            if (dist_new < dist) {
+                dist = dist_new;
+                tcandidate = t;
+            }
+            if (niter > 13) {
+                // proj_final_check for tcandidate
+                if (!(tcandidate.x() > 0 && tcandidate.x() < 1 && tcandidate.y() > 0 && tcandidate.y() < 1)) {
+                    double t1 = std::min(std::max(0.0, tcandidate.x()), 1.0);
+                    double t2 = std::min(std::max(0.0, tcandidate.y()), 1.0);
+                    Eigen::Vector3d xc0 = Grg(CtrlPts, t1, t2, eps);
+                    Eigen::Vector3d nor0 = D3Grg_helper(CtrlPts, t1, t2, eps, true);
+                    Eigen::Vector3d x_tang = (xs - xc0) - (xs - xc0).dot(nor0) * nor0;
+                    if (x_tang.norm() > 2.0 * bs_r / 100.0) {
+                        return py::make_tuple(-1.0, -1.0);
+                    }
+                }
+                return py::make_tuple(tcandidate.x(), tcandidate.y());
+            }
+        }
+    }
+
+    // proj_final_check for t
+    if (!(t.x() > 0 && t.x() < 1 && t.y() > 0 && t.y() < 1)) {
+        double t1 = std::min(std::max(0.0, t.x()), 1.0);
+        double t2 = std::min(std::max(0.0, t.y()), 1.0);
+        Eigen::Vector3d xc0 = Grg(CtrlPts, t1, t2, eps);
+        Eigen::Vector3d nor0 = D3Grg_helper(CtrlPts, t1, t2, eps, true);
+        Eigen::Vector3d x_tang = (xs - xc0) - (xs - xc0).dot(nor0) * nor0;
+        if (x_tang.norm() > 2.0 * bs_r / 100.0) {
+            return py::make_tuple(-1.0, -1.0);
+        }
+    }
+
+    return py::make_tuple(t.x(), t.y());
+}
+
+
 PYBIND11_MODULE(gregory_patch_backend, m) {
     m.doc() = "C++ backend for Gregory patch calculations";
     m.def("Grg", &Grg, "A function that calculates a point on a Gregory patch");
     m.def("Grg_derivs", &Grg_derivs, "A function that calculates first derivatives of Grg");
     m.def("Grg_derivs2", &Grg_derivs2, "A function that calculates second derivatives of Grg");
     m.def("MinDist", &MinDist, "A function that calculates the minimum distance from a point to a Gregory patch");
+    m.def("find_projection", &find_projection, "A function that finds the projection of a point onto a Gregory patch");
 }
