@@ -510,10 +510,6 @@ class GrgPatch:
 
     def MinDist(self, x, seeding = 10,x0x1y0y1 = [0.0,1.0,0.0,1.0],recursive = False,recursionLevel=0,prev_t=None):
         
-        umin = 0.0
-        vmin = 0.0
-        dmin = norm(x-self.CtrlPts[0][0])   # Starting point
-
         if recursive:
             x0,x1,y0,y1 = x0x1y0y1
             if recursive>1:
@@ -524,33 +520,16 @@ class GrgPatch:
         else:
             x0,x1,y0,y1 = x0x1y0y1
 
-        for u in np.linspace(x0,x1,seeding+1):
-            for v in np.linspace(y0,y1,seeding+1):
-                d = norm(x - self.Grg_vectorized((u,v)))
-                if d < dmin:
-                    dmin, umin, vmin = d, u, v
-        
-        # if recursive and recursionLevel<8:
+        umin, vmin = gregory_patch_backend.MinDist(np.array(self.flatCtrlPts()), x, seeding, self.eps)
+
         if recursive and recursionLevel<8:
-            # if prev_t is None or (abs(prev_t[0]-umin)>5e-3 and abs(prev_t[1]-vmin)>5e-3):
             if prev_t is None or (abs(prev_t[0]-umin)>5e-3 or abs(prev_t[1]-vmin)>5e-3):    # OR!
-                    # x0 = max(0.0,umin-dx*3/16)      # 3/16 is a bit less than 1/4
-                    # x1 = min(1.0,umin+dx*3/16)      # ... and this is useful 
-                    # y0 = max(0.0,vmin-dy*3/16)      # ... to increase variance 
-                    # y1 = min(1.0,vmin+dy*3/16)      # ... and reduce redundance.
-
-                    # x0 = max(0.0,umin-3*dx/(8*seeding))      # 3/4*(dx/(2*seeding))...
-                    # x1 = min(1.0,umin+3*dx/(8*seeding))      # ... and this is useful 
-                    # y0 = max(0.0,vmin-3*dy/(8*seeding))      # ... to increase variance 
-                    # y1 = min(1.0,vmin+3*dy/(8*seeding))      # ... and reduce redundance.
-
                     x0 = max(0.0,umin-7*dx/(16*seeding))      # 7/8*(dx/(2*seeding))...
                     x1 = min(1.0,umin+7*dx/(16*seeding))      # ... and this is useful 
                     y0 = max(0.0,vmin-7*dy/(16*seeding))      # ... to increase variance 
                     y1 = min(1.0,vmin+7*dy/(16*seeding))      # ... and reduce redundance.
             
                     return self.MinDist(x,seeding = seeding, x0x1y0y1=[x0,x1,y0,y1],recursive=recursive,recursionLevel=recursionLevel+1,prev_t=[umin,vmin])
-
 
         return umin , vmin      # Temporarily returning UV from the rough approximation on the grid. TODO: implement exact calculus
 

@@ -259,9 +259,33 @@ py::tuple Grg_derivs2(const Eigen::MatrixXd &CtrlPts, double u, double v, double
     return py::make_tuple(p, D1p, D2p, D1D1p, D1D2p, D2D2p);
 }
 
+// MinDist function
+py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int seeding, double eps) {
+    double umin = 0.0;
+    double vmin = 0.0;
+    Eigen::Vector3d initial_point = CtrlPts.row(0);
+    double dmin = (x - initial_point).norm();
+
+    for (int i = 0; i <= seeding; ++i) {
+        double u = static_cast<double>(i) / seeding;
+        for (int j = 0; j <= seeding; ++j) {
+            double v = static_cast<double>(j) / seeding;
+            Eigen::Vector3d p = Grg(CtrlPts, u, v, eps);
+            double d = (x - p).norm();
+            if (d < dmin) {
+                dmin = d;
+                umin = u;
+                vmin = v;
+            }
+        }
+    }
+    return py::make_tuple(umin, vmin);
+}
+
 PYBIND11_MODULE(gregory_patch_backend, m) {
     m.doc() = "C++ backend for Gregory patch calculations";
     m.def("Grg", &Grg, "A function that calculates a point on a Gregory patch");
     m.def("Grg_derivs", &Grg_derivs, "A function that calculates first derivatives of Grg");
     m.def("Grg_derivs2", &Grg_derivs2, "A function that calculates second derivatives of Grg");
+    m.def("MinDist", &MinDist, "A function that calculates the minimum distance from a point to a Gregory patch");
 }

@@ -96,6 +96,8 @@ conda activate fem-env
 pip install -r requirements.txt
 ```
 
+
+
 ### 3. Running the Code
 Each of the main sections (`1_Minimization_solvers/` and `2_Accelerated_Contact_Detection/`) contains 2D and 3D examples that require specific input parameters.
 
