@@ -24,3 +24,5 @@ PyClasses/__pycache__/
 *.csv
 *.ft
 *.prof
+*/build
+oldScriptsVersions/

@@ -237,6 +237,7 @@ class GrgPatch:
             return self.Grg(t, deriv=deriv)
 
     def Grg(self, t, deriv = 0):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
+        # Use C++ backend for speed while maintaining exact original Python logic
         if deriv == 0:
             return gregory_patch_backend.Grg(np.array(self.flatCtrlPts()), t[0], t[1], self.eps)
         elif deriv == 1:
@@ -247,138 +248,9 @@ class GrgPatch:
             return p, \
                     np.array([D1p, D2p],dtype=np.float64).T, \
                     np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]],dtype=np.float64).T
-        if deriv > 1:
-            D1D1p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
-            D1D2p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
-            D2D2p   = np.array([0.0 , 0.0 , 0.0],dtype=np.float64)
-        if deriv > 2:
-            D1D1D1p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
-            D1D1D2p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
-            D1D2D2p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
-            D2D2D2p = np.array([0.0 , 0.0 , 0.0],dtype=(np.float64))
-        n, m = len(self.CtrlPts)-1, len(self.CtrlPts[0])-1
-
-        for i  in range(n+1):
-            for j in range(m+1):
-                # Inner nodes: values, derivatives and treatments
-                if i in [1,2] and j in [1,2]:
-                    if i==1 and j ==1:
-                        x110, x111 = self.CtrlPts[1][1]
-                        den = max(self.eps,u+v)  
-                        xij = (u*x110+v*x111)/(den)  
-                        if deriv > 0:
-                            D1xij = x110/(den) - (u*x110 + v*x111)/((den)**2)
-                            D2xij = x111/(den) - (u*x110 + v*x111)/((den)**2)
-                        if deriv > 1:
-                            D11xij =-2*v*(x110 - x111)/(den)**3
-                            D12xij = (u - v)*(x110 - x111)/(den)**3
-                            D22xij = 2*u*(x110 - x111)/(den)**3
-                        if deriv > 2:
-                            D111xij = 6*v*(x110-x111)/(den)**4
-                            D112xij = -(2*(u-2*v)*(x110-x111)/(den)**4)
-                            D122xij = -(2*(2*u-v)*(x110-x111)/(den)**4)
-                            D222xij = -(6*u*(x110-x111)/(den)**4)
-                            
-                    elif i==1 and j==2:
-                        x120, x121 = self.CtrlPts[1][2]
-                        den = max(self.eps,u+1-v)
-                        xij = (u*x120+(1-v)*x121)/(den)
-                        if deriv > 0:
-                            D1xij = x120/(den) - (u*x120 + (1-v)*x121)/((den)**2)
-                            D2xij = -x121/(den) + (u*x120 + (1-v)*x121)/((den)**2)
-                        if deriv > 1:
-                            D11xij = (2*(-1 + v)*(x120 - x121))/(den)**3
-                            D12xij = -(((-1 + u + v)*(x120 - x121))/(den)**3)
-                            D22xij = (2*u*(x120 - x121))/(den)**3
-                        if deriv > 2:
-                            D111xij = -(6*(-1+v)*(x120-x121)/(den)**4)
-                            D112xij = (2*(-2+u+2*v)*(x120-x121)/(den)**4)
-                            D122xij = -(2*(-1+2*u+v)*(x120-x121)/(den)**4)
-                            D222xij = (6*u*(x120-x121)/(den)**4)
-
-                    elif i==2 and j==1:
-                        x210, x211 = self.CtrlPts[2][1]
-                        den = max(self.eps, v+1-u)
-                        xij = ((1-u)*x210+v*x211)/(den)
-                        if deriv > 0:
-                            D1xij = -x210/(den) + ((1-u)*x210 + v*x211)/((den)**2)
-                            D2xij = x211/(den) - ((1-u)*x210 + v*x211)/((den)**2)
-                        if deriv > 1:
-                            D11xij = (2*v*(x210 - x211))/(-den)**3
-                            D12xij = ((-1 + u + v)*(x210 - x211))/(den)**3
-                            D22xij = (2*(-1 + u)*(x210 - x211))/(-den)**3
-                        if deriv > 2:
-                            D111xij = -(6*v*(x210-x211)/(den)**4)
-                            D112xij = (2*(-1+u+2*v)*(x210-x211)/(den)**4)
-                            D122xij = -(2*(-2+2*u+v)*(x210-x211)/(den)**4)
-                            D222xij = (6*(-1+u)*(x210-x211)/(den)**4)
-
-                    else:
-                        x220, x221 = self.CtrlPts[2][2]
-                        den = max(self.eps, 2-u-v)
-                        xij = ((1-u)*x220+(1-v)*x221)/(den)
-                        if deriv > 0:
-                            D1xij = -x220/(den) + ((1-u)*x220 + (1-v)*x221)/((den)**2)
-                            D2xij = -x221/(den) + ((1-u)*x220 + (1-v)*x221)/((den)**2)
-                        if deriv > 1:
-                            D11xij = -((2*(-1 + v)*(x220 - x221))/(-den)**3)
-                            D12xij = ((u - v)*(x220 - x221))/(-den)**3
-                            D22xij = (2*(-1 + u)*(x220 - x221))/(-den)**3
-                        if deriv > 2:
-                            D111xij = 6*(-1+v)*(x220-x221)/(-den)**4
-                            D112xij = -(2*(1+u-2*v)*(x220-x221)/(-den)**4)
-                            D122xij = -(2*(-1+2*u-v)*(x220-x221)/(-den)**4)
-                            D222xij = -(6*(-1+u)*(x220-x221)/(-den)**4)
-
-                else:
-                    xij = self.CtrlPts[i][j]
-                    D1xij, D2xij = 0.0 , 0.0
-                    D11xij, D12xij, D22xij = 0.0 , 0.0 , 0.0
-                    D111xij, D112xij, D122xij, D222xij = 0.0 , 0.0 , 0.0 , 0.0
-
-                # Bernstein polynomials
-                Bi     =   Bernstein(n, i, u)
-                Bj     =   Bernstein(m, j, v)
-
-                p += Bi*Bj*xij
-
-                # Tangent Derivatives w/r to LOCAL parameters
-                if deriv > 0:
-                    D1Bi     =  dnBernstein(n, i, u, 1)
-                    D2Bj     =  dnBernstein(m, j, v, 1)
-                    D1p += D1Bi*Bj*xij + Bi*Bj*D1xij
-                    D2p += Bi*D2Bj*xij + Bi*Bj*D2xij
-
-                if deriv > 1:
-                    DD1Bi = dnBernstein(n, i, u, 2)
-                    DD2Bj = dnBernstein(m, j, v, 2)
-                    D1D1p += (DD1Bi*xij + 2*D1Bi*D1xij + Bi*D11xij)*Bj
-                    D1D2p += D1Bi*D2Bj*xij + D1Bi*Bj*D2xij + Bi*D2Bj*D1xij + Bi*Bj*D12xij
-                    D2D2p += (DD2Bj*xij + 2*D2Bj*D2xij + Bj*D22xij)*Bi
-
-                if deriv > 2:
-                    DDD1Bi = dnBernstein(n, i, u, 3)
-                    DDD2Bj = dnBernstein(m, j, v, 3)
-                    D1D1D1p += (DDD1Bi*xij + 3*DD1Bi*D1xij + 3*D1Bi*D11xij + Bi*D111xij)*Bj
-                    D1D1D2p += (DD1Bi*D2xij + 2*D1Bi*D12xij + Bi*D112xij)*Bj + (DD1Bi*xij + 2*D1Bi*D1xij + Bi*D11xij)*D2Bj
-                    D1D2D2p += (DD2Bj*D1xij + 2*D2Bj*D12xij + Bj*D122xij)*Bi + (DD2Bj*xij + 2*D2Bj*D2xij + Bj*D22xij)*D1Bi
-                    D2D2D2p += (DDD2Bj*xij + 3*DD2Bj*D2xij + 3*D2Bj*D22xij + Bj*D222xij)*Bi
-
-        if deriv==0:
-            return p
-        if deriv==1:
-            return p, np.array([D1p, D2p],dtype=np.float64).T
-        elif deriv == 2:
-            return p, \
-                    np.array([D1p, D2p],dtype=np.float64).T, \
-                    np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]],dtype=np.float64).T
-        elif deriv == 3:
-            return p, \
-                    np.array([D1p, D2p],dtype=np.float64).T, \
-                    np.array([[D1D1p, D1D2p], [D1D2p, D2D2p]],dtype=np.float64).T, \
-                    np.array([[[D1D1D1p,D1D1D2p],[D1D1D2p,D1D2D2p]], [[D1D1D2p,D1D2D2p],[D1D2D2p,D2D2D2p]]],dtype=np.float64).T
         else:
             print("Derivative order not (yet) implemented")
+            from pdb import set_trace
             set_trace()
 
 
@@ -520,16 +392,14 @@ class GrgPatch:
         else:
             x0,x1,y0,y1 = x0x1y0y1
 
-        umin, vmin = gregory_patch_backend.MinDist(np.array(self.flatCtrlPts()), x, seeding, self.eps)
-
-        if recursive and recursionLevel<8:
-            if prev_t is None or (abs(prev_t[0]-umin)>5e-3 or abs(prev_t[1]-vmin)>5e-3):    # OR!
-                    x0 = max(0.0,umin-7*dx/(16*seeding))      # 7/8*(dx/(2*seeding))...
-                    x1 = min(1.0,umin+7*dx/(16*seeding))      # ... and this is useful 
-                    y0 = max(0.0,vmin-7*dy/(16*seeding))      # ... to increase variance 
-                    y1 = min(1.0,vmin+7*dy/(16*seeding))      # ... and reduce redundance.
-            
-                    return self.MinDist(x,seeding = seeding, x0x1y0y1=[x0,x1,y0,y1],recursive=recursive,recursionLevel=recursionLevel+1,prev_t=[umin,vmin])
+        # Call C++ with full parameters to match original Python logic exactly
+        prev_u = prev_t[0] if prev_t is not None else -1.0
+        prev_v = prev_t[1] if prev_t is not None else -1.0
+        
+        umin, vmin = gregory_patch_backend.MinDist(
+            np.array(self.flatCtrlPts()), x, seeding, self.eps, 
+            x0, x1, y0, y1, recursive, recursionLevel, prev_u, prev_v
+        )
 
         return umin , vmin      # Temporarily returning UV from the rough approximation on the grid. TODO: implement exact calculus
 
@@ -537,6 +407,19 @@ class GrgPatch:
         return np.array(self.ANN_projection_model.predict(x,verbose=verbose),dtype=np.float64)
 
     def findProjection(self,xs, seeding=10, recursive=1, decimals = None,tracing =False, ANNapprox = False,t0 = None):
+        
+        def proj_final_check(self,xs,t):
+            # final check (for points at/beyond edges) - restored from original
+            # if not (0<=t[0]<=1 and 0<=t[1]<=1):
+            if not (0<t[0]<1 and 0<t[1]<1):         # Camilo
+                t1 = min(max(0.0,t[0]),1.0)     # trimming values
+                t2 = min(max(0.0,t[1]),1.0)     # trimming values
+                xc0= self.Grg0([t1,t2])
+                nor0=self.D3Grg([t1,t2])
+                x_tang = (xs-xc0)-(xs-xc0)@nor0
+                if norm(x_tang)>2*self.BS.r/100:         # some considerable order of magnitude with respect to the patch 'size'
+                    return np.array([-1.0,-1.0])
+            return t
 
         if not ANNapprox:
             t_initial = np.array(self.MinDist(xs, seeding=seeding,recursive=recursive))
@@ -547,6 +430,9 @@ class GrgPatch:
 
         u, v = gregory_patch_backend.find_projection(np.array(self.flatCtrlPts()), xs, tuple(t_initial), self.BS.r, self.eps)
         t = np.array([u, v])
+        
+        # Apply final boundary check like original Python version
+        t = proj_final_check(self,xs,t)
 
         return t if decimals is None else t.round(decimals)
 

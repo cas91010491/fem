@@ -19,6 +19,42 @@ double Bernstein(int n, int k, double t) {
     return binom * std::pow(t, k) * std::pow(1 - t, n - k);
 }
 
+// Factorial function
+double factorial(int n) {
+    if (n <= 1) return 1;
+    double result = 1;
+    for (int i = 2; i <= n; ++i) {
+        result *= i;
+    }
+    return result;
+}
+
+// Binomial coefficient
+double comb(int n, int k) {
+    if (k > n || k < 0) return 0;
+    if (k == 0 || k == n) return 1;
+    
+    double result = 1;
+    for (int i = 1; i <= k; ++i) {
+        result = result * (n - i + 1) / i;
+    }
+    return result;
+}
+
+// dnBernstein function - exact translation of Python version
+double dnBernstein(int n, int k, double x, int p) {
+    double coef = factorial(n) / factorial(n - p);
+    int desde = std::max(0, k + p - n);
+    int hasta = std::min(k, p);
+    
+    double dnB = 0.0;
+    for (int i = desde; i <= hasta; ++i) {
+        double sign = (i + p) % 2 == 0 ? 1.0 : -1.0;
+        dnB += sign * comb(p, i) * Bernstein(n - p, k - i, x);
+    }
+    return coef * dnB;
+}
+
 
 // Grg function
 Eigen::Vector3d Grg(const Eigen::MatrixXd &CtrlPts, double u, double v, double eps) {
@@ -151,8 +187,8 @@ py::tuple Grg_derivs(const Eigen::MatrixXd &CtrlPts, double u, double v, double 
 
             double Bi = Bernstein(n, i, u);
             double Bj = Bernstein(m, j, v);
-            double D1Bi = n * Bernstein(n - 1, i - 1, u) - n * Bernstein(n - 1, i, u);
-            double D2Bj = m * Bernstein(m - 1, j - 1, v) - m * Bernstein(m - 1, j, v);
+            double D1Bi = dnBernstein(n, i, u, 1);  // Match original Python exactly
+            double D2Bj = dnBernstein(m, j, v, 1);  // Match original Python exactly
 
             p += Bi * Bj * xij;
             D1p += D1Bi * Bj * xij + Bi * Bj * D1xij;
@@ -244,10 +280,10 @@ py::tuple Grg_derivs2(const Eigen::MatrixXd &CtrlPts, double u, double v, double
 
             double Bi = Bernstein(n, i, u);
             double Bj = Bernstein(m, j, v);
-            double D1Bi = n * Bernstein(n - 1, i - 1, u) - n * Bernstein(n - 1, i, u);
-            double D2Bj = m * Bernstein(m - 1, j - 1, v) - m * Bernstein(m - 1, j, v);
-            double DD1Bi = n * (n - 1) * Bernstein(n - 2, i - 2, u) - 2 * n * (n - 1) * Bernstein(n - 2, i - 1, u) + n * (n - 1) * Bernstein(n - 2, i, u);
-            double DD2Bj = m * (m - 1) * Bernstein(m - 2, j - 2, v) - 2 * m * (m - 1) * Bernstein(m - 2, j - 1, v) + m * (m - 1) * Bernstein(m - 2, j, v);
+            double D1Bi = dnBernstein(n, i, u, 1);  // Match original Python exactly
+            double D2Bj = dnBernstein(m, j, v, 1);  // Match original Python exactly
+            double DD1Bi = dnBernstein(n, i, u, 2);  // Match original Python exactly
+            double DD2Bj = dnBernstein(m, j, v, 2);  // Match original Python exactly
 
             p += Bi * Bj * xij;
             D1p += D1Bi * Bj * xij + Bi * Bj * D1xij;
@@ -260,17 +296,31 @@ py::tuple Grg_derivs2(const Eigen::MatrixXd &CtrlPts, double u, double v, double
     return py::make_tuple(p, D1p, D2p, D1D1p, D1D2p, D2D2p);
 }
 
-// MinDist function
-py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int seeding, double eps) {
+// MinDist function with recursive refinement - matches original Python logic
+py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int seeding, double eps, 
+                  double x0 = 0.0, double x1 = 1.0, double y0 = 0.0, double y1 = 1.0, 
+                  bool recursive = false, int recursionLevel = 0, double prev_u = -1.0, double prev_v = -1.0) {
     double umin = 0.0;
     double vmin = 0.0;
-    Eigen::Vector3d initial_point = CtrlPts.row(0);
+    // Fix: Use CtrlPts.row(0) which corresponds to self.CtrlPts[0][0] in the flatCtrlPts ordering
+    Eigen::Vector3d initial_point = CtrlPts.row(0);  // This is correct for flatCtrlPts[0]
     double dmin = (x - initial_point).norm();
 
-    for (int i = 0; i <= seeding; ++i) {
-        double u = static_cast<double>(i) / seeding;
-        for (int j = 0; j <= seeding; ++j) {
-            double v = static_cast<double>(j) / seeding;
+    // Handle recursive seeding adjustment
+    int actual_seeding = seeding;
+    if (recursive) {
+        if (seeding > 1) {
+            actual_seeding = seeding;
+        } else {
+            actual_seeding = 4;
+        }
+    }
+
+    // Match original Python: for u in np.linspace(x0,x1,seeding+1):
+    for (int i = 0; i <= actual_seeding; ++i) {
+        double u = x0 + static_cast<double>(i) * (x1 - x0) / actual_seeding;
+        for (int j = 0; j <= actual_seeding; ++j) {
+            double v = y0 + static_cast<double>(j) * (y1 - y0) / actual_seeding;
             Eigen::Vector3d p = Grg(CtrlPts, u, v, eps);
             double d = (x - p).norm();
             if (d < dmin) {
@@ -280,7 +330,33 @@ py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int 
             }
         }
     }
+
+    // Recursive refinement logic - matches original Python
+    if (recursive && recursionLevel < 8) {
+        bool should_refine = (prev_u < 0.0 || prev_v < 0.0) || 
+                            (std::abs(prev_u - umin) > 5e-3 || std::abs(prev_v - vmin) > 5e-3);
+        
+        if (should_refine) {
+            double dx = x1 - x0;
+            double dy = y1 - y0;
+            
+            // Refined bounds - matches Python: 7*dx/(16*seeding)
+            double new_x0 = std::max(0.0, umin - 7*dx/(16*actual_seeding));
+            double new_x1 = std::min(1.0, umin + 7*dx/(16*actual_seeding));
+            double new_y0 = std::max(0.0, vmin - 7*dy/(16*actual_seeding));
+            double new_y1 = std::min(1.0, vmin + 7*dy/(16*actual_seeding));
+            
+            return MinDist(CtrlPts, x, seeding, eps, new_x0, new_x1, new_y0, new_y1, 
+                          recursive, recursionLevel + 1, umin, vmin);
+        }
+    }
+
     return py::make_tuple(umin, vmin);
+}
+
+// Wrapper for non-recursive calls
+py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int seeding, double eps) {
+    return MinDist(CtrlPts, x, seeding, eps, 0.0, 1.0, 0.0, 1.0, false, 0, -1.0, -1.0);
 }
 
 // Helper function for D3Grg
@@ -298,87 +374,88 @@ Eigen::Vector3d D3Grg_helper(const Eigen::MatrixXd &CtrlPts, double u, double v,
     return D3p;
 }
 
-// find_projection function
+// find_projection function - rigorous translation of original Python logic
 py::tuple find_projection(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &xs, py::tuple t_py, double bs_r, double eps) {
     Eigen::Vector2d t(t_py[0].cast<double>(), t_py[1].cast<double>());
 
-    double tol = 1e-15;
+    double tol = 1e-15;  // Match original Python tolerance
     double res = 1.0 + tol;
     int niter = 0;
     Eigen::Vector2d tcandidate = t;
 
+    // Initialize candidate tracking like original Python
     Eigen::Vector3d xc_candidate = Grg(CtrlPts, tcandidate.x(), tcandidate.y(), eps);
     double dist = (xs - xc_candidate).norm();
 
-    double opa = 1e-2;
+    double opa = 1e-2;  // Match original Python opa value
 
+    // Get initial derivatives and f vector - match original Python exactly
+    py::tuple derivs2 = Grg_derivs2(CtrlPts, t.x(), t.y(), eps);
+    Eigen::Vector3d xc = derivs2[0].cast<Eigen::Vector3d>();
+    Eigen::Vector3d D1p = derivs2[1].cast<Eigen::Vector3d>();
+    Eigen::Vector3d D2p = derivs2[2].cast<Eigen::Vector3d>();
+    
+    Eigen::Matrix<double, 3, 2> dxcdt;
+    dxcdt.col(0) = D1p;
+    dxcdt.col(1) = D2p;
+    Eigen::Vector2d f = -2 * dxcdt.transpose() * (xs - xc);
+
+    // Main Newton-Raphson iteration - matches original Python exactly
     while (res > tol && (t.x() >= -opa && t.x() <= 1.0 + opa) && (t.y() >= -opa && t.y() <= 1.0 + opa)) {
-        py::tuple derivs2 = Grg_derivs2(CtrlPts, t.x(), t.y(), eps);
-        Eigen::Vector3d xc = derivs2[0].cast<Eigen::Vector3d>();
-        Eigen::Vector3d D1p = derivs2[1].cast<Eigen::Vector3d>();
-        Eigen::Vector3d D2p = derivs2[2].cast<Eigen::Vector3d>();
-        Eigen::Vector3d D1D1p = derivs2[3].cast<Eigen::Vector3d>();
-        Eigen::Vector3d D1D2p = derivs2[4].cast<Eigen::Vector3d>();
-        Eigen::Vector3d D2D2p = derivs2[5].cast<Eigen::Vector3d>();
+        
+        // Get second derivatives for this iteration
+        py::tuple derivs2_iter = Grg_derivs2(CtrlPts, t.x(), t.y(), eps);
+        Eigen::Vector3d xc_iter = derivs2_iter[0].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D1p_iter = derivs2_iter[1].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D2p_iter = derivs2_iter[2].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D1D1p = derivs2_iter[3].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D1D2p = derivs2_iter[4].cast<Eigen::Vector3d>();
+        Eigen::Vector3d D2D2p = derivs2_iter[5].cast<Eigen::Vector3d>();
 
-        Eigen::Matrix<double, 3, 2> dxcdt;
-        dxcdt.col(0) = D1p;
-        dxcdt.col(1) = D2p;
-
-        Eigen::Vector2d f = -2 * dxcdt.transpose() * (xs - xc);
-
+        // Build K matrix exactly like original Python: 2*(np.tensordot(-(xs-xc),d2xcd2t,axes=[[0],[0]]) + dxcdt.T @ dxcdt)
         Eigen::Matrix2d K;
-        K(0,0) = 2.0 * (-(xs - xc).dot(D1D1p) + D1p.dot(D1p));
-        K(0,1) = 2.0 * (-(xs - xc).dot(D1D2p) + D1p.dot(D2p));
+        K(0,0) = 2.0 * (-(xs - xc_iter).dot(D1D1p) + D1p_iter.dot(D1p_iter));
+        K(0,1) = 2.0 * (-(xs - xc_iter).dot(D1D2p) + D1p_iter.dot(D2p_iter));
         K(1,0) = K(0,1);
-        K(1,1) = 2.0 * (-(xs - xc).dot(D2D2p) + D2p.dot(D2p));
+        K(1,1) = 2.0 * (-(xs - xc_iter).dot(D2D2p) + D2p_iter.dot(D2p_iter));
 
         Eigen::Vector2d dt = -K.inverse() * f;
         t += dt;
+        
+        // Update xc, dxcdt, and f for next iteration - match original Python exactly
+        py::tuple derivs2_new = Grg_derivs2(CtrlPts, t.x(), t.y(), eps);
+        xc = derivs2_new[0].cast<Eigen::Vector3d>();
+        D1p = derivs2_new[1].cast<Eigen::Vector3d>();
+        D2p = derivs2_new[2].cast<Eigen::Vector3d>();
+        
+        dxcdt.col(0) = D1p;
+        dxcdt.col(1) = D2p;
+        f = -2 * dxcdt.transpose() * (xs - xc);
 
+        // Match original Python: res = np.linalg.norm(dt)
         res = dt.norm();
 
+        // Match original Python convergence check exactly
         if (res < std::sqrt(tol) && !(t.x() > 0 && t.x() < 1 && t.y() > 0 && t.y() < 1)) {
             return py::make_tuple(-1.0, -1.0);
         }
 
         niter++;
         if (niter > 10) {
-            Eigen::Vector3d xc_new = Grg(CtrlPts, t.x(), t.y(), eps);
-            double dist_new = (xs - xc_new).norm();
+            // Match original Python: dist_new = norm(xs - xc)
+            double dist_new = (xs - xc).norm();
             if (dist_new < dist) {
                 dist = dist_new;
                 tcandidate = t;
             }
             if (niter > 13) {
-                // proj_final_check for tcandidate
-                if (!(tcandidate.x() > 0 && tcandidate.x() < 1 && tcandidate.y() > 0 && tcandidate.y() < 1)) {
-                    double t1 = std::min(std::max(0.0, tcandidate.x()), 1.0);
-                    double t2 = std::min(std::max(0.0, tcandidate.y()), 1.0);
-                    Eigen::Vector3d xc0 = Grg(CtrlPts, t1, t2, eps);
-                    Eigen::Vector3d nor0 = D3Grg_helper(CtrlPts, t1, t2, eps, true);
-                    Eigen::Vector3d x_tang = (xs - xc0) - (xs - xc0).dot(nor0) * nor0;
-                    if (x_tang.norm() > 2.0 * bs_r / 100.0) {
-                        return py::make_tuple(-1.0, -1.0);
-                    }
-                }
+                // Return candidate like original Python
                 return py::make_tuple(tcandidate.x(), tcandidate.y());
             }
         }
     }
 
-    // proj_final_check for t
-    if (!(t.x() > 0 && t.x() < 1 && t.y() > 0 && t.y() < 1)) {
-        double t1 = std::min(std::max(0.0, t.x()), 1.0);
-        double t2 = std::min(std::max(0.0, t.y()), 1.0);
-        Eigen::Vector3d xc0 = Grg(CtrlPts, t1, t2, eps);
-        Eigen::Vector3d nor0 = D3Grg_helper(CtrlPts, t1, t2, eps, true);
-        Eigen::Vector3d x_tang = (xs - xc0) - (xs - xc0).dot(nor0) * nor0;
-        if (x_tang.norm() > 2.0 * bs_r / 100.0) {
-            return py::make_tuple(-1.0, -1.0);
-        }
-    }
-
+    // Return t like original Python (before proj_final_check)
     return py::make_tuple(t.x(), t.y());
 }
 
@@ -388,6 +465,9 @@ PYBIND11_MODULE(gregory_patch_backend, m) {
     m.def("Grg", &Grg, "A function that calculates a point on a Gregory patch");
     m.def("Grg_derivs", &Grg_derivs, "A function that calculates first derivatives of Grg");
     m.def("Grg_derivs2", &Grg_derivs2, "A function that calculates second derivatives of Grg");
-    m.def("MinDist", &MinDist, "A function that calculates the minimum distance from a point to a Gregory patch");
+    m.def("MinDist", py::overload_cast<const Eigen::MatrixXd&, const Eigen::Vector3d&, int, double>(&MinDist), 
+          "A function that calculates the minimum distance from a point to a Gregory patch");
+    m.def("MinDist", py::overload_cast<const Eigen::MatrixXd&, const Eigen::Vector3d&, int, double, double, double, double, double, bool, int, double, double>(&MinDist), 
+          "A function that calculates the minimum distance with full parameters");
     m.def("find_projection", &find_projection, "A function that finds the projection of a point onto a Gregory patch");
 }
