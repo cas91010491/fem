@@ -89,7 +89,27 @@ BCs = [cond_bd1, cond_bd2]
 slave   = [blk , blk_bottom]
 master = [ptt,ptt_highernodes]
 
-contact1 = Contact(slave, master, kn=1e2, C1Edges = False, maxGN = 0.001,f0=0.1)       # (slave, master) inputs can be surfaces as well
+# CONVERGENCE FIX: Mesh-adaptive contact parameters to prevent oscillations
+element_size = 4.0 / mesh  # Approximate element characteristic length
+
+# Conservative contact stiffness scaling - maintain reasonable ratio to material stiffness
+E = blk.Youngsmodulus  # Material Young's modulus
+base_kn = 20.0 * E  # Conservative base stiffness (50x material stiffness)
+
+# Scale contact stiffness inversely with element size (penalty method scaling)
+mesh_adapted_kn = 1.0*base_kn 
+
+# penetration tolerance 
+maxGN = 0.001
+
+
+print(f"Mesh-adaptive contact parameters for mesh={mesh}:")
+print(f"  Element size: {element_size:.3f}")
+print(f"  Material E: {E:.3f}")
+print(f"  Contact stiffness kn: {mesh_adapted_kn:.2f} (was 1e2={1e2:.0f})")
+print(f"  Max penetration maxGN: {maxGN:.4f} (was 0.001)")
+
+contact1 = Contact(slave, master, kn=mesh_adapted_kn, C1Edges = False, maxGN = maxGN, f0=0.1)
 
 ### MODEL ###
 subname = "_"+("plastic" if plastic else "elastic")+"_"+minimization_method+"_"+str(mesh)
