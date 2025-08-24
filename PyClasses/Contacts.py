@@ -162,9 +162,13 @@ class Contact:
                 if not self.masterSurf.body.isRigid:
                     patch_obj.getCtrlPts(u)
 
-                # Restore original non-vectorized logic to ensure exact matching
+                # Optimized: Use vectorized C++ call to eliminate Python-to-C++ overhead
+                from . import gregory_patch_backend
+                contained_mask = gregory_patch_backend.ContainsNodes(patch_obj.BS.x, patch_obj.BS.r, xs)
+                
+                # Process results with same logic as original
                 for ii in range(self.nsn):
-                    if patch_obj.BS.ContainsNode(xs[ii]):
+                    if contained_mask[ii]:
                         self.candids[ii].append(ipatch)
                         if CheckActive:
                             if self.IsActive(ii,ipatch):

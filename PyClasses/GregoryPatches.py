@@ -255,54 +255,12 @@ class GrgPatch:
 
 
     def Grg0(self, t):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
-        u,v = t
-        p       = np.array([0.0 , 0.0 , 0.0])
-        n, m = len(self.CtrlPts)-1, len(self.CtrlPts[0])-1
-
-        for i  in range(n+1):
-            for j in range(m+1):
-                # Inner nodes: values, derivatives and treatments
-                if i in [1,2] and j in [1,2]:
-                    if i==1 and j ==1:
-                        x110, x111 = self.CtrlPts[1][1]
-                        den = max(self.eps,u+v)  
-                        xij = (u*x110+v*x111)/(den)
-                            
-                    elif i==1 and j==2:
-                        x120, x121 = self.CtrlPts[1][2]
-                        den = max(self.eps,u+1-v)
-                        xij = (u*x120+(1-v)*x121)/(den)
-
-                    elif i==2 and j==1:
-                        x210, x211 = self.CtrlPts[2][1]
-                        den = max(self.eps, v+1-u)
-                        xij = ((1-u)*x210+v*x211)/(den)
-
-                    else:
-                        x220, x221 = self.CtrlPts[2][2]
-                        den = max(self.eps, 2-u-v)
-                        xij = ((1-u)*x220+(1-v)*x221)/(den)
-
-                else:
-                    xij = self.CtrlPts[i][j]
-
-                # Bernstein polynomials
-                Bi     =   Bernstein(n, i, u)
-                Bj     =   Bernstein(m, j, v)
-
-                p += Bi*Bj*xij
-
-
-        return p
+        # Grg0 is identical to Grg(t, deriv=0) - use existing C++ optimization!
+        return self.Grg(t, deriv=0)
 
     def D3Grg(self,t, normalize = True):                        # Normalized normal vector at (u,v) with treatment for undefinition at nodes
-        D1p, D2p = self.Grg(t, deriv = 1)[1].T
-        D3p = np.cross(D1p,D2p)
-        if norm(D3p) ==0:
-            set_trace()
-        if normalize:
-            D3p = D3p/norm(D3p)       # The NORMALIZED vectors are continuous from patch to patch (doesnt make sense otherwise)
-        return D3p
+        # Use C++ backend for speed while maintaining exact original Python logic
+        return gregory_patch_backend.D3Grg(np.array(self.flatCtrlPts()), t[0], t[1], self.eps, normalize)
 
     def dndxi(self,t,degree=1):
         _, dxcdt= self.Grg(t, deriv = 1)

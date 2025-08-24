@@ -41,7 +41,7 @@ double comb(int n, int k) {
     return result;
 }
 
-// dnBernstein function - exact translation of Python version
+// dnBernstein function
 double dnBernstein(int n, int k, double x, int p) {
     double coef = factorial(n) / factorial(n - p);
     int desde = std::max(0, k + p - n);
@@ -359,37 +359,52 @@ py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int 
     return MinDist(CtrlPts, x, seeding, eps, 0.0, 1.0, 0.0, 1.0, false, 0, -1.0, -1.0);
 }
 
-// Helper function for D3Grg
-Eigen::Vector3d D3Grg_helper(const Eigen::MatrixXd &CtrlPts, double u, double v, double eps, bool normalize) {
+// D3Grg function - rigorous translation of Python logic
+Eigen::Vector3d D3Grg(const Eigen::MatrixXd &CtrlPts, double u, double v, double eps, bool normalize = true) {
+    // Exact translation of Python: D1p, D2p = self.Grg(t, deriv = 1)[1].T
     py::tuple derivs = Grg_derivs(CtrlPts, u, v, eps);
     Eigen::Vector3d D1p = derivs[1].cast<Eigen::Vector3d>();
     Eigen::Vector3d D2p = derivs[2].cast<Eigen::Vector3d>();
+    
+    // Exact translation of Python: D3p = np.cross(D1p,D2p)
     Eigen::Vector3d D3p = D1p.cross(D2p);
-    if (normalize) {
-        double norm_D3p = D3p.norm();
-        if (norm_D3p > 1e-12) { // Avoid division by zero
-            D3p /= norm_D3p;
-        }
+    
+    // Exact translation of Python: if norm(D3p) ==0: set_trace()
+    double norm_D3p = D3p.norm();
+    if (norm_D3p == 0.0) {
+        // In C++, we can't set_trace(), but we should handle this case
+        throw std::runtime_error("D3p norm is zero in D3Grg - would trigger set_trace in Python");
     }
+    
+    // Exact translation of Python: if normalize: D3p = D3p/norm(D3p)
+    if (normalize) {
+        D3p /= norm_D3p;
+    }
+    
     return D3p;
 }
 
-// find_projection function - rigorous translation of original Python logic
+// Helper function for backward compatibility
+Eigen::Vector3d D3Grg_helper(const Eigen::MatrixXd &CtrlPts, double u, double v, double eps, bool normalize) {
+    return D3Grg(CtrlPts, u, v, eps, normalize);
+}
+
+// find_projection function
 py::tuple find_projection(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &xs, py::tuple t_py, double bs_r, double eps) {
     Eigen::Vector2d t(t_py[0].cast<double>(), t_py[1].cast<double>());
 
-    double tol = 1e-15;  // Match original Python tolerance
+    double tol = 1e-15; 
     double res = 1.0 + tol;
     int niter = 0;
     Eigen::Vector2d tcandidate = t;
 
-    // Initialize candidate tracking like original Python
+    // Initialize candidate tracking 
     Eigen::Vector3d xc_candidate = Grg(CtrlPts, tcandidate.x(), tcandidate.y(), eps);
     double dist = (xs - xc_candidate).norm();
 
     double opa = 1e-2;  // Match original Python opa value
 
-    // Get initial derivatives and f vector - match original Python exactly
+    // Get initial derivatives and f vector 
     py::tuple derivs2 = Grg_derivs2(CtrlPts, t.x(), t.y(), eps);
     Eigen::Vector3d xc = derivs2[0].cast<Eigen::Vector3d>();
     Eigen::Vector3d D1p = derivs2[1].cast<Eigen::Vector3d>();
@@ -400,7 +415,7 @@ py::tuple find_projection(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d 
     dxcdt.col(1) = D2p;
     Eigen::Vector2d f = -2 * dxcdt.transpose() * (xs - xc);
 
-    // Main Newton-Raphson iteration - matches original Python exactly
+    // Main Newton-Raphson iteration
     while (res > tol && (t.x() >= -opa && t.x() <= 1.0 + opa) && (t.y() >= -opa && t.y() <= 1.0 + opa)) {
         
         // Get second derivatives for this iteration
@@ -412,7 +427,7 @@ py::tuple find_projection(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d 
         Eigen::Vector3d D1D2p = derivs2_iter[4].cast<Eigen::Vector3d>();
         Eigen::Vector3d D2D2p = derivs2_iter[5].cast<Eigen::Vector3d>();
 
-        // Build K matrix exactly like original Python: 2*(np.tensordot(-(xs-xc),d2xcd2t,axes=[[0],[0]]) + dxcdt.T @ dxcdt)
+        // Build K matrix 
         Eigen::Matrix2d K;
         K(0,0) = 2.0 * (-(xs - xc_iter).dot(D1D1p) + D1p_iter.dot(D1p_iter));
         K(0,1) = 2.0 * (-(xs - xc_iter).dot(D1D2p) + D1p_iter.dot(D2p_iter));
@@ -422,7 +437,7 @@ py::tuple find_projection(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d 
         Eigen::Vector2d dt = -K.inverse() * f;
         t += dt;
         
-        // Update xc, dxcdt, and f for next iteration - match original Python exactly
+        // Update xc, dxcdt, and f for next iteration
         py::tuple derivs2_new = Grg_derivs2(CtrlPts, t.x(), t.y(), eps);
         xc = derivs2_new[0].cast<Eigen::Vector3d>();
         D1p = derivs2_new[1].cast<Eigen::Vector3d>();
@@ -459,9 +474,37 @@ py::tuple find_projection(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d 
     return py::make_tuple(t.x(), t.y());
 }
 
+// BoundingSphere ContainsNode function - rigorous translation of Python logic
+bool ContainsNode(const Eigen::Vector3d &sphere_center, double sphere_radius, const Eigen::Vector3d &point) {
+    // Exact translation of: return norm(xp-self.x) <= self.r
+    return (point - sphere_center).norm() <= sphere_radius;
+}
+
+// Vectorized version for multiple points - could be even faster
+py::array_t<bool> ContainsNodes(const Eigen::Vector3d &sphere_center, double sphere_radius, py::array_t<double> points) {
+    auto buf = points.request();
+    if (buf.ndim != 2 || buf.shape[1] != 3) {
+        throw std::runtime_error("Points array must be (N, 3) shape");
+    }
+    
+    int n_points = buf.shape[0];
+    auto result = py::array_t<bool>(n_points);
+    auto result_buf = result.request();
+    
+    double *points_ptr = static_cast<double*>(buf.ptr);
+    bool *result_ptr = static_cast<bool*>(result_buf.ptr);
+    
+    for (int i = 0; i < n_points; ++i) {
+        Eigen::Vector3d point(points_ptr[i*3], points_ptr[i*3+1], points_ptr[i*3+2]);
+        result_ptr[i] = (point - sphere_center).norm() <= sphere_radius;
+    }
+    
+    return result;
+}
+
 
 PYBIND11_MODULE(gregory_patch_backend, m) {
-    m.doc() = "C++ backend for Gregory patch calculations";
+    m.doc() = "C++ backend for Gregory patch calculations and BoundingSphere operations";
     m.def("Grg", &Grg, "A function that calculates a point on a Gregory patch");
     m.def("Grg_derivs", &Grg_derivs, "A function that calculates first derivatives of Grg");
     m.def("Grg_derivs2", &Grg_derivs2, "A function that calculates second derivatives of Grg");
@@ -470,4 +513,7 @@ PYBIND11_MODULE(gregory_patch_backend, m) {
     m.def("MinDist", py::overload_cast<const Eigen::MatrixXd&, const Eigen::Vector3d&, int, double, double, double, double, double, bool, int, double, double>(&MinDist), 
           "A function that calculates the minimum distance with full parameters");
     m.def("find_projection", &find_projection, "A function that finds the projection of a point onto a Gregory patch");
+    m.def("D3Grg", &D3Grg, "Calculate the normal vector at (u,v) on Gregory patch", py::arg("CtrlPts"), py::arg("u"), py::arg("v"), py::arg("eps"), py::arg("normalize")=true);
+    m.def("ContainsNode", &ContainsNode, "Check if a point is contained within a bounding sphere");
+    m.def("ContainsNodes", &ContainsNodes, "Vectorized check if multiple points are contained within a bounding sphere");
 }
