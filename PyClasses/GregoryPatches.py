@@ -1080,10 +1080,8 @@ class GrgPatch:
         """Frictionless contact potential"""
         if t is None:
             t = self.findProjection(xs)
-        xc,dxcdt = self.Grg(t,deriv=1)
-        D1p, D2p = dxcdt.T
-        D3p = np.cross(D1p,D2p)
-        normal = D3p/norm(D3p)
+        xc = self.Grg(t,deriv=0)
+        normal = self.D3Grg(t, normalize=True)  # Use optimized D3Grg instead of duplicate cross product
         gn = (xs-xc)@normal
 
         if  cubicT is None:
@@ -1105,10 +1103,8 @@ class GrgPatch:
         Ne = len(self.squad)
 
         t = self.findProjection(xs,ANNapprox=ANNapprox,t0=t0,recursive = recursive_seeding)
-        xc,dxcdt = self.Grg(t,deriv=1)
-        D1p, D2p = dxcdt.T
-        D3p = np.cross(D1p,D2p)
-        normal = D3p/norm(D3p)
+        xc = self.Grg(t,deriv=0)
+        normal = self.D3Grg(t, normalize=True)  # Use optimized D3Grg instead of duplicate cross product
         gn = (xs-xc)@normal
 
         # print("id_patch: ",self.iquad,"gn: ",gn)
@@ -1139,10 +1135,8 @@ class GrgPatch:
         Ne = len(self.squad)
 
         t = self.findProjection(xs,ANNapprox=ANNapprox,t0=t0,recursive = recursive_seeding)
-        xc,dxcdt = self.Grg(t,deriv=1)
-        D1p, D2p = dxcdt.T
-        D3p = np.cross(D1p,D2p)
-        normal = D3p/norm(D3p)
+        xc = self.Grg(t,deriv=0)
+        normal = self.D3Grg(t, normalize=True)  # Use optimized D3Grg instead of duplicate cross product
         gn = (xs-xc)@normal
 
         # print("id_patch: ",self.iquad,"gn: ",gn)
@@ -1939,9 +1933,7 @@ class GrgPatch:
 
         t = self.findProjection(xs) if t is None else t
         xc, dxcdt, d2xcd2t= self.Grg(t, deriv = 2)
-        D1p, D2p = dxcdt.T
-        D3p = np.cross(D1p,D2p)
-        normal = D3p/norm(D3p)
+        normal = self.D3Grg(t, normalize=True)  # Use optimized D3Grg instead of duplicate cross product
         gn = (xs-xc)@normal
 
         opa = 1e-3
