@@ -502,6 +502,88 @@ py::array_t<bool> ContainsNodes(const Eigen::Vector3d &sphere_center, double sph
     return result;
 }
 
+// FEAssembly m_el_extra function - rigorous translation of Python hyperelastic SED computation
+Eigen::VectorXd m_el_extra(const Eigen::MatrixXd &X_hexa, const Eigen::MatrixXd &u_hexa, 
+                          double Youngsmodulus, double Poissonsratio) {
+    // X_hexa: 8x3 matrix of hexahedron node coordinates
+    // u_hexa: 8x3 matrix of displacements (matches Python u[self.DoFs[hexa]] output)
+    
+    // Exact translation of Python material parameters
+    double d1 = Youngsmodulus * Poissonsratio / (2 * (1 + Poissonsratio) * (1 - 2 * Poissonsratio));
+    double c10 = Youngsmodulus / (4 * (1 + Poissonsratio));
+    
+    // Gauss points - exact translation of Python array
+    Eigen::MatrixXd gauss_points(8, 3);
+    double gp = 1.0 / std::sqrt(3.0);
+    gauss_points << -gp, -gp, -gp,
+                     gp, -gp, -gp,
+                     gp,  gp, -gp,
+                    -gp,  gp, -gp,
+                    -gp, -gp,  gp,
+                     gp, -gp,  gp,
+                     gp,  gp,  gp,
+                    -gp,  gp,  gp;
+    
+    Eigen::VectorXd SED(8);
+    Eigen::MatrixXd NN(8, 8);
+    
+    // u_hexa is already in 8x3 format from Python u[self.DoFs[hexa]]
+    
+    // Loop over 8 Gauss points - exact translation of Python logic
+    for (int g_i = 0; g_i < 8; ++g_i) {
+        double g1 = gauss_points(g_i, 0);
+        double g2 = gauss_points(g_i, 1);  
+        double g3 = gauss_points(g_i, 2);
+        
+        // Shape function derivatives - exact translation of Python dNd_xi
+        Eigen::MatrixXd dNd_xi(8, 3);
+        dNd_xi << -(1 - g2) * (1 - g3), -(1 - g1) * (1 - g3), -(1 - g1) * (1 - g2),
+                   (1 - g2) * (1 - g3), -(1 + g1) * (1 - g3), -(1 + g1) * (1 - g2),
+                   (1 + g2) * (1 - g3),  (1 + g1) * (1 - g3), -(1 + g1) * (1 + g2),
+                  -(1 + g2) * (1 - g3),  (1 - g1) * (1 - g3), -(1 - g1) * (1 + g2),
+                  -(1 - g2) * (1 + g3), -(1 - g1) * (1 + g3),  (1 - g1) * (1 - g2),
+                   (1 - g2) * (1 + g3), -(1 + g1) * (1 + g3),  (1 + g1) * (1 - g2),
+                   (1 + g2) * (1 + g3),  (1 + g1) * (1 + g3),  (1 + g1) * (1 + g2),
+                  -(1 + g2) * (1 + g3),  (1 - g1) * (1 + g3),  (1 - g1) * (1 + g2);
+        dNd_xi *= 1.0/8.0;
+        
+        // Jacobian computation - exact translation: J = np.dot(dNd_xi.T, X)
+        Eigen::Matrix3d J = dNd_xi.transpose() * X_hexa;
+        
+        // Jacobian inverse - exact translation: invJ = np.linalg.inv(J)
+        Eigen::Matrix3d invJ = J.inverse();
+        
+        // Global derivatives - exact translation: dNdx = np.dot(dNd_xi, invJ.T)
+        Eigen::MatrixXd dNdx = dNd_xi * invJ.transpose();
+        
+        // Deformation gradient - exact translation: F = np.eye(len(dNdx.T)) + np.dot(dNdx.T, u).T
+        Eigen::Matrix3d F = Eigen::Matrix3d::Identity() + (dNdx.transpose() * u_hexa).transpose();
+        
+        // Determinant - exact translation: detF = np.linalg.det(F)
+        double detF = F.determinant();
+        
+        // SED computation - exact translation of Python hyperelastic formula
+        // SED[g_i] = c10 * (np.trace(F.T @ F) - 3 - 2 * np.log(detF)) + d1 * (np.log(detF))**2
+        double trace_FtF = (F.transpose() * F).trace();
+        double log_detF = std::log(detF);
+        SED(g_i) = c10 * (trace_FtF - 3.0 - 2.0 * log_detF) + d1 * log_detF * log_detF;
+        
+        // Shape functions for extrapolation - exact translation of Python NN[g_i]
+        NN(g_i, 0) = (1 - g1) * (1 - g2) * (1 - g3);
+        NN(g_i, 1) = (1 + g1) * (1 - g2) * (1 - g3);
+        NN(g_i, 2) = (1 + g1) * (1 + g2) * (1 - g3);
+        NN(g_i, 3) = (1 - g1) * (1 + g2) * (1 - g3);
+        NN(g_i, 4) = (1 - g1) * (1 - g2) * (1 + g3);
+        NN(g_i, 5) = (1 + g1) * (1 - g2) * (1 + g3);
+        NN(g_i, 6) = (1 + g1) * (1 + g2) * (1 + g3);
+        NN(g_i, 7) = (1 - g1) * (1 + g2) * (1 + g3);
+        NN.row(g_i) *= 1.0/8.0;
+    }
+    
+    // Final extrapolation - exact translation: return SED@np.linalg.inv(NN)
+    return SED.transpose() * NN.inverse();
+}
+
 
 PYBIND11_MODULE(gregory_patch_backend, m) {
     m.doc() = "C++ backend for Gregory patch calculations and BoundingSphere operations";
@@ -516,4 +598,5 @@ PYBIND11_MODULE(gregory_patch_backend, m) {
     m.def("D3Grg", &D3Grg, "Calculate the normal vector at (u,v) on Gregory patch", py::arg("CtrlPts"), py::arg("u"), py::arg("v"), py::arg("eps"), py::arg("normalize")=true);
     m.def("ContainsNode", &ContainsNode, "Check if a point is contained within a bounding sphere");
     m.def("ContainsNodes", &ContainsNodes, "Vectorized check if multiple points are contained within a bounding sphere");
+    m.def("m_el_extra", &m_el_extra, "Compute strain energy density at nodes for hyperelastic material");
 }
