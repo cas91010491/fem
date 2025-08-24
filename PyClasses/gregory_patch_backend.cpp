@@ -296,42 +296,55 @@ py::tuple Grg_derivs2(const Eigen::MatrixXd &CtrlPts, double u, double v, double
     return py::make_tuple(p, D1p, D2p, D1D1p, D1D2p, D2D2p);
 }
 
-// MinDist function with recursive refinement - matches original Python logic
+// Micro-optimized MinDist - maintains exact Python logic with performance improvements
 py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int seeding, double eps, 
                   double x0 = 0.0, double x1 = 1.0, double y0 = 0.0, double y1 = 1.0, 
                   bool recursive = false, int recursionLevel = 0, double prev_u = -1.0, double prev_v = -1.0) {
     double umin = 0.0;
     double vmin = 0.0;
-    // Fix: Use CtrlPts.row(0) which corresponds to self.CtrlPts[0][0] in the flatCtrlPts ordering
-    Eigen::Vector3d initial_point = CtrlPts.row(0);  // This is correct for flatCtrlPts[0]
+    Eigen::Vector3d initial_point = CtrlPts.row(0);  
     double dmin = (x - initial_point).norm();
 
-    // Handle recursive seeding adjustment
-    int actual_seeding = seeding;
-    if (recursive) {
-        if (seeding > 1) {
-            actual_seeding = seeding;
-        } else {
-            actual_seeding = 4;
-        }
-    }
+    // Handle recursive seeding - exact Python logic
+    int actual_seeding = recursive ? ((seeding > 1) ? seeding : 4) : seeding;
 
-    // Match original Python: for u in np.linspace(x0,x1,seeding+1):
+    // Micro-optimization 1: Pre-compute step sizes
+    double du = (x1 - x0) / actual_seeding;
+    double dv = (y1 - y0) / actual_seeding;
+    
+    // Micro-optimization 2: Early termination threshold
+    double very_close_threshold = 1e-12;
+    
+    // Exact Python grid search logic with micro-optimizations
     for (int i = 0; i <= actual_seeding; ++i) {
-        double u = x0 + static_cast<double>(i) * (x1 - x0) / actual_seeding;
+        double u = x0 + i * du;
+        
+        // Micro-optimization 3: Skip obviously out-of-bounds u values
+        if (u < -0.01 || u > 1.01) continue;
+        
         for (int j = 0; j <= actual_seeding; ++j) {
-            double v = y0 + static_cast<double>(j) * (y1 - y0) / actual_seeding;
+            double v = y0 + j * dv;
+            
+            // Micro-optimization 4: Skip obviously out-of-bounds v values  
+            if (v < -0.01 || v > 1.01) continue;
+            
             Eigen::Vector3d p = Grg(CtrlPts, u, v, eps);
             double d = (x - p).norm();
+            
             if (d < dmin) {
                 dmin = d;
                 umin = u;
                 vmin = v;
+                
+                // Micro-optimization 5: Early termination for very close points
+                if (d < very_close_threshold) {
+                    return py::make_tuple(umin, vmin);
+                }
             }
         }
     }
 
-    // Recursive refinement logic - matches original Python
+    // Recursive refinement logic - exact Python translation
     if (recursive && recursionLevel < 8) {
         bool should_refine = (prev_u < 0.0 || prev_v < 0.0) || 
                             (std::abs(prev_u - umin) > 5e-3 || std::abs(prev_v - vmin) > 5e-3);
@@ -340,7 +353,7 @@ py::tuple MinDist(const Eigen::MatrixXd &CtrlPts, const Eigen::Vector3d &x, int 
             double dx = x1 - x0;
             double dy = y1 - y0;
             
-            // Refined bounds - matches Python: 7*dx/(16*seeding)
+            // Exact Python formula for refined bounds
             double new_x0 = std::max(0.0, umin - 7*dx/(16*actual_seeding));
             double new_x1 = std::min(1.0, umin + 7*dx/(16*actual_seeding));
             double new_y0 = std::max(0.0, vmin - 7*dy/(16*actual_seeding));
