@@ -96,8 +96,8 @@ element_size = 4.0 / mesh  # Approximate element characteristic length
 E = blk.Youngsmodulus  # Material Young's modulus
 base_kn = 20.0 * E  # Conservative base stiffness (50x material stiffness)
 
-# Scale contact stiffness inversely with element size (penalty method scaling)
-mesh_adapted_kn = 1.0*base_kn 
+# Scale contact stiffness y with mesh characteristic parameter L/h 
+mesh_adapted_kn = 0.1*base_kn*mesh
 
 # penetration tolerance 
 maxGN = 0.001
